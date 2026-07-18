@@ -1,0 +1,898 @@
+%% ========================================================================
+%  DYNAMIC THERMOELASTIC ANALYSIS (LORD-SHULMAN) – FULLY CORRECTED
+%  Fixed singular matrix (rank deficiency) by proper BC application
+%  and reduced DOF method. Monitoring points adjusted to avoid fixed nodes.
+%  ========================================================================
+clear; clc; close all;
+
+%% ========================= 0. Select boundary conditions =========================
+BC_left  = 'C';   % at z=0: 'C', 'S', or 'F'
+BC_right = 'C';   % at z=L: 'C', 'S', or 'F'
+
+%% ========================= 1. Geometry and discretization =========================
+NL = 3;                     % number of layers
+R_i = 0.1;                  % inner radius (m)
+R_o = 0.2;                  % outer radius (m)
+L = 0.5;                    % cylinder length (m)
+N_r = 7;                   % radial points per layer
+N_z = 9;                   % axial points
+
+t_layer = (R_o - R_i) / NL;
+R_boundaries = linspace(R_i, R_o, NL+1);
+
+% Chebyshev grids
+z_nodes = chebyshev_grid(0, L, N_z);
+r_nodes = cell(NL,1);
+for e = 1:NL
+    r_nodes{e} = chebyshev_grid(R_boundaries(e), R_boundaries(e+1), N_r);
+end
+
+% DQ weights
+[A_z, B_z] = DQ_weights(z_nodes);
+A_r = cell(NL,1); B_r = cell(NL,1);
+for e = 1:NL
+    [A_r{e}, B_r{e}] = DQ_weights(r_nodes{e});
+end
+
+%% ========================= 2. Material properties =========================
+% GPL
+a_GPL = 2.5e-6;   b_GPL = 1.5e-6;   t_GPL = 1.5e-9;
+E_GPL = 1.01e12;  rho_GPL = 1060;   c_GPL = 710;
+alpha_GPL = 5e-6; k_GPL = 5000;
+% Matrix
+E_m = 3.0e9;      nu_m = 0.34;      rho_m = 1200;
+c_m = 800;        alpha_m = 45e-6;  k_m = 0.4;
+
+GPL_pattern = 'UD';       porosity_pattern = 'UD';
+W_GPL_total = 0.05;       % mass fraction of GPL
+e1 = 0.3;  e2 = 0.3;  e3 = 0.7;      % porosity coefficients
+
+% Halpin‑Tsai
+xi_L = 2*a_GPL/t_GPL;          xi_T = 2*b_GPL/t_GPL;
+eta_L = (E_GPL/E_m-1)/(E_GPL/E_m+xi_L);
+eta_T = (E_GPL/E_m-1)/(E_GPL/E_m+xi_T);
+
+% Thermal conductivity
+p = a_GPL/t_GPL;
+if p>1
+    Hp = log(p+sqrt(p^2-1))*p/sqrt((p^2-1)^3) - 1/(p^2-1);
+else
+    Hp = 0;
+end
+gamma_conn = 1;
+
+% Loading and BCs
+T_ref = 300;      T_inf = 300;        h_c = 100;
+T_i_amp = 400;    t0 = 0.01;          P_i = 0;
+
+% Lord‑Shulman parameters
+tau0 = 1e-5;               % relaxation time (s)
+total_time = 0.1;         % total simulation time (s)
+dt = 1e-3;                 % time step (s)
+Nt = round(total_time / dt);
+
+%% ========================= 3. Porosity coefficients for V & A =========================
+l_total = R_o - R_i;
+int_ref = integral(@(r) sqrt(1 - e1*cos(pi*r/l_total)), R_i, R_o);
+if strcmpi(porosity_pattern,'V')
+    fun_V = @(r,e4) sqrt(e4*abs(cos(pi*r/(2*l_total)+pi/4)));
+    e4_sol = fzero(@(e4) integral(@(r)fun_V(r,e4),R_i,R_o)-int_ref,0.5);
+    e5_sol = NaN;
+elseif strcmpi(porosity_pattern,'A')
+    fun_A = @(r,e5) sqrt(e5*abs(cos(pi*r/(2*l_total)+5*pi/4)));
+    e5_sol = fzero(@(e5) integral(@(r)fun_A(r,e5),R_i,R_o)-int_ref,0.5);
+    e4_sol = NaN;
+else
+    e4_sol = NaN; e5_sol = NaN;
+end
+
+%% ========================= 4. Effective properties =========================
+E_node = cell(NL,1);  nu_node = cell(NL,1);  rho_node = cell(NL,1);
+c_node = cell(NL,1);  k_node = cell(NL,1);   alpha_node = cell(NL,1);
+
+for e = 1:NL
+    switch upper(GPL_pattern)
+        case 'UD',   W_GPL_e = W_GPL_total;
+        case 'O',    mid = (NL+1)/2; W_GPL_e = 4*W_GPL_total*(0.5-abs(e-mid))/(NL+2);
+        case 'X',    W_GPL_e = W_GPL_total*(2*e/(NL+1));
+        case 'V',    W_GPL_e = W_GPL_total*(2*(NL+1-e)/(NL+1));
+        case 'A',    W_GPL_e = W_GPL_total*(2*e/(NL+1));
+        otherwise,   error('Invalid GPL pattern.');
+    end
+    W_GPL_e = max(0,min(1,W_GPL_e));
+    V_GPL = W_GPL_e / (W_GPL_e + (rho_GPL/rho_m)*(1-W_GPL_e));
+
+    E_L = (1+xi_L*eta_L*V_GPL)/(1-eta_L*V_GPL)*E_m;
+    E_T = (1+xi_T*eta_T*V_GPL)/(1-eta_T*V_GPL)*E_m;
+    E_base = 3/8*E_L + 5/8*E_T;
+    rho_base = V_GPL*rho_GPL + (1-V_GPL)*rho_m;
+    c_base   = V_GPL*c_GPL   + (1-V_GPL)*c_m;
+    alpha_base= V_GPL*alpha_GPL + (1-V_GPL)*alpha_m;
+    k_base = k_m * ...
+    (k_GPL + 2*k_m + 2*V_GPL*(k_GPL-k_m)) / ...
+    (k_GPL + 2*k_m - V_GPL*(k_GPL-k_m));
+    nu_base = nu_m;
+
+    r_rel = r_nodes{e} - R_i;
+    switch lower(porosity_pattern)
+        case 'ud',   FacE = e3*ones(size(r_rel));
+        case 'o',    FacE = 1 - e1*cos(pi*r_rel/l_total);
+        case 'x',    FacE = 1 - e2*(1-cos(pi*r_rel/l_total));
+        case 'v',    FacE = e4_sol*cos(pi*r_rel/(2*l_total)+pi/4);
+        case 'a',    FacE = e5_sol*cos(pi*r_rel/(2*l_total)+5*pi/4);
+        otherwise,   error('Invalid porosity pattern');
+    end
+    FacE = max(0,min(1,FacE));
+    FacRho = FacE;
+    FacK = FacE;  FacC = 1.0;
+
+    E_node{e}   = E_base   * FacE;
+    nu_node{e}  = nu_base   * ones(size(r_rel));
+    rho_node{e} = rho_base * FacRho;
+    c_node{e} = c_base * ones(N_r,1);
+    k_node{e}   = k_base   * FacK;
+    alpha_node{e} = alpha_base * ones(size(r_rel));
+end
+
+%% ========================= 5. Global assembly =========================
+Ndof_T = NL*N_r*N_z;
+Ndof_U = NL*N_r*N_z;
+Ndof_W = NL*N_r*N_z;
+Ndof = Ndof_T + Ndof_U + Ndof_W;
+
+idx_T = @(e,ir,iz) (e-1)*N_r*N_z + (ir-1)*N_z + iz;
+idx_U = @(e,ir,iz) Ndof_T + (e-1)*N_r*N_z + (ir-1)*N_z + iz;
+idx_W = @(e,ir,iz) Ndof_T+Ndof_U + (e-1)*N_r*N_z + (ir-1)*N_z + iz;
+
+K = sparse(Ndof,Ndof);
+M = sparse(Ndof,Ndof);
+C = sparse(Ndof,Ndof);
+
+%% -------------------- 5.1 Thermal stiffness --------------------
+for e = 1:NL
+    rv = r_nodes{e}; kv = k_node{e};
+    for ir = 1:N_r
+        r = rv(ir); kk = kv(ir);
+        % Derivative of k at point ir (scalar)
+        dkdr_ir = sum(A_r{e}(ir,:) * kv(:));
+        for iz = 1:N_z
+            eq = idx_T(e,ir,iz);
+            for jr = 1:N_r
+                % Term: k/r * dT/dr + dk/dr * dT/dr + k * d2T/dr2
+                K(eq, idx_T(e,jr,iz)) = K(eq, idx_T(e,jr,iz)) ...
+                    + (kk/r + dkdr_ir) * A_r{e}(ir,jr) ...
+                    + kk * B_r{e}(ir,jr);
+            end
+            for jz = 1:N_z
+                K(eq, idx_T(e,ir,jz)) = K(eq, idx_T(e,ir,jz)) + kk * B_z(iz,jz);
+            end
+        end
+    end
+end
+
+%% -------------------- 5.2 Mechanical stiffness --------------------
+for e = 1:NL
+    rv = r_nodes{e};
+    for ir = 1:N_r
+        r = rv(ir);
+        E = E_node{e}(ir); nu = nu_node{e}(ir);
+        C11 = (1-nu)*E/((1+nu)*(1-2*nu));
+        C12 = nu*E/((1+nu)*(1-2*nu));
+        C13 = C12;  C22 = C11;  C23 = C12;  C33 = C11;
+        C55 = E/(2*(1+nu));
+        for iz = 1:N_z
+            eq_u = idx_U(e,ir,iz);
+            for jr = 1:N_r
+                K(eq_u, idx_U(e,jr,iz)) = K(eq_u, idx_U(e,jr,iz)) ...
+                    + C11*B_r{e}(ir,jr) + (C11/r)*A_r{e}(ir,jr);
+                if ir == jr
+                    K(eq_u, idx_U(e,ir,iz)) = K(eq_u, idx_U(e,ir,iz)) ...
+                        - (C11 + C22 - C12 + C22) / r^2;
+                    % or equivalently: - (2*C11 - C12)/r^2 for isotropic materials
+                end
+            end
+            for jz = 1:N_z
+                K(eq_u, idx_U(e,ir,jz)) = K(eq_u, idx_U(e,ir,jz)) + C55*B_z(iz,jz);
+            end
+            for jz = 1:N_z
+                K(eq_u, idx_W(e,ir,jz)) = K(eq_u, idx_W(e,ir,jz)) + (C13-C23)/r * A_z(iz,jz);
+            end
+            for jr = 1:N_r
+                for jz = 1:N_z
+                    K(eq_u, idx_W(e,jr,jz)) = K(eq_u, idx_W(e,jr,jz)) ...
+                        + (C13+C55) * A_r{e}(ir,jr) * A_z(iz,jz);
+                end
+            end
+
+            eq_w = idx_W(e,ir,iz);
+            for jr = 1:N_r
+                K(eq_w, idx_W(e,jr,iz)) = K(eq_w, idx_W(e,jr,iz)) ...
+                    + C55*B_r{e}(ir,jr) + (C55/r)*A_r{e}(ir,jr);
+            end
+            for jz = 1:N_z
+                K(eq_w, idx_W(e,ir,jz)) = K(eq_w, idx_W(e,ir,jz)) + C33*B_z(iz,jz);
+            end
+            for jz = 1:N_z
+                K(eq_w, idx_U(e,ir,jz)) = K(eq_w, idx_U(e,ir,jz)) + (C23+C55)/r * A_z(iz,jz);
+            end
+            for jr = 1:N_r
+                for jz = 1:N_z
+                    K(eq_w, idx_U(e,jr,jz)) = K(eq_w, idx_U(e,jr,jz)) ...
+                        + (C13+C55) * A_r{e}(ir,jr) * A_z(iz,jz);
+                end
+            end
+        end
+    end
+end
+
+%% ========================= 6. Add mass and damping =========================
+% Thermal mass and damping
+for e = 1:NL
+    for ir = 1:N_r
+        for iz = 1:N_z
+            eq = idx_T(e,ir,iz);
+            dr = t_layer/(N_r-1);
+            dz = L/(N_z-1);
+            Veff = 2*pi*r_nodes{e}(ir)*dr*dz;
+            rc = rho_node{e}(ir)*c_node{e}(ir)*Veff;
+            M(eq,eq)=M(eq,eq)+rc*tau0;
+            C(eq,eq)=C(eq,eq)+rc;
+        end
+    end
+end
+
+% Mechanical mass
+dr = t_layer/(N_r-1);
+dz = L/(N_z-1);
+
+for e = 1:NL
+
+    for ir = 1:N_r
+
+        r = r_nodes{e}(ir);
+
+        rho_val = rho_node{e}(ir);
+
+        Veff = 2*pi*r*dr*dz;
+
+        for iz = 1:N_z
+
+            M(idx_U(e,ir,iz),idx_U(e,ir,iz)) = ...
+                M(idx_U(e,ir,iz),idx_U(e,ir,iz)) + rho_val*Veff;
+
+            M(idx_W(e,ir,iz),idx_W(e,ir,iz)) = ...
+                M(idx_W(e,ir,iz),idx_W(e,ir,iz)) + rho_val*Veff;
+
+        end
+    end
+end
+%% ========================= 7. Boundary-condition flags (move BEFORE coupling) =========================
+is_fixed = false(Ndof,1);
+
+% Thermal Dirichlet BC: inner surface temperature
+for e = 1:NL
+    for iz = 1:N_z
+        is_fixed(idx_T(e,1,iz)) = true;
+    end
+end
+
+% Mechanical clamped BCs using only DOFs that definitely exist in this code
+for e = 1:NL
+    for ir = 1:N_r
+        if BC_left == 'C'
+            is_fixed(idx_U(e,ir,1)) = true;
+            is_fixed(idx_W(e,ir,1)) = true;
+        end
+
+        if BC_right == 'C'
+            is_fixed(idx_U(e,ir,N_z)) = true;
+            is_fixed(idx_W(e,ir,N_z)) = true;
+        end
+    end
+end
+
+
+%% ========================= 6.1 Thermal-mechanical coupling =========================
+% IMPORTANT:
+% This block must come AFTER is_fixed is defined.
+% We protect all fixed DOFs from being polluted by coupling terms.
+
+for e = 1:NL
+    rv = r_nodes{e};
+
+    for ir = 1:N_r
+        r = rv(ir);
+
+        alpha = alpha_node{e}(ir);
+        E     = E_node{e}(ir);
+        nu    = nu_node{e}(ir);
+
+        lambda = nu*E/((1+nu)*(1-2*nu));
+        mu     = E/(2*(1+nu));
+        coeff  = alpha*(3*lambda + 2*mu);
+
+        for iz = 1:N_z
+            eq = idx_T(e,ir,iz);
+
+            % Do not modify rows that are Dirichlet-fixed
+            if is_fixed(eq)
+                continue;
+            end
+
+            % Coupling with radial displacement U through dU/dr + U/r
+            for jr = 1:N_r
+                col = idx_U(e,jr,iz);
+
+                % Do not couple into fixed mechanical DOFs
+                if is_fixed(col)
+                    continue;
+                end
+
+                M(eq, col) = M(eq, col) + coeff * tau0 * A_r{e}(ir,jr);
+                C(eq, col) = C(eq, col) + coeff * A_r{e}(ir,jr);
+            end
+
+            % U/r term
+            col_u_self = idx_U(e,ir,iz);
+            if ~is_fixed(col_u_self)
+                M(eq, col_u_self) = M(eq, col_u_self) + coeff * tau0 / r;
+                C(eq, col_u_self) = C(eq, col_u_self) + coeff / r;
+            end
+
+            % Coupling with axial displacement W through dW/dz
+            for jz = 1:N_z
+                col = idx_W(e,ir,jz);
+
+                if is_fixed(col)
+                    continue;
+                end
+
+                M(eq, col) = M(eq, col) + coeff * tau0 * A_z(iz,jz);
+                C(eq, col) = C(eq, col) + coeff * A_z(iz,jz);
+            end
+        end
+    end
+end
+
+%% ========================= 7. Apply boundary conditions (classical method without DOF reduction) =========================
+
+% Convection on outer surface (Neumann condition)
+e_last = NL;
+for iz = 1:N_z
+    node = idx_T(e_last,N_r,iz);
+    k_out = k_node{e_last}(N_r);
+    K(node,:) = 0;
+%     K(:,node) = 0;
+
+    C(node,:) = 0;
+%     C(:,node) = 0;
+
+    M(node,:) = 0;
+%     M(:,node) = 0;
+
+    K(node,node)=1;
+    M(node,node)=1;
+    C(node,node)=1;
+    for jr = 1:N_r
+        K(node, idx_T(e_last,jr,iz)) = k_out * A_r{e_last}(N_r,jr);
+    end
+    K(node,node) = K(node,node) + h_c;
+end
+% Insulated end surfaces (dT/dz=0)
+for e = 1:NL
+    for ir = 1:N_r
+        n0 = idx_T(e,ir,1);  nL = idx_T(e,ir,N_z);
+        K(n0,:)=0; C(n0,:)=0; M(n0,:)=0;
+        for jz=1:N_z, K(n0, idx_T(e,ir,jz)) = A_z(1,jz); end
+        K(nL,:)=0; C(nL,:)=0; M(nL,:)=0;
+        for jz=1:N_z, K(nL, idx_T(e,ir,jz)) = A_z(N_z,jz); end
+    end
+end
+% Thermal continuity between layers
+for e = 1:NL-1
+    for iz = 2:N_z-1
+        left = idx_T(e,N_r,iz);  right = idx_T(e+1,1,iz);
+        K(left,:)=0; C(left,:)=0; M(left,:)=0;
+        K(left,left)=1; K(left,right)=-1;
+        K(right,:)=0; C(right,:)=0; M(right,:)=0;
+        kL = k_node{e}(N_r);  kR = k_node{e+1}(1);
+        for jr=1:N_r
+            K(right, idx_T(e,jr,iz)) = kL * A_r{e}(N_r,jr);
+            K(right, idx_T(e+1,jr,iz)) = -kR * A_r{e+1}(1,jr);
+        end
+    end
+end
+
+% --- Mechanical boundary conditions at ends (for all radial points) ---
+for e = 1:NL
+    for ir = 1:N_r
+        r = r_nodes{e}(ir);
+        E = E_node{e}(ir); nu = nu_node{e}(ir);
+        C13 = nu*E/((1+nu)*(1-2*nu));
+        C33 = (1-nu)*E/((1+nu)*(1-2*nu));
+        C55 = E/(2*(1+nu));
+        for iz = [1, N_z]
+            if iz == 1, BC = BC_left; else, BC = BC_right; end
+            switch BC
+                case 'C'   % clamped
+                    is_fixed(idx_U(e,ir,iz)) = true;
+                    is_fixed(idx_W(e,ir,iz)) = true;
+                case 'S'   % simply supported
+                    is_fixed(idx_U(e,ir,iz)) = true;
+                    row_w = idx_W(e,ir,iz);
+                    K(row_w,:)=0; C(row_w,:)=0; M(row_w,:)=0;
+                    for jr=1:N_r
+                        K(row_w, idx_U(e,jr,iz)) = C13 * A_r{e}(ir,jr);
+                    end
+                    K(row_w, idx_U(e,ir,iz)) = K(row_w, idx_U(e,ir,iz)) + C13/r;
+                    for jz=1:N_z
+                        K(row_w, idx_W(e,ir,jz)) = C33 * A_z(iz,jz);
+                    end
+                case 'F'   % free
+                    row_u = idx_U(e,ir,iz);
+                    K(row_u,:)=0; C(row_u,:)=0; M(row_u,:)=0;
+                    for jz=1:N_z
+                        K(row_u, idx_U(e,ir,jz)) = C55 * A_z(iz,jz);
+                    end
+                    for jr=1:N_r
+                        K(row_u, idx_W(e,jr,iz)) = C55 * A_r{e}(ir,jr);
+                    end
+                    row_w = idx_W(e,ir,iz);
+                    K(row_w,:)=0; C(row_w,:)=0; M(row_w,:)=0;
+                    for jr=1:N_r
+                        K(row_w, idx_U(e,jr,iz)) = C13 * A_r{e}(ir,jr);
+                    end
+                    K(row_w, idx_U(e,ir,iz)) = K(row_w, idx_U(e,ir,iz)) + C13/r;
+                    for jz=1:N_z
+                        K(row_w, idx_W(e,ir,jz)) = C33 * A_z(iz,jz);
+                    end
+            end
+        end
+    end
+end
+
+% --- Mechanical continuity between layers (as in your original code) ---
+% (Keep this part unchanged from your own code; if missing, use the previous code)
+for e = 1:NL-1
+    for iz = 2:N_z-1
+        ru = idx_U(e,N_r,iz); rw = idx_W(e,N_r,iz);
+        K(ru,:)=0; C(ru,:)=0; M(ru,:)=0;
+        K(ru, idx_U(e,N_r,iz)) = 1; K(ru, idx_U(e+1,1,iz)) = -1;
+        K(rw,:)=0; C(rw,:)=0; M(rw,:)=0;
+        K(rw, idx_W(e,N_r,iz)) = 1; K(rw, idx_W(e+1,1,iz)) = -1;
+        
+        rsig = idx_U(e+1,1,iz);  rtau = idx_W(e+1,1,iz);
+        r_b = R_boundaries(e+1);
+        EL = E_node{e}(N_r); nuL = nu_node{e}(N_r);
+        C11L = (1-nuL)*EL/((1+nuL)*(1-2*nuL));
+        C12L = nuL*EL/((1+nuL)*(1-2*nuL));
+        C13L = C12L;  C55L = EL/(2*(1+nuL));
+        ER = E_node{e+1}(1); nuR = nu_node{e+1}(1);
+        C11R = (1-nuR)*ER/((1+nuR)*(1-2*nuR));
+        C12R = nuR*ER/((1+nuR)*(1-2*nuR));
+        C13R = C12R;  C55R = ER/(2*(1+nuR));
+        K(rsig,:)=0; C(rsig,:)=0; M(rsig,:)=0;
+        for jr=1:N_r
+            K(rsig, idx_U(e,jr,iz)) = C11L * A_r{e}(N_r,jr);
+            K(rsig, idx_U(e+1,jr,iz)) = -C11R * A_r{e+1}(1,jr);
+        end
+        K(rsig, idx_U(e,N_r,iz)) = K(rsig, idx_U(e,N_r,iz)) + C12L/r_b;
+        K(rsig, idx_U(e+1,1,iz)) = K(rsig, idx_U(e+1,1,iz)) - C12R/r_b;
+        for jz=1:N_z
+            K(rsig, idx_W(e,N_r,jz)) = C13L * A_z(iz,jz);
+            K(rsig, idx_W(e+1,1,jz)) = -C13R * A_z(iz,jz);
+        end
+        K(rtau,:)=0; C(rtau,:)=0; M(rtau,:)=0;
+        for jz=1:N_z
+            K(rtau, idx_U(e,N_r,jz)) = C55L * A_z(iz,jz);
+            K(rtau, idx_U(e+1,1,jz)) = -C55R * A_z(iz,jz);
+        end
+        for jr=1:N_r
+            K(rtau, idx_W(e,jr,iz)) = C55L * A_r{e}(N_r,jr);
+            K(rtau, idx_W(e+1,jr,iz)) = -C55R * A_r{e+1}(1,jr);
+        end
+    end
+end
+
+% --- Additional constraint for S and F cases (prevent rigid body motion) ---
+if BC_left ~= 'C' || BC_right ~= 'C'
+    e_pin = 1; ir_pin = 1; iz_pin = 1;
+    is_fixed(idx_U(e_pin, ir_pin, iz_pin)) = true;
+    is_fixed(idx_W(e_pin, ir_pin, iz_pin)) = true;
+    fprintf('Added u=0 and w=0 at (Ri, z=0) to prevent rigid motion.\n');
+end
+
+% --- Radial boundary conditions (only for interior points along z) ---
+% Inner surface (r=Ri): sigma_rr = -P_i (applied in RHS), tau_rz=0
+e=1; ir=1;
+for iz = 2:N_z-1
+    r = r_nodes{e}(ir);
+    E = E_node{e}(ir); nu = nu_node{e}(ir);
+    C11 = (1-nu)*E/((1+nu)*(1-2*nu));
+    C12 = nu*E/((1+nu)*(1-2*nu));
+    C13 = C12; C55 = E/(2*(1+nu));
+    row = idx_U(e,ir,iz);
+    K(row,:)=0; C(row,:)=0; M(row,:)=0;
+    
+    for jr=1:N_r
+        K(row, idx_U(e,jr,iz)) = C11 * A_r{e}(ir,jr);
+    end
+    K(row, idx_U(e,ir,iz)) = K(row, idx_U(e,ir,iz)) + C12/r;
+    for jz=1:N_z
+        K(row, idx_W(e,ir,jz)) = C13 * A_z(iz,jz);
+    end
+    row_tau = idx_W(e,ir,iz);
+    K(row_tau,:)=0; C(row_tau,:)=0; M(row_tau,:)=0;
+    for jz=1:N_z
+        K(row_tau, idx_U(e,ir,jz)) = C55 * A_z(iz,jz);
+    end
+    for jr=1:N_r
+        K(row_tau, idx_W(e,jr,iz)) = C55 * A_r{e}(ir,jr);
+    end
+end
+
+% Outer surface (r=Ro): sigma_rr=0, tau_rz=0
+e=NL; ir=N_r;
+for iz = 2:N_z-1
+    r = r_nodes{e}(ir);
+    E = E_node{e}(ir); nu = nu_node{e}(ir);
+    C11 = (1-nu)*E/((1+nu)*(1-2*nu));
+    C12 = nu*E/((1+nu)*(1-2*nu));
+    C13 = C12; C55 = E/(2*(1+nu));
+    row = idx_U(e,ir,iz);
+    K(row,:)=0; C(row,:)=0; M(row,:)=0;
+    for jr=1:N_r
+        K(row, idx_U(e,jr,iz)) = C11 * A_r{e}(ir,jr);
+    end
+    K(row, idx_U(e,ir,iz)) = K(row, idx_U(e,ir,iz)) + C12/r;
+    for jz=1:N_z
+        K(row, idx_W(e,ir,jz)) = C13 * A_z(iz,jz);
+    end
+    row_tau = idx_W(e,ir,iz);
+    K(row_tau,:)=0; C(row_tau,:)=0; M(row_tau,:)=0;
+    for jz=1:N_z
+        K(row_tau, idx_U(e,ir,jz)) = C55 * A_z(iz,jz);
+    end
+    for jr=1:N_r
+        K(row_tau, idx_W(e,jr,iz)) = C55 * A_r{e}(ir,jr);
+    end
+end
+
+%% ========================= Final Dirichlet enforcement (MUST BE LAST BC STEP) =========================
+for node = find(is_fixed)'
+    % zero columns
+%     K(:,node) = 0;   C(:,node) = 0;   M(:,node) = 0;
+
+    % zero rows
+    K(node,:) = 0;   C(node,:) = 0;   M(node,:) = 0;
+
+    % identity row
+    K(node,node) = 1;
+end
+
+%% ========================= Diagnostics before time integration =========================
+beta  = 0.25;
+gamma = 0.5;
+
+c1 = 1/(beta*dt^2);
+c2 = gamma/(beta*dt);
+
+fprintf('rank(K)     = %d out of %d\n', rank(full(K)), Ndof);
+fprintf('rank(M)     = %d out of %d\n', rank(full(M)), Ndof);
+fprintf('rank(C)     = %d out of %d\n', rank(full(C)), Ndof);
+
+%% ========================= DIAGNOSTIC: zero/weak rows =========================
+row_norm_K = full(sum(abs(K),2));
+row_norm_M = full(sum(abs(M),2));
+row_norm_C = full(sum(abs(C),2));
+
+tol = 1e-12;
+
+zero_rows_K = find(row_norm_K < tol);
+zero_rows_M = find(row_norm_M < tol);
+zero_rows_C = find(row_norm_C < tol);
+
+fprintf('\n=== DIAGNOSTIC REPORT ===\n');
+fprintf('Zero/near-zero rows in K: %d\n', numel(zero_rows_K));
+fprintf('Zero/near-zero rows in M: %d\n', numel(zero_rows_M));
+fprintf('Zero/near-zero rows in C: %d\n', numel(zero_rows_C));
+
+% disp('First few zero rows in K:');
+% disp(zero_rows_K(1:min(20,end))');
+
+% disp('First few zero rows in M:');
+% disp(zero_rows_M(1:min(20,end))');
+% 
+% disp('First few zero rows in C:');
+% disp(zero_rows_C(1:min(20,end))');
+
+K_eff = K + c1*M + c2*C;
+
+fprintf('rank(K_eff) = %d out of %d\n', rank(full(K_eff)), Ndof);
+fprintf('rcond(K_eff)= %.3e\n', rcond(full(K_eff)));
+
+%% ========================= 8. Newmark time integration (without DOF reduction) =========================
+beta = 0.25; gamma = 0.5;
+c1 = 1/(beta*dt^2);   c2 = gamma/(beta*dt);
+c3 = 1/(beta*dt);     c4 = 1/(2*beta);
+c5 = gamma/beta;      c6 = dt*(1 - gamma/(2*beta));
+% Effective matrix is constant (factorized with LU)
+K_eff = K + c1*M + c2*C;
+[L_eff, U_eff, P_eff, Q_eff] = lu(K_eff);
+
+% Initial vectors
+d = zeros(Ndof,1); v = zeros(Ndof,1); a = zeros(Ndof,1);
+% Set initial temperature (all points T_ref)
+for e = 1:NL
+    for ir = 1:N_r
+        for iz = 1:N_z
+            d(idx_T(e,ir,iz)) = T_ref;
+        end
+    end
+end
+
+% Monitoring points (middle thickness, middle radius, middle length)
+e_mid = ceil(NL/2); ir_mid = round(N_r/2); iz_mid = round(N_z/2);
+idx_T_mid = idx_T(e_mid, ir_mid, iz_mid);
+idx_U_mid = idx_U(e_mid, ir_mid, iz_mid);
+idx_W_mid = idx_W(e_mid, ir_mid, iz_mid);
+
+T_mid = zeros(Nt+1,1); U_mid = zeros(Nt+1,1); W_mid = zeros(Nt+1,1);
+T_mid(1) = d(idx_T_mid);
+U_mid(1) = d(idx_U_mid);
+W_mid(1) = d(idx_W_mid);
+
+PressureBC = zeros(Ndof,1);
+
+e = 1;
+ir = 1;
+
+for iz = 2:N_z-1
+    row = idx_U(e,ir,iz);
+    PressureBC(row) = -P_i * 2*pi*r*dz;
+end
+
+for tstep = 1:Nt
+    time = tstep * dt;
+    F_rhs = zeros(Ndof,1);
+    F_rhs = F_rhs + PressureBC;
+    T_inner = T_ref + (T_i_amp - T_ref)*(1 - exp(-time/t0));
+    
+    % Thermal loads: Dirichlet values for inner surface
+    for iz = 1:N_z
+        node = idx_T(1,1,iz);
+        F_rhs(node) = T_inner;
+    end
+    % Convection condition on outer surface
+    for iz = 1:N_z
+        node = idx_T(NL,N_r,iz);
+        F_rhs(node) = h_c * T_inf;
+    end
+    
+   % =========================================================================
+    % Corrected: thermal loads in mechanical equations (due to thermal expansion)
+    % =========================================================================
+    for e = 1:NL
+        for ir = 2:N_r-1 % Radial filter: only fully interior points of the layer
+            r = r_nodes{e}(ir);
+            E = E_node{e}(ir); nu = nu_node{e}(ir);
+            C11 = (1-nu)*E/((1+nu)*(1-2*nu));
+            C12 = nu*E/((1+nu)*(1-2*nu));
+            C13 = C12;  C33 = C11;
+            alpha = alpha_node{e}(ir);
+            
+            for iz = 2:N_z-1 % Axial filter: only fully interior points of the cylinder length
+                
+                % Compute thermal derivatives accurately with DQ
+                dTdr = 0; dTdz = 0;
+                for jr = 1:N_r
+                    dTdr = dTdr + A_r{e}(ir,jr) * d(idx_T(e,jr,iz));
+                end
+                for jz = 1:N_z
+                    dTdz = dTdz + A_z(iz,jz) * d(idx_T(e,ir,jz));
+                end
+                
+                % Apply force in radial direction (U)
+                row_u = idx_U(e,ir,iz);
+                if ~is_fixed(row_u)
+                    T_at_node = d(idx_T(e, ir, iz)) - T_ref;
+                    F_rhs(row_u) = F_rhs(row_u) + (C11 + C12 + C13) * alpha * (dTdr+ T_at_node/r);
+                end
+                
+                % Apply force in axial direction (W)
+                row_w = idx_W(e,ir,iz);
+                if ~is_fixed(row_w)
+                    F_rhs(row_w) = F_rhs(row_w) + (C13 + C12 + C33) * alpha * dTdz;
+                end
+            end
+        end
+    end
+    
+    % % internal pressure (mechanical load)
+    if time > 0
+        for iz = 1:N_z
+            node = idx_U(1,1,iz);
+            if ~is_fixed(node)
+                F_rhs(node) = F_rhs(node) - P_i;
+            end
+        end
+    end
+    
+    % Newmark predictor step
+    d_pred = d + dt*v + (0.5-beta)*dt^2*a;
+    v_pred = v + (1-gamma)*dt*a;
+    F_eff = F_rhs + M*(c1*d_pred + c3*v + c4*a) + C*(c2*d_pred + c5*v + c6*a);
+    
+    % Solve system
+    a_new = Q_eff * (U_eff \ (L_eff \ (P_eff * F_eff)));
+    
+    % Correction
+    d = d_pred + beta*dt^2 * a_new;
+    v = v_pred + gamma*dt * a_new;
+    a = a_new;
+    
+    % Reapply Dirichlet conditions (prevent cumulative error)
+    % for iz = 1:N_z
+    %     node = idx_T(1,1,iz);
+    %     d(node) = T_inner;
+    %     v(node) = 0; a(node) = 0;
+    % end
+    % for node = find(is_fixed)'
+    %     d(node) = 0; v(node) = 0; a(node) = 0;
+    % end
+    % % Simpler correction: set all is_fixed nodes to zero (except internal temperature which was already set)
+    % for node = find(is_fixed)'
+    %     if ~any(node == idx_T(1,1,1:N_z))  % if node is not an inner temperature node
+    %         d(node) = 0; v(node) = 0; a(node) = 0;
+    %     end
+    % end
+
+    % =========================================================================
+    % Corrected: reapply actual boundary conditions to prevent numerical error accumulation
+    % =========================================================================
+    % 1. Fix inner surface temperature
+    for iz = 1:N_z
+        node = idx_T(1,1,iz);
+        d(node) = T_inner;
+        v(node) = 0; a(node) = 0;
+    end
+    
+    % 2. Zero out nodes that are mechanically Fixed (e.g., clamped support)
+    for node = find(is_fixed)'
+        % If this node is not part of the inner temperature boundary, set to zero
+        if ~any(node == idx_T(1,1,1:N_z))
+            d(node) = 0; 
+            v(node) = 0; 
+            a(node) = 0;
+        end
+    end
+    
+    % Save monitoring values
+    T_mid(tstep+1) = d(idx_T_mid);
+    U_mid(tstep+1) = d(idx_U_mid);
+    W_mid(tstep+1) = d(idx_W_mid);
+end
+
+%% ========================= 9. Plot results =========================
+time_vec = (0:Nt)*dt;
+figure('Position',[100,100,1200,800]);
+
+% Time histories
+subplot(2,3,1);
+plot(time_vec, T_mid, 'b-', 'LineWidth',1.5);
+xlabel('Time (s)'); ylabel('Temperature (K)'); 
+title('Mid-point T(t)');
+grid on;
+
+subplot(2,3,2);
+plot(time_vec, U_mid*1e6, 'r-', 'LineWidth',1.5);
+xlabel('Time (s)'); ylabel('Radial displacement (\mum)'); 
+title('Mid-point U(t)');
+grid on;
+
+subplot(2,3,3);
+plot(time_vec, W_mid*1e6, 'g-', 'LineWidth',1.5);
+xlabel('Time (s)'); ylabel('Axial displacement (\mum)'); 
+title(sprintf('Mid-point W(t) – BC: %s/%s', BC_left, BC_right));
+grid on;
+
+% Radial profiles at mid-height
+iz_mid = round(N_z/2);
+r_global = []; T_radial = []; U_radial = []; W_radial = [];
+for e = 1:NL
+    if e == 1
+        r_layer = r_nodes{e}(:);
+        idx_range = 1:N_r;
+    else
+        r_layer = r_nodes{e}(2:end);
+        idx_range = 2:N_r;
+    end
+    r_global = [r_global; r_layer(:)];
+    for ir = idx_range
+        T_radial = [T_radial; d(idx_T(e,ir,iz_mid))];
+        U_radial = [U_radial; d(idx_U(e,ir,iz_mid))];
+        W_radial = [W_radial; d(idx_W(e,ir,iz_mid))];
+    end
+end
+
+subplot(2,3,4);
+plot(r_global, T_radial, 'b-o', 'LineWidth',1.5);
+xlabel('r (m)'); ylabel('Temperature (K)'); 
+title('Radial T at z=L/2');
+grid on;
+
+subplot(2,3,5);
+plot(r_global, U_radial*1e6, 'r-o', 'LineWidth',1.5);
+xlabel('r (m)'); ylabel('U (\mum)'); 
+title('Radial displacement');
+grid on;
+
+subplot(2,3,6);
+plot(r_global, W_radial*1e6, 'g-o', 'LineWidth',1.5);
+xlabel('r (m)'); ylabel('W (\mum)'); 
+title('Axial displacement at mid-height');
+grid on;
+
+% Axial profiles at mid-radius
+e_mid = ceil(NL/2); ir_mid = round(N_r/2);
+z_global = z_nodes;
+T_axial = zeros(N_z,1);
+U_axial = zeros(N_z,1);
+W_axial = zeros(N_z,1);
+for iz = 1:N_z
+    T_axial(iz) = d(idx_T(e_mid, ir_mid, iz));
+    U_axial(iz) = d(idx_U(e_mid, ir_mid, iz));
+    W_axial(iz) = d(idx_W(e_mid, ir_mid, iz));
+end
+
+figure('Position',[100,100,1200,400]);
+subplot(1,3,1);
+plot(z_global, T_axial, 'b-o', 'LineWidth',1.5);
+xlabel('z (m)'); ylabel('Temperature (K)'); 
+title('Axial T at mid-radius');
+grid on;
+subplot(1,3,2);
+plot(z_global, U_axial*1e6, 'r-o', 'LineWidth',1.5);
+xlabel('z (m)'); ylabel('U (\mum)'); 
+title('Axial variation of U');
+grid on;
+subplot(1,3,3);
+plot(z_global, W_axial*1e6, 'g-o', 'LineWidth',1.5);
+xlabel('z (m)'); ylabel('W (\mum)'); 
+title(sprintf('Axial displacement W – BC %s / %s', BC_left, BC_right));
+grid on;
+
+fprintf('\n===== FINAL RESULTS at t = %.2e s =====\n', total_time);
+fprintf('Mid‑point temperature: %.2f K\n', T_mid(end));
+fprintf('Mid‑point radial displacement: %.3e m\n', U_mid(end));
+fprintf('Mid‑point axial displacement: %.3e m\n', W_mid(end));
+fprintf('Maximum radial displacement: %.3e m at r=%.3f m\n', max(U_radial), r_global(U_radial==max(U_radial)));
+fprintf('Minimum axial displacement: %.3e m\n', min(W_axial));
+
+%% ========================= Auxiliary functions =========================
+function x = chebyshev_grid(a,b,N)
+    x = a + (b-a)/2 * (1 - cos(pi*(0:N-1)/(N-1)));
+end
+
+function [A,B] = DQ_weights(x)
+    N = length(x);
+    A = zeros(N,N);
+    for i=1:N
+        for j=1:N
+            if i~=j
+                num=1; den=1;
+                for k=1:N
+                    if k~=i && k~=j
+                        num = num*(x(i)-x(k));
+                        den = den*(x(j)-x(k));
+                    end
+                end
+                A(i,j) = num/(den*(x(j)-x(i)));
+            end
+        end
+    end
+    for i=1:N
+        A(i,i) = -sum(A(i,:));
+    end
+    B = A*A;
+end
