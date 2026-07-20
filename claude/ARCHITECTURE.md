@@ -42,6 +42,12 @@ x_{n+1} = K_eff \ (F_{n+1} + M(a0 x + a2 ẋ + a3 ẍ) + C(a1 x + a4 ẋ + a5 �
 `gam > 0.5` (with `bet = (γ+½)²/4`) adds numerical damping — useful to
 smooth Gibbs oscillations behind sharp LS wave fronts.
 
+> **Symbol caution for the thesis text:** the letter γ is already used as the
+> percolation ("characteristic") exponent γ = 0.5 in the GPL thermal-
+> conductivity model (`gamma_conn` in the code). Write the Newmark parameter
+> as **δ** (Bathe's notation, δ ≥ ½) or **γ_N** in the thesis to avoid the
+> clash — the two are unrelated even though both equal 0.5 by default.
+
 ## Configuration (`cfg` mechanism)
 The solver script starts with `clearvars -except cfg`. Any configuration
 variable can be overridden by a field of the workspace struct `cfg`
