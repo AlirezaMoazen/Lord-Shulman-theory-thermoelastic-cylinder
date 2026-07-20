@@ -12,26 +12,34 @@ GPL-reinforced hollow cylinders** (layerwise DQM + Newmark).
 Open MATLAB in this folder and run the current solver revision:
 
 ```matlab
-claude_R3_1        % runs with default configuration (UD/UD patterns, LS on)
+claude_R5          % runs with default configuration (UD/UD patterns, LS on)
 ```
 
 To run a custom case, set a `cfg` struct first (any config variable can be
 overridden — misspelled fields produce a warning):
 
 ```matlab
-cfg = struct('LS_enabled',true, 'tau0',1e-5, 'BC_z','S', ...
+cfg = struct('theory','LS', 'tau0',50, 'BC_z','S', ...
              'NL',5, 'N_r',9, 'N_z',11, ...
              'T_in_val',600, 'h_c',10, 'P_i',1e6, ...
-             'total_time',0.05, 'dt',5e-4);
-claude_R3_1
+             'total_time',100, 'dt',0.1);
+claude_R5
 ```
+
+`theory` accepts `'FOURIER' | 'LS' | 'DPL' | 'GN3'` (with `tau_T` for DPL and
+`k_star` for GN-III).
 
 ## Files
 
 | file | purpose |
 |---|---|
-| `claude_R3_1.m` | **current verified solver** (LS/Fourier, all BC options, final porosity patterns) |
-| `claude_R1.m` / `claude_R2.m` / `claude_R2_1.m` / `claude_R3.m` | frozen revision history (see PROTOCOL.md) |
+| `claude_R5.m` | **current verified solver** (theory switch FOURIER/LS/DPL/GN3, all BC options, final porosity patterns) |
+| `claude_R4.m` | campaign solver (adds Gaussian thermal-pulse loading) |
+| `claude_R1.m` / `claude_R2.m` / `claude_R2_1.m` / `claude_R3.m` / `claude_R3_1.m` | frozen revision history (see PROTOCOL.md) |
+| `run_param_studies_v3.ps1` | parallel campaign orchestrator (3 MATLAB jobs, skip-existing resume) |
+| `claude_param_figures_R2.m` | campaign/extension figure generator (dimensionless); R1 frozen |
+| `claude_T1_time_integrators.m` | T1: six time-integration methods compared (table) |
+| `claude_T2_1_spatial_methods.m` | T2.1: spatial convergence DQM vs FDM vs FEM (lin+quad); T2 frozen |
 | `Static_Baseline_R1.m` | independent static solver (legacy Main-EN + one bug fix) used for cross-validation |
 | `Compare_R1.m` | static-vs-dynamic cross-validation script |
 | `claude_R2_run_benchmark1.m` | Benchmark 1: IJPVP-2012 Table 6 (dynamic pressure vs paper + ANSYS) |
@@ -42,6 +50,24 @@ claude_R3_1
 | `claude_porosity_variant_test.m` | the investigation script that identified the pattern conventions |
 | `Validation/` | all benchmark figures (PNG 300 dpi + editable .fig) and CSV tables |
 | `results/` | saved .mat results of the verification runs |
+| `param_studies/` | **raw data store**: one .mat + .log per campaign/extension case (33 campaign + T1/T2/T3) |
+| `results_campaign/` | results-chapter figures of the **parametric campaign** (studies A–N) |
+| `results_extensions/` | results-chapter figures/tables of the **method & theory extensions** (T1 integrators, T2 spatial DQM/FDM/FEM, T3 theories) |
+
+## Results-chapter organization
+
+The thesis results chapter has two separated parts, mirrored by the folders:
+
+1. **Parametric campaign** (`results_campaign/`) — physics of the cylinder:
+   GPL patterns, porosity patterns/levels, relaxation time, coupling,
+   pressure, convection, thickness, layers, shock loading (studies A–N).
+2. **Extensions** (`results_extensions/`) — numerical-methods and theory
+   comparisons that go beyond the reference theses: T1 time integrators,
+   T2 spatial discretizations (DQM vs FDM vs FEM), T3 thermoelasticity
+   theories (Fourier / LS / DPL / GN-III).
+
+Raw case data for both parts stays in `param_studies/` (the figure scripts
+read from there).
 
 ## Validation status (all figures/tables in `Validation/`)
 

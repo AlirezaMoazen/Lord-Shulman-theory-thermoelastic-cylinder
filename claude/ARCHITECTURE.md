@@ -48,6 +48,17 @@ variable can be overridden by a field of the workspace struct `cfg`
 (unknown field names produce a warning). Drivers must re-derive their local
 constants **after** calling the solver (the call clears the workspace).
 
+## Results organization (thesis results chapter)
+- `param_studies\` — raw data store: one `<case>.mat` (+ `.log`) per run;
+  campaign cases (A–N + BASE) and extension cases (T3_*) live side by side.
+- `results_campaign\figures\` — chapter figures of the **parametric
+  campaign** (studies A–N), written by `claude_param_figures_R2.m`.
+- `results_extensions\` — chapter figures/tables of the **method & theory
+  extensions**: T1 integrator table, T2.1 spatial convergence
+  (DQM-Chebyshev / DQM-uniform / FDM / FEM-linear / FEM-quadratic),
+  T3 theory comparison. Written by `claude_param_figures_R2.m` and
+  `claude_T2_1_spatial_methods.m`.
+
 ## Known limits / findings
 - **F (free) and R (roller) end supports are dynamically unstable** in the
   2-D solver: the u-field needs kinematic anchoring at the z-ends

@@ -1,0 +1,29 @@
+===== T2.1: SPATIAL METHOD CONVERGENCE incl. FEM (error at t=10 s) =====
+DQM  N=  7 : cheb err=1.676e-03   uniform err=1.747e-02
+DQM  N=  9 : cheb err=3.354e-04   uniform err=4.579e-04
+DQM  N= 11 : cheb err=3.094e-04   uniform err=1.618e-04
+DQM  N= 15 : cheb err=2.851e-04   uniform err=1.723e-04
+DQM  N= 21 : cheb err=1.109e-03   uniform err=2.921e-04
+DQM  N= 31 : cheb err=1.023e-03   uniform err=3.989e-04
+FDM  N= 11 : err=1.320e-01
+FDM  N= 21 : err=3.172e-02
+FDM  N= 41 : err=7.870e-03
+FDM  N= 81 : err=1.959e-03
+FDM  N=161 : err=1.103e-03
+FDM  N=321 : err=1.100e-03
+FEM1 N= 11 : err=8.126e-02
+FEM1 N= 21 : err=2.044e-02
+FEM1 N= 41 : err=5.136e-03
+FEM1 N= 81 : err=1.314e-03
+FEM1 N=161 : err=1.097e-03
+FEM1 N=321 : err=1.099e-03
+FEM2 N= 11 : err=1.456e-03
+FEM2 N= 21 : err=3.282e-04
+FEM2 N= 41 : err=2.921e-04
+FEM2 N= 81 : err=3.589e-04
+FEM2 N=161 : err=1.099e-03
+[Warning: Graphics acceleration hardware is unavailable. Graphics quality and performance might be diminished. See <a
+href="https://www.mathworks.com/support/requirements/matlab-system-requirements.html">MATLAB System Requirements</a>.] 
+[> In print (line 6)
+In claude_T2_1_spatial_methods (line 112)] 
+Saved results_extensions\figures\T2_spatial_convergence + T2_spatial_table.csv

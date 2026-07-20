@@ -39,5 +39,7 @@ and CSV tables into `Validation/`.
 ## 6. Decisions log
 Open physics/spec decisions are tracked in the thesis notes and closed by
 the author/supervisor; the code carries explicit warnings for anything not
-yet decided. Current status: porosity patterns FINAL (R3_1); pending: end-BC
-choice for thesis results, τ0 set / nondimensionalization for figures.
+yet decided. Current status: porosity patterns FINAL (R3_1); base geometry
+FINAL (R_i = 0.1 m, R_o = 0.2 m — thick-walled, R_o/R_i = 2); dimensionless
+presentation FINAL (Fo, τ̄, T*, ξ, u*, σ*); pending: end-BC choice for the
+thesis results (S vs C — study F data available), γ smoothing for figures.

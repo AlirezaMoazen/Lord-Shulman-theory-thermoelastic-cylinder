@@ -1,0 +1,22 @@
+alpha_ref = 3.500e-04 m^2/s ; Fo(100 s) = 0.875 ; tau_bar(50 s) = 0.437
+[Warning: Graphics acceleration hardware is unavailable. Graphics quality and performance might be diminished. See <a
+href="https://www.mathworks.com/support/requirements/matlab-system-requirements.html">MATLAB System Requirements</a>.] 
+[> In print (line 6)
+In claude_param_figures_R2 (line 126)] 
+figure written: A_GPL_patterns -> results_campaign\figures
+figure written: B_porosity_patterns -> results_campaign\figures
+figure written: C_relaxation -> results_campaign\figures
+figure written: D_GPL_fraction -> results_campaign\figures
+figure written: E_porosity_level -> results_campaign\figures
+figure written: F_end_BC -> results_campaign\figures
+figure written: G_pressure -> results_campaign\figures
+figure written: H_interaction -> results_campaign\figures
+figure written: I_coupling -> results_campaign\figures
+figure written: J_convection -> results_campaign\figures
+figure written: K_thickness -> results_campaign\figures
+figure written: L_layers -> results_campaign\figures
+figure written: M_gauss_shock -> results_campaign\figures
+figure written: N_sine_pressure -> results_campaign\figures
+figure written: T3_theories -> results_extensions\figures
+
+Campaign figures in results_campaign\figures ; extension figures in results_extensions\figures
