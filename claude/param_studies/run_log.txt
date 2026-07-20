@@ -1,0 +1,208 @@
+﻿PARAM STUDIES START 14:00:19
+LAUNCH BASE  14:00:19
+LAUNCH A_GPL_O  14:00:23
+LAUNCH A_GPL_X  14:00:24
+FAIL A_GPL_X  14:02:39
+FAIL A_GPL_O  14:02:39
+Error using struct
+Duplicate field name "GPL_pattern"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH A_GPL_V  14:02:46
+LAUNCH A_GPL_A  14:02:47
+FAIL A_GPL_V  14:04:24
+Error using struct
+Duplicate field name "GPL_pattern"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+FAIL A_GPL_A  14:04:24
+Error using struct
+Duplicate field name "GPL_pattern"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH B_POR_O  14:04:28
+LAUNCH B_POR_X  14:04:28
+DONE BASE  14:04:55
+LAUNCH B_POR_V  14:04:59
+FAIL B_POR_O  14:05:44
+Error using struct
+Duplicate field name "porosity_pattern"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Error using struct
+Duplicate field name "porosity_pattern"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH B_POR_A  14:05:50
+LAUNCH C_FOURIER  14:05:50
+FAIL B_POR_V  14:06:17
+Error using struct
+Duplicate field name "porosity_pattern"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH C_TAU_01  14:06:21
+FAIL B_POR_A  14:07:22
+Error using struct
+Duplicate field name "porosity_pattern"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+FAIL C_FOURIER  14:07:23
+Error using struct
+Duplicate field name "LS_enabled"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH C_TAU_06  14:07:32
+LAUNCH D_W_000  14:07:33
+FAIL C_TAU_01  14:07:46
+Error using struct
+Duplicate field name "tau0"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH D_W_001  14:07:55
+FAIL C_TAU_06  14:09:11
+Error using struct
+Duplicate field name "tau0"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Error using struct
+Duplicate field name "W_GPL_total"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH D_W_008  14:09:17
+LAUNCH E_EM3_9675  14:09:17
+FAIL D_W_001  14:09:21
+Error using struct
+Duplicate field name "W_GPL_total"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH E_EM3_7776  14:09:28
+FAIL D_W_008  14:10:39
+Error using struct
+Duplicate field name "W_GPL_total"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+FAIL E_EM3_9675  14:10:39
+Error using struct
+Duplicate field name "em3"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+LAUNCH F_BC_C  14:10:40
+LAUNCH G_NOPRESS  14:10:42
+FAIL E_EM3_7776  14:10:52
+Error using struct
+Duplicate field name "em3"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+FAIL G_NOPRESS  14:12:00
+Error using struct
+Duplicate field name "P_i"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+FAIL F_BC_C  14:12:01
+Error using struct
+Duplicate field name "BC_z"
+matlab.exe : ERROR: MATLAB error Exit Status: 0x00000001
+At line:3 char:14
++         $o = & $m -batch $c 2>&1 | Out-String
++              ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: MATLAB e...tus: 0x00000001:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+ALL COMPLETE 14:12:01

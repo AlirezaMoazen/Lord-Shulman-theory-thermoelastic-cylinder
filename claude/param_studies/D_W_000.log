@@ -1,0 +1,33 @@
+Ndof = 1485
+rcond-est of K_eff (after equilibration): 3.398e-09
+zero rows in K_eff : 0
+static limit  : T_mid = 446.48 K, u_mid = 1.7776e-03 m
+  step   50/1000  t=5.000e+00  max|theta|=3.000e+02  max|u|=1.724e-04
+  step  100/1000  t=1.000e+01  max|theta|=3.000e+02  max|u|=1.447e-04
+  step  150/1000  t=1.500e+01  max|theta|=3.000e+02  max|u|=1.234e-04
+  step  200/1000  t=2.000e+01  max|theta|=3.000e+02  max|u|=1.152e-04
+  step  250/1000  t=2.500e+01  max|theta|=3.000e+02  max|u|=1.110e-04
+  step  300/1000  t=3.000e+01  max|theta|=3.236e+02  max|u|=1.131e-04
+  step  350/1000  t=3.500e+01  max|theta|=3.468e+02  max|u|=1.224e-04
+  step  400/1000  t=4.000e+01  max|theta|=3.443e+02  max|u|=1.382e-04
+  step  450/1000  t=4.500e+01  max|theta|=3.213e+02  max|u|=1.588e-04
+  step  500/1000  t=5.000e+01  max|theta|=3.000e+02  max|u|=1.872e-04
+  step  550/1000  t=5.500e+01  max|theta|=3.000e+02  max|u|=2.238e-04
+  step  600/1000  t=6.000e+01  max|theta|=3.000e+02  max|u|=2.590e-04
+  step  650/1000  t=6.500e+01  max|theta|=3.000e+02  max|u|=2.853e-04
+  step  700/1000  t=7.000e+01  max|theta|=3.000e+02  max|u|=2.982e-04
+  step  750/1000  t=7.500e+01  max|theta|=3.000e+02  max|u|=2.971e-04
+  step  800/1000  t=8.000e+01  max|theta|=3.000e+02  max|u|=2.881e-04
+  step  850/1000  t=8.500e+01  max|theta|=3.000e+02  max|u|=2.732e-04
+  step  900/1000  t=9.000e+01  max|theta|=3.016e+02  max|u|=2.569e-04
+  step  950/1000  t=9.500e+01  max|theta|=3.282e+02  max|u|=2.431e-04
+  step 1000/1000  t=1.000e+02  max|theta|=3.433e+02  max|u|=2.349e-04
+Newmark time-integration CPU: 3.85 s (1000 steps)
+
+===== FINAL STATE (t = 100 s) =====
+inner-surface target T : 600.00 K
+mid-point  T           : 299.90 K
+mid-point  u           : 1.5963e-04 m
+sigma_rr at inner node : -1.0000e+06 Pa  (target -P(t_end) = -1.0000e+06)
+sigma_rr at outer node : -4.5588e-07 Pa  (target 0)
+Saved param_studies\D_W_000.mat

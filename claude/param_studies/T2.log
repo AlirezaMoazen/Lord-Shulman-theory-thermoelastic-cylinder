@@ -1,0 +1,20 @@
+===== T2: SPATIAL METHOD CONVERGENCE (error at t=10 s) =====
+DQM  N=  7 : cheb err=1.676e-03   uniform err=1.747e-02
+DQM  N=  9 : cheb err=3.354e-04   uniform err=4.579e-04
+DQM  N= 11 : cheb err=3.094e-04   uniform err=1.618e-04
+DQM  N= 15 : cheb err=2.851e-04   uniform err=1.723e-04
+DQM  N= 21 : cheb err=1.109e-03   uniform err=2.921e-04
+DQM  N= 31 : cheb err=1.023e-03   uniform err=3.989e-04
+FDM  N= 11 : err=1.320e-01
+FDM  N= 21 : err=3.172e-02
+FDM  N= 41 : err=7.870e-03
+FDM  N= 81 : err=1.959e-03
+FDM  N=161 : err=1.103e-03
+FDM  N=321 : err=1.100e-03
+[Warning: Graphics acceleration hardware is unavailable. Graphics quality and performance might be diminished. See <a
+href="https://www.mathworks.com/support/requirements/matlab-system-requirements.html">MATLAB System Requirements</a>.] 
+[> In savefig (line 7)
+In saveasfig (line 6)
+In saveas (line 107)
+In claude_T2_spatial_methods (line 83)] 
+Saved figures\T2_spatial_convergence + T2_spatial_table.csv

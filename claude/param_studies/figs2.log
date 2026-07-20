@@ -1,0 +1,23 @@
+alpha_ref = 3.500e-04 m^2/s ; Fo(100 s) = 0.875 ; tau_bar(50 s) = 0.437
+[Warning: Graphics acceleration hardware is unavailable. Graphics quality and performance might be diminished. See <a
+href="https://www.mathworks.com/support/requirements/matlab-system-requirements.html">MATLAB System Requirements</a>.] 
+[> In savefig (line 7)
+In saveasfig (line 6)
+In saveas (line 107)
+In claude_param_figures (line 114)] 
+figure written: A_GPL_patterns
+figure written: B_porosity_patterns
+figure written: C_relaxation
+figure written: D_GPL_fraction
+figure written: E_porosity_level
+figure written: F_end_BC
+figure written: G_pressure
+figure written: H_interaction
+figure written: I_coupling
+figure written: J_convection
+figure written: K_thickness
+figure written: L_layers
+figure written: M_gauss_shock
+figure written: N_sine_pressure
+
+All study figures in param_studies\figures

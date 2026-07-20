@@ -1,0 +1,45 @@
+Ndof = 945
+rcond-est of K_eff (after equilibration): 1.782e-07
+zero rows in K_eff : 0
+static limit  : T_mid = 450.21 K, u_mid = 0.0000e+00 m
+  step   20/400  t=2.000e+00  max|theta|=6.594e+01  max|u|=0.000e+00
+  step   40/400  t=4.000e+00  max|theta|=1.101e+02  max|u|=0.000e+00
+  step   60/400  t=6.000e+00  max|theta|=1.398e+02  max|u|=0.000e+00
+  step   80/400  t=8.000e+00  max|theta|=1.596e+02  max|u|=0.000e+00
+  step  100/400  t=1.000e+01  max|theta|=1.729e+02  max|u|=0.000e+00
+  step  120/400  t=1.200e+01  max|theta|=1.819e+02  max|u|=0.000e+00
+  step  140/400  t=1.400e+01  max|theta|=1.878e+02  max|u|=0.000e+00
+  step  160/400  t=1.600e+01  max|theta|=1.918e+02  max|u|=0.000e+00
+  step  180/400  t=1.800e+01  max|theta|=1.945e+02  max|u|=0.000e+00
+  step  200/400  t=2.000e+01  max|theta|=1.963e+02  max|u|=0.000e+00
+  step  220/400  t=2.200e+01  max|theta|=1.975e+02  max|u|=0.000e+00
+  step  240/400  t=2.400e+01  max|theta|=1.984e+02  max|u|=0.000e+00
+  step  260/400  t=2.600e+01  max|theta|=1.989e+02  max|u|=0.000e+00
+  step  280/400  t=2.800e+01  max|theta|=1.993e+02  max|u|=0.000e+00
+  step  300/400  t=3.000e+01  max|theta|=1.995e+02  max|u|=0.000e+00
+  step  320/400  t=3.200e+01  max|theta|=1.997e+02  max|u|=0.000e+00
+  step  340/400  t=3.400e+01  max|theta|=1.998e+02  max|u|=0.000e+00
+  step  360/400  t=3.600e+01  max|theta|=1.999e+02  max|u|=0.000e+00
+  step  380/400  t=3.800e+01  max|theta|=1.999e+02  max|u|=0.000e+00
+  step  400/400  t=4.000e+01  max|theta|=1.999e+02  max|u|=0.000e+00
+Newmark time-integration CPU: 0.33 s (400 steps)
+
+===== FINAL STATE (t = 40 s) =====
+inner-surface target T : 499.93 K
+mid-point  T           : 446.99 K
+mid-point  u           : 0.0000e+00 m
+sigma_rr at inner node : 0.0000e+00 Pa  (target -P(t_end) = -0.0000e+00)
+sigma_rr at outer node : 0.0000e+00 Pa  (target 0)
+Saved param_studies\T1_newmark.mat
+Laplace-Durbin: full-range err = 0.1371 K, t>=2s err = 0.1371 K
+
+===== T1: TIME-INTEGRATION METHOD COMPARISON =====
+probe r=0.0900 m, exact = Bessel series;  dt=0.1 s, Nt=400
+method                       max err (K)    CPU (s)   
+Newmark (g=1/2,b=1/4)        0.00319        0.33      
+Wilson-theta (1.4)           0.01643        0.19      
+Houbolt                      0.00253        0.24      
+HHT-alpha (-0.1)             0.00330        0.29      
+ode15s (adaptive)            0.00026        2.57      
+Laplace-Durbin (thermal)     0.13710        193.20    
+Saved param_studies\T1_integrators_table.csv
