@@ -51,8 +51,11 @@ claude_R5
 | `Validation/` | all benchmark figures (PNG 300 dpi + editable .fig) and CSV tables |
 | `results/` | saved .mat results of the verification runs |
 | `param_studies/` | **raw data store**: one .mat + .log per campaign/extension case (33 campaign + T1/T2/T3) |
-| `results_campaign/` | results-chapter figures of the **parametric campaign** (studies A–N) |
-| `results_extensions/` | results-chapter figures/tables of the **method & theory extensions** (T1 integrators, T2 spatial DQM/FDM/FEM, T3 theories) |
+| `results_campaign/` | results-chapter figures of the **parametric campaign** (studies A–N); `figures_print/` = production B&W (PDF vector + PNG + FIG) |
+| `results_extensions/` | results-chapter figures/tables of the **method & theory extensions** (T1 integrators, T2 spatial DQM/FDM/FEM, T3 theories); `figures_print/` = production B&W |
+| `thesis_chapter/` | **results-chapter text**: RESULTS_CHAPTER_EN.md + RESULTS_CHAPTER_FA.md (English + Persian, 18 sections), FIGURE_CAPTIONS.md (EN+FA), chapter_stats.csv (all quoted numbers) |
+| `claude_param_figures_R3.m` | production B&W figure generator (line styles + markers + grayscale, Times, vector PDF) |
+| `claude_chapter_stats.m` | extracts the dimensionless numbers cited in the chapter text |
 
 ## Results-chapter organization
 

@@ -1,0 +1,26 @@
+alpha_ref = 3.500e-04 m^2/s ; Fo(100 s) = 0.875
+[Warning: Graphics acceleration hardware is unavailable. Graphics quality and performance might be diminished. See <a
+href="https://www.mathworks.com/support/requirements/matlab-system-requirements.html">MATLAB System Requirements</a>.] 
+[> In savefig (line 7)
+In saveasfig (line 6)
+In saveas (line 107)
+In claude_param_figures_R3>saveall (line 168)
+In claude_param_figures_R3 (line 126)] 
+print figure written: A_GPL_patterns -> results_campaign\figures_print
+print figure written: B_porosity_patterns -> results_campaign\figures_print
+print figure written: C_relaxation -> results_campaign\figures_print
+print figure written: D_GPL_fraction -> results_campaign\figures_print
+print figure written: E_porosity_level -> results_campaign\figures_print
+print figure written: F_end_BC -> results_campaign\figures_print
+print figure written: G_pressure -> results_campaign\figures_print
+print figure written: H_interaction -> results_campaign\figures_print
+print figure written: I_coupling -> results_campaign\figures_print
+print figure written: J_convection -> results_campaign\figures_print
+print figure written: K_thickness -> results_campaign\figures_print
+print figure written: L_layers -> results_campaign\figures_print
+print figure written: M_gauss_shock -> results_campaign\figures_print
+print figure written: N_sine_pressure -> results_campaign\figures_print
+print figure written: T3_theories -> results_extensions\figures_print
+print figure written: T2_spatial_convergence -> results_extensions\figures_print
+
+All PRODUCTION figures written (PDF vector + PNG 300dpi + FIG).
