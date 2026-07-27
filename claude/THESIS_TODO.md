@@ -37,7 +37,7 @@ Last updated: 2026-07-27. Priority for autonomous work = topmost 🔄/⬜ item.
 R2a. ⬜ Color-coded editing of chapters 1–3: deletions RED, additions GREEN, default BLACK + a second version where deletions are marked but not removed (Prom.2 الف).
 R2b. ⬜ Complete the "blue"/un-analyzed sections with analysis + figures (Prom.2 ب,ج).
 R2c. ⬜ Hyperlink the table-of-contents entries to sections; complete English abstract (Prom.2 د,ه).
-R2d. ⬜ Write an appendix explaining the Newmark method + briefly the comparison methods (DQM/FDM/FEM, integrators) (Prom.2 و).
+R2d. ✅ Write an appendix explaining the Newmark method + briefly the comparison methods (DQM/FDM/FEM, integrators) (Prom.2 و). Done bilingually: APPENDIX_A_methods_FA/EN.md + .docx via pandoc (93 native Word equations; FA is RTL with 49 bidi paragraphs). **Validates the pandoc LaTeX→Word equation pipeline for Chapter 3.**
 R2e. ⏸ Replace porosity patterns with the NEW patterns in the MZ file, then re-run porosity cases (Prom.2 ز) — NEEDS user-confirmed formulas.
 R2f. ⏸ Fix length/thickness notation (not L / h) (Prom.2 ح) — NEEDS user's chosen symbols.
 R2g. ⬜ Code documentation: (1) short usage manual, (2) full technical description of the solver — both as .doc (Prom.2 pages 3–4).
