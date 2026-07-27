@@ -1,0 +1,10 @@
+# LibreOffice / OpenOffice lock files (created while a doc is open)
+.~lock.*#
+
+# Microsoft Office temporary/owner files
+~$*
+
+# OS clutter
+Thumbs.db
+desktop.ini
+.DS_Store
