@@ -38,6 +38,28 @@ Status: OPEN unless marked. Please answer inline or tell me and I'll update.
 10. γ_N = 0.5 kept (no numerical damping); wave wiggles noted, not filtered. ✅ set.
 11. Two Persian docx (B&W + color) + one English docx as the deliverable. ✅ set.
 
+## E. NEW — from supervisor review Prom.2 (2026-07-27)
+See full transcription in `claude/REVIEW2_PROM2.docx`. Items needing you:
+12. **Porosity patterns (Prom.2 بند ز):** the review says replace the porosity
+    patterns with the NEW patterns in the MZ file. I need the exact new formulas
+    from `MZ-R 0.docx`. Confirm and I will put them in a new solver revision and
+    re-run the porosity cases (§4-6, §4-13). Until then the chapter carries the
+    current results with a note. — **BLOCKING for porosity sections.**
+13. **Length/thickness notation (Prom.2 بند ح):** the review says length must not
+    be shown as L and thickness not as h. What symbols do you want? (e.g. length
+    = h, thickness = ℓ, or your preference). I will apply globally.
+14. **GPL weight-fraction question (Prom.2 p.2):** the review asks why our GPL %
+    is higher than the literature (mostly 0.1–2 %). I added a justification to
+    §4-7 (we go to 4 % / 8 % to show the upper reinforcement limit and the
+    saturation past the percolation threshold). Confirm this is acceptable.
+15. **Color-coded editing (Prom.2 بند الف):** for chapters 1–3 the review wants
+    deletions in RED, additions in GREEN, a second version with deletions marked
+    not removed. This applies to the OLDER chapters; confirm when you want me to
+    start that pass (needs the current chapter-1..3 text).
+16. **Code documentation (Prom.2 pages 3–4):** two .doc files requested — a short
+    usage manual and a full technical description of the solver. I can draft both
+    from the code; confirm priority vs finishing the thesis chapters first.
+
 ## D. Session/limit note
 - The Claude usage limit was hit on 2026-07-27 (resets 6pm America/New_York).
   Heavy multi-agent work is paused until reset; I continue single-thread work and

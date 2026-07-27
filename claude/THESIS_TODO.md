@@ -28,10 +28,20 @@ Last updated: 2026-07-27. Priority for autonomous work = topmost 🔄/⬜ item.
 14. ✅ Build & verify claude_R6 (regression vs R5 = 0) for mixed BC + GPL aspect ratios.
 15. ✅ Run v5 cases: infinite-length (L=1/2/4), mixed support (S-C), GPL aspect ratios, full 4×4 GPL×porosity matrix.
 16. ✅ Generate B&W (figures_print) and COLOR (figures_color) figure sets.
-17. 🔄 Draft the 10 new/revised chapter-4 sections bilingually. **6/10 drafted** (convergence, validation, GPL-patterns, porosity-patterns, weight, aspect) via workflow; **4 remain** (pressure, supports, infinite-length, interaction-matrix) — blocked by session limit, write next cycle.
-18. ⬜ Assemble the full R3 chapter FA + EN: split convergence/validation into two sections, add units to all dimensional numbers, add peak-trough (قله-قعر) and mirror-pattern interpretations, integrate the new-study sections, renumber figures.
-19. ⬜ Build the TWO Persian Word documents (B&W-graphs + color-graphs) and the English document; move fig-4-15 legend fix into the figures (done in R4 script).
-20. ⬜ Commit & push the R3 chapter package.
+17. ✅ Draft the 10 new/revised chapter-4 sections bilingually (6 via workflow + 4 in main loop). All recovered from journal + WIP.
+18. ✅ Assemble the full R3 chapter FA + EN (21 sections): convergence (4-3) and validation (4-4) split; new sections aspect-ratio (4-8) + infinite-length (4-12); full 4×4 interaction matrix (4-13); pressure sweep 0–100 MPa (4-11); mixed support (4-10); peak-trough + mirror-pattern interpretations added; figures renumbered 4-1…4-22; captions → FIGURE_CAPTIONS_R3.md.
+19. ✅ Build the TWO Persian Word docs (RESULTS_CHAPTER_FA_R3_bw.docx via figures_print + RESULTS_CHAPTER_FA_R3_color.docx via figures_color) and the English doc (RESULTS_CHAPTER_EN_R3.docx); 22 figures embedded; fig-4-2 legend now top-right.
+20. 🔄 Referee number-check (per Prom.2 method) → commit & push the R3 chapter package.
+
+## PHASE 4b — Supervisor review round 2 (Prom.2, received 2026-07-27)
+R2a. ⬜ Color-coded editing of chapters 1–3: deletions RED, additions GREEN, default BLACK + a second version where deletions are marked but not removed (Prom.2 الف).
+R2b. ⬜ Complete the "blue"/un-analyzed sections with analysis + figures (Prom.2 ب,ج).
+R2c. ⬜ Hyperlink the table-of-contents entries to sections; complete English abstract (Prom.2 د,ه).
+R2d. ⬜ Write an appendix explaining the Newmark method + briefly the comparison methods (DQM/FDM/FEM, integrators) (Prom.2 و).
+R2e. ⏸ Replace porosity patterns with the NEW patterns in the MZ file, then re-run porosity cases (Prom.2 ز) — NEEDS user-confirmed formulas.
+R2f. ⏸ Fix length/thickness notation (not L / h) (Prom.2 ح) — NEEDS user's chosen symbols.
+R2g. ⬜ Code documentation: (1) short usage manual, (2) full technical description of the solver — both as .doc (Prom.2 pages 3–4).
+R2h. ⬜ Answer the GPL wt% question (0.1–2 % in lit vs up to 4 % here) — draft justification in §4-7, confirm with user.
 
 ## PHASE 5 — Remaining thesis chapters
 21. ⬜ Chapter 3 (formulation & method): render the governing equations as editable Word equations via pandoc; use δ for the Newmark parameter (γ reserved for the percolation exponent); match the implemented scheme exactly.

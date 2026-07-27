@@ -1,0 +1,12 @@
+alpha_ref = 3.500e-04 m^2/s ; Fo(100 s) = 0.875
+[Warning: Graphics acceleration hardware is unavailable. Graphics quality and performance might be diminished. See <a
+href="https://www.mathworks.com/support/requirements/matlab-system-requirements.html">MATLAB System Requirements</a>.] 
+[> In savefig (line 7)
+In saveasfig (line 6)
+In saveas (line 107)
+In claude_param_figures_R4>saveall (line 196)
+In claude_param_figures_R4 (line 109)] 
+fig: A_GPL_patterns -> results_campaign\figures_print
+fig: B_porosity_patterns -> results_campaign\figures_print
+fig: C_relaxation -> results_campaign\figures_print
+fig: D_GPL_fraction -> results_campaign\figures_print
