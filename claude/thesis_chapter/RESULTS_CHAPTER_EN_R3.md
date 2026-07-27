@@ -414,7 +414,7 @@ field remains practically independent of the internal pressure, because thermal
 and mechanical loading are linked only through the weak coupling term in the
 energy equation, and pressure is not a direct driver of temperature. By
 contrast, the mechanical response grows linearly with pressure: the peak
-dimensionless radial displacement rises from 1.073 with no pressure to 1.086,
+dimensionless radial displacement rises from 1.072 with no pressure to 1.086,
 1.115, 1.143, 1.171, and 1.214, respectively, with an increment of exactly
 0.0283 per 20 MPa; this perfect linearity reflects the linear nature of the
 thermoelastic model employed.
@@ -641,7 +641,7 @@ Green-Naghdi type-III theory [67] with k* = k/τ0 (so that its wave speed equals
 the Lord-Shulman one). According to Figure 4-22, the peak mid-point temperatures
 order as: Fourier 0.991 = DPL(τ_T=τ_q) 0.991 < DPL(τ_T=τ_q/2) 1.065 <
 Green-Naghdi 1.151 < Lord-Shulman 1.412. Two main observations follow. First,
-for τ_T = τ_q the DPL solution collapses onto the Fourier solution to nine
+for τ_T = τ_q the DPL solution collapses onto the Fourier solution to eight
 significant digits — the numerical confirmation of the known analytical
 degeneracy of this theory — showing that DPL is meaningful only for τ_T < τ_q,
 in which case it interpolates between Fourier and Lord-Shulman. Second, the
