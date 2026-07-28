@@ -46,7 +46,7 @@ R2h. ⬜ Answer the GPL wt% question (0.1–2 % in lit vs up to 4 % here) — dr
 ## PHASE 5 — Remaining thesis chapters
 21. ⬜ Chapter 3 (formulation & method): render the governing equations as editable Word equations via pandoc; use δ for the Newmark parameter (γ reserved for the percolation exponent); match the implemented scheme exactly.
 22. ⬜ Chapter 1 (introduction / framework) and Chapter 2 (literature review) from the annotated bibliography; establish novelty.
-23. ⬜ Chapter 5 (conclusions + future work): F/R end treatment, vectorized assembly, temperature-dependent properties, radiation BC.
+23. ✅ Chapter 5 (conclusions + future work): CHAPTER5_conclusions_FA/EN.md + .docx (pandoc). 10 findings + contributions + 7 future-work items (F/R end treatment, vectorized assembly, temperature-dependent properties, radiation BC, damage/failure model for rupture, updated porosity patterns, geometric/loading extensions). Notation-light pending ح.
 24. ⬜ Validation content: ensure each benchmark has a comparison-to-paper diagram (review requirement).
 
 ## PHASE 6 — Finalization & defense
