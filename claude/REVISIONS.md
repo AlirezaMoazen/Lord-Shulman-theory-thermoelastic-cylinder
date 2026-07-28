@@ -26,7 +26,7 @@
 | Artifact | Current | History |
 |---|---|---|
 | `claude_catalog_R#.m` | **R5** (+ `_R5_color`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → R3 = adds ε_rr and ε_zz strain profiles to Part 2 (8 panels; ε_zz then from last snapshot) → R4 = weight-fraction zoom study (D2) swapped from 2–4% to the low range W = 0.1/0.3/0.5/0.9/1.5% (cases D3_W_001..015) → **R5 = ε_zz recomputed from the saved final-time stresses via Hooke's law (exact final; 2μ recovered per case from σ_rr−σ_θθ)**, B&W + color |
-| `FIGURE_CATALOG_FA.docx` / `_color_FA.docx` | built from catalog **R5** | rebuilt whenever catalog Rn changes |
+| `FIGURE_CATALOG_R5_FA.docx` / `_R5_color_FA.docx` | built from catalog **R5** (docx + md filenames now carry the revision number) | on each catalog Rn the deliverables are renamed `_R<n>` too |
 
 ## 4. Results chapter 4
 | Artifact | Current | History |
