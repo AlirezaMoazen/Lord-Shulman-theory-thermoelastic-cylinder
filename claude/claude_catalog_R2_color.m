@@ -1,5 +1,6 @@
-%% claude_catalog_R1_color.m — COLOR variant of the chapter-4 quantity catalog
-%  Same two-part layout as claude_catalog_R1.m but distinct COLORS per case
+%% claude_catalog_R2_color.m — COLOR variant (revision 2) of the chapter-4 catalog
+%  Color companion to claude_catalog_R2.m (two-part + makima-smoothed).
+%  Same two-part layout as claude_catalog_R2.m but distinct COLORS per case
 %  (MATLAB default 'lines' order, solid lines).
 %    PART 1  <study>_hist.png : T*(Fo) u*(Fo) w*(Fo)
 %    PART 2  <study>_prof.png : T*(xi) u*(xi) eps_th(xi) sig*_rr sig*_thth sig*_zz

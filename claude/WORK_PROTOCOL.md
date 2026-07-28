@@ -23,6 +23,18 @@ PROTOCOL.md (code rules) and THESIS_TODO.md (task plan). Newest first.
 
 ## Key decisions & reasons (log)
 
+### 2026-07-28 — Figure catalog + revision-rule correction
+- Built a quantity CATALOG (B&W + color) so the author can choose which ch4
+  figures to keep: per study, Part 1 (T*/u*/w* histories) + Part 2 (T*/u*/
+  ε_θθ + σ* profiles); curves smoothed by makima densification.
+- **Revision-rule correction (author reminder):** I had edited
+  `claude_catalog_R1.m` IN PLACE (9-panel → two-part → smoothed), which
+  violates the no-rewrite / revision-number rule. Corrected: R1 restored to the
+  frozen 9-panel original (from git 770d10b); the current two-part+smoothed
+  version is now `claude_catalog_R2.m` / `claude_catalog_R2_color.m`. LESSON:
+  the revision-number rule applies to ALL scripts (figure/util scripts too),
+  not only the solver line — future changes go in a new revision, never in place.
+
 ### 2026-07-27 — Chapter-4 revision (supervisor review)
 - **Split convergence & validation** into two sections — the review explicitly
   requires it; convergence = numerical (layers, grid, DQM-vs-FDM-vs-FEM),

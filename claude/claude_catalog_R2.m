@@ -1,15 +1,15 @@
-%% claude_catalog_R1.m — QUANTITY CATALOG for choosing chapter-4 figures
-%  For each parametric study, draws ONE overview image with 9 panels overlaying
-%  all cases of that study, covering every field quantity available from the
-%  saved .mat files (no re-run needed):
-%     row 1 (mid-point time histories):   T*(Fo)   u*(Fo)   w*(Fo)
-%     row 2 (final radial profiles):      T*(xi)   u*(xi)   eps_theta(xi)
-%     row 3 (final radial stress profiles): sig*_rr(xi)  sig*_thth(xi)  sig*_zz(xi)
+%% claude_catalog_R2.m — QUANTITY CATALOG for choosing chapter-4 figures (B&W)
+%  REVISION 2 of claude_catalog_R1.m (frozen; R1 drew ONE 9-panel image). R2
+%  splits each study into two images and smooths the curves (makima ~300-pt).
+%  For each parametric study, draws TWO separate images (not one combined grid):
+%    PART 1  <study>_hist.png : mid-point time histories  T*(Fo) u*(Fo) w*(Fo)
+%    PART 2  <study>_prof.png : final radial profiles      T*(xi) u*(xi) eps_th(xi)
+%                                                          sig*_rr sig*_thth sig*_zz
 %  Purpose: a menu to DECIDE which graphs to place in the thesis chapter 4.
 %  NOTE: stress/strain *time histories* are NOT available from the saved data
 %  (only T,u,w mid-point histories were stored); they need a full-history re-run.
-%  Output: figures_catalog\<study>_catalog.png  (+ .fig)
-%  This is a NEW post-processing script; it does not modify any solver file.
+%  Output: figures_catalog\<study>_hist.png and _prof.png  (+ .fig)
+%  New post-processing script; it does not modify any solver file.
 
 clearvars; clc; close all;
 pdir = 'param_studies';
@@ -42,7 +42,7 @@ sst = @(s) s/(beta_ref*dT);
 %% ---- styles (B&W, up to 5 curves) --------------------------------------
 STY.co = {[0 0 0],[0 0 0],[0.45 0.45 0.45],[0.45 0.45 0.45],[0.68 0.68 0.68]};
 STY.ls = {'-','--',':','-.','-'};  STY.mk = {'o','s','^','d','v'};
-STY.lw = [1.4 1.2 1.2 1.2 1.4];  FNT='Times New Roman'; FSZ=9;
+STY.lw = [1.4 1.2 1.2 1.2 1.4];  FNT='Times New Roman'; FSZ=10;
 
 %% ---- studies (same mapping as claude_param_figures_R4) ------------------
 studies = { ...
@@ -76,63 +76,69 @@ for si = 1:size(studies,1)
         D{ci} = load(f);
     end
     if ~ok, continue; end
-
-    fig = figure('Position',[40 40 1350 980],'Color','w','Name',[sname '_catalog']);
     xiOf = @(d) (d.r_all - d.r_nodes{1}(1)) / (d.r_nodes{end}(end) - d.r_nodes{1}(1));
 
-    % ---- row 1: mid-point time histories ----
-    subplot(3,3,1); hold on;
+    % ===== PART 1: mid-point time histories (1x3) =====
+    f1 = figure('Position',[40 60 1360 430],'Color','w','Name',[sname '_hist']);
+    subplot(1,3,1); hold on;
     for ci=1:numel(cnames), curve(Fo(D{ci}.tv), Tst(D{ci}.hist_T), ci, STY); end
-    fin(gca,FNT,FSZ,'Fo','T^*','(1) T^* history'); legend(labels,'Location','best','FontSize',7,'FontName',FNT);
-    subplot(3,3,2); hold on;
+    fin(gca,FNT,FSZ,'Fo','T^*','(1) T^* history'); legend(labels,'Location','best','FontSize',8,'FontName',FNT);
+    subplot(1,3,2); hold on;
     for ci=1:numel(cnames), curve(Fo(D{ci}.tv), ust(D{ci}.hist_U), ci, STY); end
     fin(gca,FNT,FSZ,'Fo','u^*','(2) u^* history (radial)');
-    subplot(3,3,3); hold on;
+    subplot(1,3,3); hold on;
     for ci=1:numel(cnames), curve(Fo(D{ci}.tv), ust(D{ci}.hist_W), ci, STY); end
     fin(gca,FNT,FSZ,'Fo','w^*','(3) w^* history (axial)');
+    sgtitle(sprintf('%s  —  part 1: time histories', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
+    print(f1, fullfile(cdir,[sname '_hist.png']), '-dpng','-r130');
+    savefig(f1, fullfile(cdir,[sname '_hist.fig'])); close(f1);
 
-    % ---- row 2: final radial profiles: T, u, hoop strain ----
-    subplot(3,3,4); hold on;
+    % ===== PART 2: final radial profiles (2x3) =====
+    f2 = figure('Position',[40 40 1360 760],'Color','w','Name',[sname '_prof']);
+    subplot(2,3,1); hold on;
     for ci=1:numel(cnames), curve(xiOf(D{ci}), Tst(D{ci}.T_all), ci, STY); end
-    fin(gca,FNT,FSZ,'\xi','T^*','(4) T^*(\xi) final');
-    subplot(3,3,5); hold on;
+    fin(gca,FNT,FSZ,'\xi','T^*','(4) T^*(\xi) final'); legend(labels,'Location','best','FontSize',8,'FontName',FNT);
+    subplot(2,3,2); hold on;
     for ci=1:numel(cnames), curve(xiOf(D{ci}), ust(D{ci}.U_all), ci, STY); end
     fin(gca,FNT,FSZ,'\xi','u^*','(5) u^*(\xi) final');
-    subplot(3,3,6); hold on;
-    for ci=1:numel(cnames)
-        eth = D{ci}.U_all ./ D{ci}.r_all;        % hoop strain eps_theta = u/r (exact)
-        curve(xiOf(D{ci}), eth, ci, STY);
-    end
+    subplot(2,3,3); hold on;
+    for ci=1:numel(cnames), eth = D{ci}.U_all ./ D{ci}.r_all; curve(xiOf(D{ci}), eth, ci, STY); end
     fin(gca,FNT,FSZ,'\xi','\epsilon_{\theta\theta}','(6) hoop strain(\xi) final');
-
-    % ---- row 3: final radial stress profiles ----
-    subplot(3,3,7); hold on;
+    subplot(2,3,4); hold on;
     for ci=1:numel(cnames), curve(xiOf(D{ci}), sst(D{ci}.S_rr), ci, STY); end
     fin(gca,FNT,FSZ,'\xi','\sigma^*_{rr}','(7) \sigma^*_{rr}(\xi) final');
-    subplot(3,3,8); hold on;
+    subplot(2,3,5); hold on;
     for ci=1:numel(cnames), curve(xiOf(D{ci}), sst(D{ci}.S_tt), ci, STY); end
     fin(gca,FNT,FSZ,'\xi','\sigma^*_{\theta\theta}','(8) \sigma^*_{\theta\theta}(\xi) final');
-    subplot(3,3,9); hold on;
+    subplot(2,3,6); hold on;
     for ci=1:numel(cnames), curve(xiOf(D{ci}), sst(D{ci}.S_zz), ci, STY); end
     fin(gca,FNT,FSZ,'\xi','\sigma^*_{zz}','(9) \sigma^*_{zz}(\xi) final');
+    sgtitle(sprintf('%s  —  part 2: radial profiles at final time', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
+    print(f2, fullfile(cdir,[sname '_prof.png']), '-dpng','-r130');
+    savefig(f2, fullfile(cdir,[sname '_prof.fig'])); close(f2);
 
-    sgtitle(sprintf('%s  —  quantity catalog (choose panels for the thesis)', strrep(sname,'_','\_')), ...
-        'FontName',FNT,'FontSize',12);
-    print(fig, fullfile(cdir,[sname '_catalog.png']), '-dpng','-r130');
-    savefig(fig, fullfile(cdir,[sname '_catalog.fig']));
-    close(fig);
     made{end+1} = sname; %#ok<SAGROW>
-    fprintf('catalog: %s\n', sname);
+    fprintf('catalog: %s (hist+prof)\n', sname);
 end
-fprintf('\nDONE: %d study catalogs -> %s\n', numel(made), cdir);
+fprintf('\nDONE: %d studies x 2 parts -> %s\n', numel(made), cdir);
 
 %% ---- local helpers ----
 function curve(x,y,ci,STY)
+    % smooth curve: densify to ~300 points with shape-preserving (makima)
+    % interpolation so transitions read smoothly; single object per case
+    % (sparse markers via MarkerIndices -> correct one-entry-per-case legend).
     k = mod(ci-1,5)+1;
-    n = numel(x); mi = unique(round(linspace(1,n,10)));
-    plot(x,y,'Color',STY.co{k},'LineStyle',STY.ls{k},'LineWidth',STY.lw(k));
-    plot(x(mi),y(mi),'LineStyle','none','Marker',STY.mk{k},'MarkerSize',4.5,...
-        'Color',STY.co{k},'MarkerFaceColor','w');
+    x = x(:); y = y(:);
+    xm = x;                                   % make x strictly increasing
+    for i = 2:numel(xm)
+        if xm(i) <= xm(i-1), xm(i) = xm(i-1) + 1e-9; end
+    end
+    nP = max(300, numel(x));
+    xf = linspace(xm(1), xm(end), nP);
+    yf = interp1(xm, y, xf, 'makima');
+    mi = unique(round(linspace(1, nP, 8)));
+    plot(xf, yf, 'Color',STY.co{k}, 'LineStyle',STY.ls{k}, 'LineWidth',STY.lw(k), ...
+        'Marker',STY.mk{k}, 'MarkerIndices',mi, 'MarkerSize',4.5, 'MarkerFaceColor','w');
 end
 function fin(ax,FNT,FSZ,xl,yl,tl)
     grid(ax,'on'); box(ax,'on'); set(ax,'FontName',FNT,'FontSize',FSZ);
