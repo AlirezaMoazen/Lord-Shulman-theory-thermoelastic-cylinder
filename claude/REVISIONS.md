@@ -25,8 +25,8 @@
 ## 3. Quantity CATALOG (figure-selection tool)
 | Artifact | Current | History |
 |---|---|---|
-| `claude_catalog_R#.m` | **R4** (+ `_R4_color`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → R3 = adds ε_rr (radial) and ε_zz (axial) strain profiles to Part 2 (8 panels) → **R4 = weight-fraction zoom study (D2) swapped from 2–4% band to the low range W = 0.1/0.3/0.5/0.9/1.5% (cases D3_W_001..015)**, B&W + color |
-| `FIGURE_CATALOG_FA.docx` / `_color_FA.docx` | built from catalog **R4** | rebuilt whenever catalog Rn changes |
+| `claude_catalog_R#.m` | **R5** (+ `_R5_color`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → R3 = adds ε_rr and ε_zz strain profiles to Part 2 (8 panels; ε_zz then from last snapshot) → R4 = weight-fraction zoom study (D2) swapped from 2–4% to the low range W = 0.1/0.3/0.5/0.9/1.5% (cases D3_W_001..015) → **R5 = ε_zz recomputed from the saved final-time stresses via Hooke's law (exact final; 2μ recovered per case from σ_rr−σ_θθ)**, B&W + color |
+| `FIGURE_CATALOG_FA.docx` / `_color_FA.docx` | built from catalog **R5** | rebuilt whenever catalog Rn changes |
 
 ## 4. Results chapter 4
 | Artifact | Current | History |

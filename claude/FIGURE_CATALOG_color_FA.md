@@ -14,8 +14,8 @@ lang: fa-IR
   شعاعی $\epsilon_{rr}(\xi)$ · کرنش محیطی $\epsilon_{\theta\theta}(\xi)$ · کرنش
   محوری $\epsilon_{zz}(\xi)$ · جابجایی $u^*(\xi)$ · تنش شعاعی
   $\sigma^*_{rr}(\xi)$ · تنش محیطی $\sigma^*_{\theta\theta}(\xi)$ · تنش محوری
-  $\sigma^*_{zz}(\xi)$. (کرنش شعاعی و محیطی در زمان نهاییِ دقیق‌اند؛ کرنش محوری
-  $\epsilon_{zz}$ از آخرین لحظهٔ ذخیره‌شده ≈ زمان نهایی محاسبه شده.)
+  $\sigma^*_{zz}(\xi)$. (هر سه کرنش در زمان نهاییِ دقیق‌اند؛ کرنش محوری
+  $\epsilon_{zz}$ از تنش‌های ذخیره‌شدهٔ زمان نهایی به کمک قانون هوک محاسبه شده.)
 
 نسخهٔ سیاه‌وسفید در `FIGURE_CATALOG_FA.docx` موجود است.
 
@@ -41,7 +41,7 @@ lang: fa-IR
 ![D_hist](figures_catalog_color/D_GPL_fraction_hist.png){width=6.5in}
 ![D_prof](figures_catalog_color/D_GPL_fraction_prof.png){width=6.5in}
 
-## بخش ۴-۷ — بزرگ‌نمایی بازهٔ گذار کسر وزنی (2–4٪)
+## بخش ۴-۷ — کسر وزنی کمِ گرافن (۰٫۱ / ۰٫۳ / ۰٫۵ / ۰٫۹ / ۱٫۵٪)
 ![D2_hist](figures_catalog_color/D2_GPL_fill_hist.png){width=6.5in}
 ![D2_prof](figures_catalog_color/D2_GPL_fill_prof.png){width=6.5in}
 
