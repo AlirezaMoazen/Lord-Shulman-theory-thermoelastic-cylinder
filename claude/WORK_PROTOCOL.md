@@ -5,8 +5,14 @@ made, so the reasoning is auditable and reproducible. It complements
 PROTOCOL.md (code rules) and THESIS_TODO.md (task plan). Newest first.
 
 ## Standing operating rules (agreed with the author)
-1. **Revision naming**: features → next integer (claude_R6); audit fixes →
-   sub-revision (claude_R6_1). Old revisions are frozen.
+1. **Revision naming — ALL files** (author directive 2026-07-28, so changes and
+   progress are followable): every deliverable carries `_R<n>`; the first version
+   is R1; a change → the NEXT integer (`claude_R6`, `..._R3`); audit fixes →
+   sub-revision (`claude_R6_1`). Never edit a working file in place. Old
+   revisions are frozen (kept for provenance). The single index to follow every
+   artifact's current revision + the commit timeline is **`claude/REVISIONS.md`**
+   — update it whenever a new revision is made. (Applies to util/figure scripts
+   too, not only the solver line — see the 2026-07-28 catalog correction below.)
 2. **No-rewrite**: never edit verified code in place; a new revision is a copy
    with surgical, marked additions. Every revision must reproduce the previous
    one's default results digit-for-digit before use.
