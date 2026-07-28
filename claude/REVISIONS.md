@@ -15,7 +15,7 @@
 ## 1. Solver (MATLAB)
 | Artifact | Current | History |
 |---|---|---|
-| `claude_R#.m` (main solver) | **R6** | R1 fixed the broken dynamic solver (frozen) → R2 cfg engine + full-history + sine pressure → R2_1 audit fix → R3 BC options → R3_1 final porosity → R4 Gaussian shock → R5 theory switch (Fourier/LS/DPL/GN3) → **R6 per-end BC + cfg-overridable GPL dims** |
+| `claude_R#.m` (main solver) | **R7** | R1 fixed the broken dynamic solver (frozen) → R2 cfg engine + full-history + sine pressure → R2_1 audit fix → R3 BC options → R3_1 final porosity → R4 Gaussian shock → R5 theory switch (Fourier/LS/DPL/GN3) → R6 per-end BC + cfg-overridable GPL dims → **R7 explicit DOF numbering/mapping matrix (NodeMap + DOFmap + GridDOF + CSV export); physics digit-identical to R6 (Prom.2 p.4)** |
 
 ## 2. Parametric-campaign figure scripts
 | Artifact | Current | History |
@@ -25,8 +25,8 @@
 ## 3. Quantity CATALOG (figure-selection tool)
 | Artifact | Current | History |
 |---|---|---|
-| `claude_catalog_R#.m` | **R3** (+ `_R3_color`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → **R3 = adds ε_rr (radial) and ε_zz (axial) strain profiles to Part 2 (now 8 panels)**, B&W + color |
-| `FIGURE_CATALOG_FA.docx` / `_color_FA.docx` | built from catalog **R3** | rebuilt whenever catalog Rn changes |
+| `claude_catalog_R#.m` | **R4** (+ `_R4_color`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → R3 = adds ε_rr (radial) and ε_zz (axial) strain profiles to Part 2 (8 panels) → **R4 = weight-fraction zoom study (D2) swapped from 2–4% band to the low range W = 0.1/0.3/0.5/0.9/1.5% (cases D3_W_001..015)**, B&W + color |
+| `FIGURE_CATALOG_FA.docx` / `_color_FA.docx` | built from catalog **R4** | rebuilt whenever catalog Rn changes |
 
 ## 4. Results chapter 4
 | Artifact | Current | History |
