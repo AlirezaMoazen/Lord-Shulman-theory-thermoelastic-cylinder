@@ -1,17 +1,14 @@
-%% claude_catalog_R1.m — QUANTITY CATALOG for choosing chapter-4 figures (B&W)
-%  For each parametric study, draws TWO separate images (not one combined grid):
-%    PART 1  <study>_hist.png : mid-point time histories  T*(Fo) u*(Fo) w*(Fo)
-%    PART 2  <study>_prof.png : final radial profiles      T*(xi) u*(xi) eps_th(xi)
-%                                                          sig*_rr sig*_thth sig*_zz
-%  Purpose: a menu to DECIDE which graphs to place in the thesis chapter 4.
-%  NOTE: stress/strain *time histories* are NOT available from the saved data
-%  (only T,u,w mid-point histories were stored); they need a full-history re-run.
-%  Output: figures_catalog\<study>_hist.png and _prof.png  (+ .fig)
-%  New post-processing script; it does not modify any solver file.
+%% claude_catalog_R1_color.m — COLOR variant of the chapter-4 quantity catalog
+%  Same two-part layout as claude_catalog_R1.m but distinct COLORS per case
+%  (MATLAB default 'lines' order, solid lines).
+%    PART 1  <study>_hist.png : T*(Fo) u*(Fo) w*(Fo)
+%    PART 2  <study>_prof.png : T*(xi) u*(xi) eps_th(xi) sig*_rr sig*_thth sig*_zz
+%  Output: figures_catalog_color\<study>_hist.png and _prof.png  (+ .fig)
+%  New post-processing script; does not modify any solver file.
 
 clearvars; clc; close all;
 pdir = 'param_studies';
-cdir = 'figures_catalog';
+cdir = 'figures_catalog_color';
 if ~exist(cdir,'dir'), mkdir(cdir); end
 
 %% ---- reference (BASE UD) material -> dimensionless maps (same as R4 figs) --
@@ -37,10 +34,11 @@ Tst = @(T) (T - T_inf)/dT;
 ust = @(u) u*(lam_+2*mu_)/(beta_ref*dT*hthick);
 sst = @(s) s/(beta_ref*dT);
 
-%% ---- styles (B&W, up to 5 curves) --------------------------------------
-STY.co = {[0 0 0],[0 0 0],[0.45 0.45 0.45],[0.45 0.45 0.45],[0.68 0.68 0.68]};
-STY.ls = {'-','--',':','-.','-'};  STY.mk = {'o','s','^','d','v'};
-STY.lw = [1.4 1.2 1.2 1.2 1.4];  FNT='Times New Roman'; FSZ=10;
+%% ---- styles (COLOR, up to 5 curves; solid lines + markers) --------------
+STY.co = {[0 0.4470 0.7410],[0.8500 0.3250 0.0980],[0.9290 0.6940 0.1250], ...
+          [0.4940 0.1840 0.5560],[0.4660 0.6740 0.1880]};
+STY.ls = {'-','-','-','-','-'};  STY.mk = {'o','s','^','d','v'};
+STY.lw = [1.5 1.5 1.5 1.5 1.5];  FNT='Times New Roman'; FSZ=10;
 
 %% ---- studies (same mapping as claude_param_figures_R4) ------------------
 studies = { ...
@@ -87,7 +85,7 @@ for si = 1:size(studies,1)
     subplot(1,3,3); hold on;
     for ci=1:numel(cnames), curve(Fo(D{ci}.tv), ust(D{ci}.hist_W), ci, STY); end
     fin(gca,FNT,FSZ,'Fo','w^*','(3) w^* history (axial)');
-    sgtitle(sprintf('%s  —  part 1: time histories', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
+    sgtitle(sprintf('%s  —  part 1: time histories (color)', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
     print(f1, fullfile(cdir,[sname '_hist.png']), '-dpng','-r130');
     savefig(f1, fullfile(cdir,[sname '_hist.fig'])); close(f1);
 
@@ -111,14 +109,14 @@ for si = 1:size(studies,1)
     subplot(2,3,6); hold on;
     for ci=1:numel(cnames), curve(xiOf(D{ci}), sst(D{ci}.S_zz), ci, STY); end
     fin(gca,FNT,FSZ,'\xi','\sigma^*_{zz}','(9) \sigma^*_{zz}(\xi) final');
-    sgtitle(sprintf('%s  —  part 2: radial profiles at final time', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
+    sgtitle(sprintf('%s  —  part 2: radial profiles at final time (color)', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
     print(f2, fullfile(cdir,[sname '_prof.png']), '-dpng','-r130');
     savefig(f2, fullfile(cdir,[sname '_prof.fig'])); close(f2);
 
     made{end+1} = sname; %#ok<SAGROW>
-    fprintf('catalog: %s (hist+prof)\n', sname);
+    fprintf('catalog(color): %s (hist+prof)\n', sname);
 end
-fprintf('\nDONE: %d studies x 2 parts -> %s\n', numel(made), cdir);
+fprintf('\nDONE: %d color studies x 2 parts -> %s\n', numel(made), cdir);
 
 %% ---- local helpers ----
 function curve(x,y,ci,STY)
