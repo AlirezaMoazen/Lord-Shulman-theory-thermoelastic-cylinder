@@ -25,8 +25,8 @@
 ## 3. Quantity CATALOG (figure-selection tool)
 | Artifact | Current | History |
 |---|---|---|
-| `claude_catalog_R#.m` | **R2** (+ `_R2_color`) | **R1 = frozen** (one 9-panel image) → **R2 = two-part (hist+prof) + makima-smoothed**, B&W + color |
-| `FIGURE_CATALOG_FA.docx` / `_color_FA.docx` | built from catalog **R2** | rebuilt whenever catalog Rn changes |
+| `claude_catalog_R#.m` | **R3** (+ `_R3_color`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → **R3 = adds ε_rr (radial) and ε_zz (axial) strain profiles to Part 2 (now 8 panels)**, B&W + color |
+| `FIGURE_CATALOG_FA.docx` / `_color_FA.docx` | built from catalog **R3** | rebuilt whenever catalog Rn changes |
 
 ## 4. Results chapter 4
 | Artifact | Current | History |
