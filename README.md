@@ -1,6 +1,6 @@
 # Lord-Shulman Thermoelasticity of a Multilayer Porous GPL Cylinder
 
-MSc thesis project (Alireza Moazen): transient coupled **Lord-Shulman**
+MSc thesis project: transient coupled **Lord-Shulman**
 thermoelastic analysis of **multilayer porous graphene-platelet-reinforced
 hollow cylinders** under thermo-mechanical loading — **layerwise DQM** in
 space, **Newmark** in time, MATLAB.
