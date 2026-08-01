@@ -8,3 +8,10 @@
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Large regenerable solver output — some full-history .mat exceed GitHub's 100 MB
+# limit (1 GB total). Regenerate via claude/run_ch4_campaign.ps1 + run_nz_sweep.ps1.
+claude/param_studies_ch4/
+
+# MATLAB batch run/render logs (noise)
+*.log

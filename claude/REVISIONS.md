@@ -25,8 +25,8 @@
 ## 3. Quantity CATALOG (figure-selection tool)
 | Artifact | Current | History |
 |---|---|---|
-| `claude_catalog_R#.m` | **R5** (+ `_R5_color`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → R3 = adds ε_rr and ε_zz strain profiles to Part 2 (8 panels; ε_zz then from last snapshot) → R4 = weight-fraction zoom study (D2) swapped from 2–4% to the low range W = 0.1/0.3/0.5/0.9/1.5% (cases D3_W_001..015) → **R5 = ε_zz recomputed from the saved final-time stresses via Hooke's law (exact final; 2μ recovered per case from σ_rr−σ_θθ)**, B&W + color |
-| `FIGURE_CATALOG_R5_FA.docx` / `_R5_color_FA.docx` | built from catalog **R5** (docx + md filenames now carry the revision number) | on each catalog Rn the deliverables are renamed `_R<n>` too |
+| `claude_catalog_R#.m` | **R6** (`_R6` 4-panel · `_R6_full` · `_R6_extras` · `_conv`) | R1 = frozen (one 9-panel image) → R2 = two-part (hist+prof) + makima-smoothed → R3 = adds ε_rr and ε_zz strain profiles to Part 2 (8 panels; ε_zz then from last snapshot) → R4 = weight-fraction zoom study (D2) swapped to low range W = 0.1/0.3/0.5/0.9/1.5% → R5 = ε_zz recomputed from saved final-time stresses via Hooke's law (exact; 2μ per case) → **R6 = full rebuild for the NEW geometry (R_i 1 / R_o 1.5 / l 2.1, mesh N_r 15 / N_z 11) and the app10041397 (Heydarpour) dimensionless convention (Fo=α̂t/h², h=wall); split into `claude_catalog_R6.m` (4-panel selection: T*,u* vs Fo + T*,Σ_θθ vs ξ), `claude_catalog_R6_full.m` (8-panel hist+prof, all strains+stresses, Hooke ε_zz), `claude_catalog_R6_extras.m` (second-sound wave-fronts + 5×5 GPL×porosity matrix) and `claude_catalog_conv.m` (N_r/N_z/N_L/Δt convergence + min-nodes master). Prom.3 applied: 25-case matrix, a/b & b/t legends, sine-pressure study dropped.** |
+| `FIGURE_CATALOG_R6_FA.docx` (+ `_R6.md`) | built from catalog **R6** (44 figures; color variant + EN pending author's selections) | on each catalog Rn the deliverables are renamed `_R<n>` too |
 
 ## 4. Results chapter 4
 | Artifact | Current | History |
@@ -57,6 +57,7 @@
 ## 7. Commit timeline (newest first — the dated progress trail)
 | Commit | What |
 |---|---|
+| _pending_ | **Ch4 catalog R6 + campaign at new geometry (N_r=15):** 81-case campaign + N_z axial sweep + convergence/min-nodes study (mesh locked N_r=15/N_z=11); 4-panel + full-component + wave-front + 25-matrix + convergence figures; `FIGURE_CATALOG_R6_FA.docx` (44 figs); `run_ch4_campaign.ps1` + `run_nz_sweep.ps1`; raw solver `.mat` gitignored (>100 MB, regenerable) |
 | caf505b | Catalog: observe the revision-number rule (R1 frozen, R2 = current) |
 | 980e496 | Project audit: protocols + review-item status + gaps |
 | 64806ea | Figure catalog: color + two-part split + smoother curves |
