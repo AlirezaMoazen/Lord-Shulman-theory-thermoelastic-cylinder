@@ -57,7 +57,7 @@ foreach ($name in $cases.Keys) {
     if ((Test-Path $mat) -and ((Get-Item $mat).Length -gt 50kb)) { "SKIP $name" | Add-Content $log -Encoding utf8; continue }
     $ov = $cases[$name].TrimStart(',')
     $cfg = "cfg=struct($base); ov=struct($ov); fo=fieldnames(ov); for ii=1:numel(fo), cfg.(fo{ii})=ov.(fo{ii}); end; cfg.out_name='param_studies_ch4/$name.mat';"
-    $cmd = "cd('$here'); try, $cfg claude_R7; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); addpath('code/solver'); try, $cfg claude_R7; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     while (@($jobs | Where-Object { $_.State -eq 'Running' }).Count -ge $maxPar) { Start-Sleep -Seconds 5 }
     "RUN  $name  $(Get-Date -Format 'HH:mm:ss')" | Add-Content $log -Encoding utf8
     $jobs += Start-Job -Name $name -ScriptBlock {

@@ -192,6 +192,18 @@ these five checks confirm the validity of the present solution in both the
 static and the transient regimes and in the coupled and uncoupled cases. A
 summary is given in Table 4-2.
 
+The three checks that compare against published or exact references are shown
+below — the mechanical response against Malekzadeh & Heydarpour and ANSYS, the
+transient conduction against the exact Bessel-series solution, and the coupled
+Lord-Shulman wave fronts against Bagri & Eslami — with the present curves
+coinciding with the references in every case.
+
+[شکل: bench1_U]
+
+[شکل: bench2_T_profiles]
+
+[شکل: bench3_theta]
+
 **Table 4-2: Summary of the solver verification tests.**
 
 | # | test | reference | result |

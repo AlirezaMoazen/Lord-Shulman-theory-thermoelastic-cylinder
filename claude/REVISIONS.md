@@ -57,6 +57,8 @@
 ## 7. Commit timeline (newest first — the dated progress trail)
 | Commit | What |
 |---|---|
+| _(R4+tidy)_ | **Ch4 R4 finished + repo tidy:** figure **captions** (descriptive, FA+EN) on all four docx (Prom.1); **3 verification comparison figures** inlined in §4-4 (present vs Malekzadeh/ANSYS, exact Bessel, Bagri&Eslami — Prom.1 "diagrams not tables only"); `FIGURE_CAPTIONS_R4`; **folder tidy** (Prom.3 #1) — `.m`→`code/{solver,catalog,validation,extensions,misc}`, runners→`campaign/`, docs→`governance/`+`reviews/`; data/figures/thesis_chapter kept at root so relative paths still resolve (run scripts from `claude/` via `run('code/.../x.m')`). |
+| _(Ch4 R4)_ | Chapter 4 R4 EN draft (53283b1) + FA mirror & 4 docx EN/FA×bw/color (5b021be) — see §4. |
 | ecd8d24 | **Ch4 catalog R6 + campaign at new geometry (N_r=15):** 81-case campaign + N_z axial sweep + convergence/min-nodes study (mesh locked N_r=15/N_z=11); 4-panel + full-component + wave-front + 25-matrix + convergence figures; `FIGURE_CATALOG_R6_FA.docx` (44 figs); `run_ch4_campaign.ps1` + `run_nz_sweep.ps1`; raw solver `.mat` gitignored (>100 MB, regenerable) |
 | caf505b | Catalog: observe the revision-number rule (R1 frozen, R2 = current) |
 | 980e496 | Project audit: protocols + review-item status + gaps |

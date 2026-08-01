@@ -16,7 +16,7 @@ foreach ($n in $nz.Keys) {
     $mat = "$out\$n.mat"
     if ((Test-Path $mat) -and ((Get-Item $mat).Length -gt 20kb)) { "SKIP $n" | Add-Content $tlog -Encoding utf8; continue }
     $cfg = "cfg=struct($base); cfg.N_z=$($nz[$n]); cfg.out_name='param_studies_ch4/$n.mat';"
-    $cmd = "cd('$here'); try, $cfg claude_R7; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); addpath('code/solver'); try, $cfg claude_R7; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     $el = (Measure-Command { & $matlab -batch $cmd -logfile "$out\$n.log" | Out-Null }).TotalSeconds
     $ok = ($LASTEXITCODE -eq 0) -and (Test-Path $mat)
     "$(if($ok){'DONE'}else{'FAIL'}) $n  N_z=$($nz[$n])  $([math]::Round($el)) s  serial" | Add-Content $tlog -Encoding utf8
