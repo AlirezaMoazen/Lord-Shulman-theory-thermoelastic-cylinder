@@ -31,7 +31,7 @@
 ## 4. Results chapter 4
 | Artifact | Current | History |
 |---|---|---|
-| `RESULTS_CHAPTER_FA/EN*.md` (+ docx) | **R3** | base → R2 (authored thesis style, FA+EN) → **R3** (split convergence/validation, aspect+infinite sections, 4×4 matrix, pressure 0–100 MPa, peak-trough/mirror interpretations, figs 4-1…4-22) |
+| `RESULTS_CHAPTER_FA/EN*_R#.md` (+ docx) | **R4** | base → R2 (authored FA+EN) → R3 (old geometry: split convergence/validation, aspect+infinite, 4×4 matrix, pressure 0–100 MPa, peak-trough/mirror) → **R4 = full rebuild for the NEW geometry (R_i 1 / R_o 1.5 / l 2.1), Heydarpour dimensionless convention (Fo=α̂t/h²), notation l=length/h=thickness; all 21 sections' numbers re-extracted from `param_studies_ch4`; Prom.3 applied (25-case matrix, a/b & b/t legends, sine study dropped); delivered as 4 docx (EN/FA × bw/color, 23 inlined figures each) built from `figures_ch4_bw` / `figures_ch4_color`. Open: Heydarpour citation [x], figure numbers, optional 4-17 wave-front.** |
 | `FIGURE_CAPTIONS*.md` | **R3** | base → R2 → **R3** (22 figs, new numbering) |
 
 ## 5. Other thesis deliverables (each is at R1 unless noted; next change → R2)
