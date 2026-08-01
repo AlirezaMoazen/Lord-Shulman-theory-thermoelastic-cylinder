@@ -57,7 +57,7 @@
 ## 7. Commit timeline (newest first — the dated progress trail)
 | Commit | What |
 |---|---|
-| 5f7d4ea | **Ch4 catalog R6 + campaign at new geometry (N_r=15):** 81-case campaign + N_z axial sweep + convergence/min-nodes study (mesh locked N_r=15/N_z=11); 4-panel + full-component + wave-front + 25-matrix + convergence figures; `FIGURE_CATALOG_R6_FA.docx` (44 figs); `run_ch4_campaign.ps1` + `run_nz_sweep.ps1`; raw solver `.mat` gitignored (>100 MB, regenerable) |
+| ecd8d24 | **Ch4 catalog R6 + campaign at new geometry (N_r=15):** 81-case campaign + N_z axial sweep + convergence/min-nodes study (mesh locked N_r=15/N_z=11); 4-panel + full-component + wave-front + 25-matrix + convergence figures; `FIGURE_CATALOG_R6_FA.docx` (44 figs); `run_ch4_campaign.ps1` + `run_nz_sweep.ps1`; raw solver `.mat` gitignored (>100 MB, regenerable) |
 | caf505b | Catalog: observe the revision-number rule (R1 frozen, R2 = current) |
 | 980e496 | Project audit: protocols + review-item status + gaps |
 | 64806ea | Figure catalog: color + two-part split + smoother curves |
