@@ -127,7 +127,7 @@ for kk = 1:numel(tsel)
     plot(rr, 300 + arrayfun(@(r) theta_exact(r, tsel(kk)), rr), '-', 'Color', cols(kk,:), 'LineWidth',1.4);
 end
 xlabel('r (m)'); ylabel('T (K)'); grid on; box on;
-legend('DQM+Newmark  t=2 s','Exact','t=10 s','Exact','t=40 s','Exact','Location','southwest');
+legend('DQM+Newmark  t=2 s','Exact','t=10 s','Exact','t=40 s','Exact','Location','northeast');
 title('Transient conduction: solver vs exact Bessel-series solution');
 saveas(figA, fullfile(outdir,'bench2_T_profiles.fig'));
 print(figA, fullfile(outdir,'bench2_T_profiles.png'), '-dpng','-r300');
