@@ -52,7 +52,7 @@ wave fronts are the well-known Gibbs effect of the spectral discretization and
 are left unfiltered so that the results are reported without manipulation.
 
 For generality all results are presented in dimensionless form, following the
-convention of reference [x] (Heydarpour et al.). The reference thermal
+convention of reference [69] (Heydarpour et al.). The reference thermal
 diffusivity of the homogenized reference material is
 α̂ = k̄/(ρ̄c̄) = 8.97×10⁻⁵ m²/s, and the length scale is the wall thickness
 h = R_o − R_i, not the outer radius; the definitions are collected in Table 4-1.
