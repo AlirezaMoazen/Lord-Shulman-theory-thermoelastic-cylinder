@@ -96,7 +96,7 @@ for si = 1:size(studies,1)
     end
     fin(gca,FNT,FSZ,'\xi','\Sigma_{\theta\theta}','(4) \Sigma_{\theta\theta}(\xi)');
 
-    sgtitle(sprintf('%s', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
+    % Prom.4: no sgtitle on the figure — the figure number/caption is added in the document
     print(f1, fullfile(cdir,[sname '.png']), '-dpng','-r130');
     savefig(f1, fullfile(cdir,[sname '.fig'])); close(f1);
     made{end+1}=sname; %#ok<SAGROW>

@@ -1,8 +1,8 @@
 ﻿# Chapter 4: Research Findings
 <!-- RESULTS_CHAPTER_EN_R4 — English mirror of RESULTS_CHAPTER_FA_R4.
-     Revision 4: full rebuild for the NEW geometry (R_i = 1, R_o = 1.5, l = 2.1)
+     Revision 4: full rebuild for the NEW geometry (R_i = 1, R_o = 1.5, L = 2.1)
      and the app10041397 (Heydarpour) dimensionless convention (Fo = alpha_hat t / h^2,
-     h = wall thickness). Notation LOCKED 2026-08-01: l = length, h = thickness
+     h = wall thickness). Notation LOCKED 2026-08-01: L = length, h = thickness
      (opposite of R3). Every quoted number is re-extracted from param_studies_ch4
      (mesh N_r = 15, N_z = 11, N_L = 7, dt = 1 s). Prom.3 applied: the interaction
      study is the full 5x5 (25-case) GPL x porosity matrix; the platelet aspect
@@ -34,7 +34,7 @@ chapter is summarized.
 
 The problem under study is a thick-walled hollow cylinder with inner radius
 R_i = 1.0 m and outer radius R_o = 1.5 m (radius ratio R_o/R_i = 1.5, wall
-thickness h = 0.5 m), length l = 2.1 m, built from N_L = 7 layers. In the
+thickness h = 0.5 m), length L = 2.1 m, built from N_L = 7 layers. In the
 reference case the GPL distribution across the thickness is uniform (UD) with
 total weight fraction W_GPL = 0.3 %, the porosity distribution is uniform (UD)
 with mass coefficient e_m3 = 0.8604, and the Lord-Shulman theory [4] with
@@ -84,78 +84,113 @@ overshoot produced by the reflected thermal wave.
 ## 4-3. Numerical convergence
 
 Before the results are verified, the numerical convergence of the solution is
-examined independently in every discretization direction of the model — the
-number of radial points per layer N_r, the number of axial points N_z, the
-number of layers N_L, and the time step Δt — so that any later discrepancy with
-a reference can be attributed to physics rather than residual numerical error.
-The convergence measure is the dimensionless hoop stress, reported both as the
-inner-surface value and as the relative L₂ error of the whole mid-plane radial
-profile against the finest mesh.
+examined independently in each discretization direction — the radial nodes per
+layer N_r, the axial nodes N_z, the number of layers N_L, and the time step Δt.
+The convergence measure is the dimensionless hoop stress, reported as both the
+inner-surface value and the relative L₂ error of the whole mid-plane radial
+profile against the finest mesh. For each spatial direction the profile overlays
+are shown as a figure and the error and cost are collected in a table.
 
-![Layer-count convergence: hoop-stress and temperature profiles, L2 error and cost vs number of layers N_L (N_r=15, N_z=11).](figures_ch4_bw/conv_NL.png){width=6in}
+### 4-3-1. Radial nodes (N_r)
 
-Layer convergence is shown in Figure 4-1(NL). As the number of layers is
-increased through 3, 5, 7, 9 and 15, the dimensionless inner-surface hoop stress
-takes the values 1.5261, 1.5257, 1.5264, 1.5264 and 1.5265, a total variation
-below 0.05 %, and the L₂ profile error relative to fifteen layers falls below
-0.26 %. The field quantities are therefore essentially layer-independent from as
-few as three layers; the main effect of a larger layer count is only a
-refinement of the staircase pattern of the hoop-stress profile at the layer
-interfaces, which is the natural signature of the layerwise property model.
-Seven layers are adopted in what follows, matching the seven-layer graded
-build of the reference cylinder while remaining safely on the converged side.
+**Figure 4-1.**
 
 ![Radial-node convergence per layer (N_z=11, N_L=7); the field quantities are converged from N_r=7.](figures_ch4_bw/conv_Nr.png){width=6in}
 
-Radial convergence within each layer is shown in Figure 4-1(Nr). Increasing the
-number of radial points per layer through 7, 9, 11, 13 and 15 leaves the
-inner-surface hoop stress within 0.09 % (1.5251 to 1.5264) and the L₂ profile
-error below 0.29 % throughout; every mesh from seven points upward is thus
-converged in the field quantities. This is the hallmark of the spectral
-(Chebyshev) differential quadrature discretization: three-digit accuracy is
-reached with a handful of points. The value N_r = 15 is nevertheless adopted for
-the production runs, because — while it does not change any integral quantity —
-it renders the sharp, moving second-sound front in the temperature profiles
-cleanly, without the localized oscillation that a coarser radial mesh leaves at
-the instant the front sits between two nodes.
+Figure 4-1 shows the hoop-stress and temperature profiles for N_r = 7 … 15
+(with N_z = 11, N_L = 7); the curves are visually indistinguishable. As Table 4-2
+shows, the inner-surface hoop stress stays within 0.09 % and the L₂ profile error
+below 0.29 % over the whole range, so the field quantities are converged from as
+few as seven radial points — the hallmark of the spectral (Chebyshev) differential
+quadrature discretization. N_r = 15 is nevertheless adopted for the production
+runs because it renders the sharp, moving second-sound front in the temperature
+profiles cleanly, without the localized oscillation a coarser mesh leaves when the
+front sits between two nodes; this does not change any integral quantity.
+
+**Table 4-2: Radial-node convergence (N_z = 11, N_L = 7).**
+
+| N_r | Σθθ (inner) | L₂ error (%) | N_dof |
+|---|---|---|---|
+| 7 | 1.5251 | 0.28 | 1617 |
+| 9 | 1.5256 | 0.23 | 2079 |
+| 11 | 1.5256 | 0.24 | 2541 |
+| 13 | 1.5264 | 0.16 | 3003 |
+| 15 | 1.5264 | ref | 3465 |
+
+### 4-3-2. Axial nodes (N_z)
+
+**Figure 4-2.**
 
 ![Axial-node convergence, the binding direction (N_r=15, N_L=7); N_z=5 gives a 9.4% error, with the clean serial cost.](figures_ch4_bw/conv_Nz.png){width=6in}
 
-The axial direction, shown in Figure 4-1(Nz), is the one that actually governs
-the mesh. With only five axial points the inner-surface hoop stress is in error
-by 9.4 % (1.3844 against the converged 1.5278), because the simply-supported
-end layer is left unresolved; the error then falls to 0.36 %, 1.0 %, 0.09 % and
-0.02 % for seven, nine, eleven and thirteen points. The convergence is
-non-monotonic — the oscillatory envelope characteristic of spectral methods —
-but is clearly settled by nine points, and eleven points give an L₂ profile
-error of 0.16 %. Eleven axial points are adopted. Unlike the radial direction,
-the axial one is also the most expensive: measured on a single core, one solve
-costs 90, 198, 349, 987 and 1630 s for five, seven, nine, thirteen and fifteen
-axial points, i.e. the cost grows roughly as N_z^2.6, because each added axial
-point multiplies the entire through-thickness system.
+The axial direction (Figure 4-2) governs the mesh. With only five axial points the
+inner-surface hoop stress is in error by 9.4 %, because the simply-supported end
+layer is left unresolved; the error then settles below about 1 % from nine points
+onward (Table 4-3). The convergence is non-monotonic — the oscillatory envelope
+typical of spectral methods — but is clearly settled by nine points, and eleven
+points give an L₂ error of 0.16 %. Eleven axial points are adopted. This direction
+is also the most expensive: the single-core solve time grows roughly as N_z^2.6
+(Table 4-3), because each added axial point multiplies the entire through-thickness
+system. The axial direction is therefore the binding one — both the least accurate
+per node and the steepest in cost.
 
-![Time-step convergence; steps up to 2 s are converged while 5 s produces a spurious overshoot.](figures_ch4_bw/conv_dt.png){width=6in}
+**Table 4-3: Axial-node convergence and cost (N_r = 15, N_L = 7).**
 
-Time-step convergence is shown in Figure 4-1(dt). For time steps of 0.5, 1 and
-2 s the response is unchanged, but at Δt = 5 s a spurious 3 % overshoot appears
-in the peak temperature as the integrator under-resolves the sharp thermal
-front; the L₂ error of the final hoop-stress profile relative to Δt = 0.5 s is
-0.17 %, 0.25 % and 0.64 % for 1, 2 and 5 s. A time step of 1 s is adopted, which
-both resolves the shock and leaves a comfortable margin.
+| N_z | Σθθ (inner) | L₂ error (%) | solve time (s) |
+|---|---|---|---|
+| 5 | 1.3844 | 3.92 | 90 |
+| 7 | 1.5333 | 1.07 | 198 |
+| 9 | 1.5434 | 0.23 | 349 |
+| 11 | 1.5264 | 0.16 | — |
+| 13 | 1.5274 | 0.27 | 987 |
+| 15 | 1.5278 | ref | 1630 |
 
-![L2 hoop-profile error versus problem size N_dof, refined one direction at a time; the axial direction is binding.](figures_ch4_bw/conv_master.png){width=6in}
+### 4-3-3. Number of layers (N_L)
 
-Figure 4-1(master) collects the four studies as the L₂ profile error against the
-total number of unknowns N_dof = 3 N_L N_r N_z, refined one direction at a time.
-The picture summarizes the numerical character of the model: the radial and
-layer directions sit below 0.3 % from their smallest meshes and are effectively
-free, whereas the axial direction both starts far above 1 % and is the steepest
-in cost. The adopted production mesh (N_r = 15, N_z = 11, N_L = 7, Δt = 1 s) is
-accordingly balanced — generous where refinement is cheap and merely adequate
-where it is expensive — and delivers the field quantities to better than 0.2 %.
-The superiority of the differential-quadrature discretization over the finite
-difference and finite element methods, in points required per direction, is
-taken up separately as an extension study in Section 4-19.
+**Figure 4-3.**
+
+![Layer-count convergence: hoop-stress and temperature profiles, L2 error and cost vs number of layers N_L (N_r=15, N_z=11).](figures_ch4_bw/conv_NL.png){width=6in}
+
+Figure 4-3 shows the profiles for N_L = 3 … 15 (N_r = 15, N_z = 11). The
+inner-surface hoop stress varies by less than 0.05 % and the L₂ error stays below
+0.26 % (Table 4-4); the field quantities are essentially layer-independent from
+three layers. The only effect of more layers is a finer staircase in the
+hoop-stress profile at the interfaces — the natural signature of the layerwise
+property model. Seven layers are adopted, matching the seven-layer graded build of
+the reference cylinder.
+
+**Table 4-4: Layer convergence (N_r = 15, N_z = 11).**
+
+| N_L | Σθθ (inner) | L₂ error (%) | N_dof |
+|---|---|---|---|
+| 3 | 1.5261 | 0.26 | 1485 |
+| 5 | 1.5257 | 0.21 | 2475 |
+| 7 | 1.5264 | 0.16 | 3465 |
+| 9 | 1.5264 | 0.14 | 4455 |
+| 15 | 1.5265 | ref | 7425 |
+
+### 4-3-4. Time step (Δt)
+
+The time step is converged for Δt ≤ 2 s; at Δt = 5 s a spurious 3 % overshoot
+appears in the peak temperature as the Newmark integrator under-resolves the sharp
+thermal front (Table 4-5). Δt = 1 s is adopted, which resolves the shock with a
+comfortable margin.
+
+**Table 4-5: Time-step convergence (N_r = 15, N_z = 11, N_L = 7).**
+
+| Δt (s) | time steps | L₂ error (%) | note |
+|---|---|---|---|
+| 0.5 | 6000 | ref | — |
+| 1 | 3000 | 0.17 | adopted |
+| 2 | 1500 | 0.25 | — |
+| 5 | 600 | 0.64 | 3 % peak overshoot |
+
+Overall, the adopted production mesh (N_r = 15, N_z = 11, N_L = 7, Δt = 1 s)
+delivers the field quantities to better than 0.2 %: the radial and layer directions
+are effectively free, while the axial direction is the binding and most expensive
+one. The superiority of the differential-quadrature discretization over the finite
+difference and finite element methods, in points required per direction, is taken
+up separately in Section 4-19.
 
 ## 4-4. Verification
 
@@ -190,7 +225,7 @@ and the reflection times within the cylinder wall are correctly reproduced, and
 the present wave fronts coincide with those of the reference. Taken together,
 these five checks confirm the validity of the present solution in both the
 static and the transient regimes and in the coupled and uncoupled cases. A
-summary is given in Table 4-2.
+summary is given in Table 4-6.
 
 The three checks that compare against published or exact references are shown
 below — the mechanical response against Malekzadeh & Heydarpour and ANSYS, the
@@ -198,13 +233,19 @@ transient conduction against the exact Bessel-series solution, and the coupled
 Lord-Shulman wave fronts against Bagri & Eslami — with the present curves
 coinciding with the references in every case.
 
+**Figure 4-4.**
+
 ![Verification (mechanical): dimensionless inner-surface radial displacement of the present solver against Malekzadeh & Heydarpour (2012) and an independent ANSYS solution.](figures_ch4_bw/bench1_U.png){width=6in}
+
+**Figure 4-5.**
 
 ![Verification (thermal): transient temperature profiles from the present DQM+Newmark solver against the exact Bessel-series solution at t = 2, 10 and 40 s.](figures_ch4_bw/bench2_T_profiles.png){width=6in}
 
+**Figure 4-6.**
+
 ![Verification (Lord-Shulman waves): second-sound temperature fronts through the wall against Bagri & Eslami (2007), Fig. 2.](figures_ch4_bw/bench3_theta.png){width=6in}
 
-**Table 4-2: Summary of the solver verification tests.**
+**Table 4-6: Summary of the solver verification tests.**
 
 | # | test | reference | result |
 |---|---|---|---|
@@ -218,10 +259,12 @@ coinciding with the references in every case.
 
 In the first parametric study the effect of five GPL distribution patterns across
 the thickness (UD, O, X, V and A) is examined with all other parameters held at
-their reference values. Figure 4-2 shows the time histories of the dimensionless
+their reference values. Figure 4-7 shows the time histories of the dimensionless
 temperature and radial displacement of the mid-thickness point at the mid-length
 section together with the radial profiles of the temperature and hoop stress at
 the final time.
+
+**Figure 4-7.**
 
 ![Effect of the GPL distribution pattern (UD, O, X, V, A): mid-point T* and U* histories vs Fo and the final T*, hoop-stress profiles vs xi.](figures_ch4_bw/A_GPL_patterns.png){width=6in}
 
@@ -254,11 +297,21 @@ lowest hoop stress and the smallest displacement, while its mirror pattern A is
 the worst case in all three; pattern V is recommended for the GPL distribution in
 cylinders under internal thermal shock.
 
+A feature common to all the hoop-stress profiles is a set of step jumps at the
+layer interfaces: wherever the layer stiffness changes, Σθθ is genuinely
+discontinuous, so the graded patterns (O, X, V, A) show a staircase while the
+uniform UD profile is smooth. These jumps are the physical signature of the
+piecewise-layered material — not a numerical artifact — and they refine as the
+layer count grows (Section 4-3). Where a parametric change is severe enough to
+reverse the sign of the inner-surface hoop stress (as in the porosity-A, high
+weight-fraction, thick-wall and short-length cases below), that reversal is
+flagged and explained in the corresponding section.
+
 ## 4-6. Effect of the porosity pattern and porosity level
 
 This section examines the effect of the porosity distribution pattern across the
 wall for the five patterns UD, O, X, V and A; the GPL distribution is kept uniform
-(UD) and the remaining parameters are held at their reference values. Figure 4-3
+(UD) and the remaining parameters are held at their reference values. Figure 4-8
 shows the mid-point time histories together with the radial profiles at the final
 time. The porosity pattern acts by reshaping the heat-conduction path, since a
 porous band of negligible conductivity behaves as a localized thermal resistance.
@@ -266,6 +319,8 @@ The three symmetric patterns UD, O and X behave similarly, with mid-point peak
 temperatures of 0.926, 0.927 and 0.867; in these patterns the porous phase is
 uniformly spread or symmetric about the mid-thickness and does not render the
 conduction path fundamentally asymmetric.
+
+**Figure 4-8.**
 
 ![Effect of the porosity distribution pattern (UD, O, X, V, A), GPL kept uniform; pattern A acts as a thermal barrier.](figures_ch4_bw/B_porosity_patterns.png){width=6in}
 
@@ -290,9 +345,11 @@ that is, the inner region, normally under hoop tension, turns compressive. This
 sign reversal must be carefully accounted for in the design of cylinders under
 internal thermal shock.
 
+**Figure 4-9.**
+
 ![Effect of the porosity level e_m3 = 0.9675 / 0.8604 / 0.7776 (light / moderate / heavy).](figures_ch4_bw/E_porosity_level.png){width=6in}
 
-Finally, the effect of the overall porosity level is shown in Figure 4-4 for the
+Finally, the effect of the overall porosity level is shown in Figure 4-9 for the
 three mass coefficients e_m3 = 0.9675, 0.8604 and 0.7776 (light, moderate and
 heavy porosity). Increasing the porosity lowers the conductivity and the stiffness
 together; consequently the peak mid-point temperature grows mildly, from 0.905
@@ -302,10 +359,12 @@ loading.
 
 ## 4-7. Effect of the GPL weight fraction
 
+**Figure 4-10.**
+
 ![Effect of the GPL weight fraction, low range W = 0.1 / 0.3 / 0.5 / 0.9 / 1.5 %.](figures_ch4_bw/D_wt_low.png){width=6in}
 
 The percolation character of the thermal-conductivity model (Chapter 3) makes the
-GPL weight fraction the strongest material lever of the problem. Figure 4-5 scans
+GPL weight fraction the strongest material lever of the problem. Figure 4-10 scans
 the low range W = 0.1, 0.3, 0.5, 0.9 and 1.5 %. At the smallest fraction the
 graphene network is barely percolated: the thermal wave penetrates weakly, the
 outer-surface temperature reaches only 0.484 and the mid-point peak stays at
@@ -316,9 +375,11 @@ unity (full through-wall penetration) by W = 0.9 %. Because the added graphene
 also stiffens the wall, the peak radial displacement falls in the opposite
 direction, from 10.60 at W = 0.1 % to 6.06 at W = 1.5 %.
 
+**Figure 4-11.**
+
 ![Effect of the GPL weight fraction, high range W = 1 / 2 / 4 / 8 %; the thermal gain saturates while the stresses grow.](figures_ch4_bw/D2_wt_high.png){width=6in}
 
-The higher range W = 1, 2, 4 and 8 % is shown in Figure 4-6. Here the thermal
+The higher range W = 1, 2, 4 and 8 % is shown in Figure 4-11. Here the thermal
 response saturates — the mid-point peak rises only gradually from 1.072 to 1.261
 — but the mechanical penalty grows sharply: the peak hoop stress more than
 doubles, from 2.45 to 5.71, and the inner-surface hoop stress falls and reverses
@@ -339,16 +400,20 @@ characteristic length a_GPL, and the width-to-thickness ratio b/t, entering
 through the characteristic thickness t_GPL. Each is examined separately with all
 other parameters at their reference values.
 
+**Figure 4-12.**
+
 ![Effect of the platelet length-to-width aspect ratio a/b = 1.0 / 1.67 / 2.67.](figures_ch4_bw/O_aspect_ab.png){width=6in}
 
-The effect of the length-to-width ratio is shown in Figure 4-7. As a/b increases
+The effect of the length-to-width ratio is shown in Figure 4-12. As a/b increases
 from 1.0 to 1.67 (reference) and then to 2.67, the peak mid-point temperature
 rises only from 0.898 to 0.926 and 0.939, and the inner-surface hoop stress from
 1.453 to 1.526 and 1.556 — changes of a few percent.
 
+**Figure 4-13.**
+
 ![Effect of the platelet width-to-thickness aspect ratio b/t = 500 / 1000 / 2000.](figures_ch4_bw/P_aspect_bt.png){width=6in}
 
-The width-to-thickness ratio (Figure 4-8) is even weaker at this reference: as b/t
+The width-to-thickness ratio (Figure 4-13) is even weaker at this reference: as b/t
 increases from 500 to 1000 and 2000, the peak temperature is essentially constant
 (0.926, 0.926, 0.925) and the inner-surface hoop stress changes only from 1.542
 to 1.516. At the low reference weight fraction of 0.3 % the reinforcement is too
@@ -361,9 +426,11 @@ properties.
 
 ## 4-9. Effect of the relaxation time; Lord-Shulman versus Fourier
 
+**Figure 4-14.**
+
 ![Effect of the relaxation time: Fourier (tau*=0) and Lord-Shulman tau* = 0.04 / 0.15 / 0.44 / 0.87; overshoot grows with tau*.](figures_ch4_bw/C_relaxation.png){width=6in}
 
-Figure 4-9 compares Fourier conduction (τ* = 0) with four dimensionless
+Figure 4-14 compares Fourier conduction (τ* = 0) with four dimensionless
 relaxation times τ* = 0.04, 0.15, 0.44 and 0.87. Under Fourier conduction the
 mid-point temperature increases monotonically and never exceeds the driving value
 (peak 0.950), since classical diffusion, with its unbounded propagation speed,
@@ -381,11 +448,13 @@ employing generalized thermoelasticity in short-time analyses [3].
 
 ## 4-10. Effect of the end supports
 
+**Figure 4-15.**
+
 ![Effect of the end supports: simply supported (S-S), mixed (S-C) and clamped (C-C).](figures_ch4_bw/F_end_BC.png){width=6in}
 
 The effect of the end supports is examined for three cases: simply supported at
 both ends (S-S), one end simply supported and the other clamped (S-C), and clamped
-at both ends (C-C). As shown in Figure 4-10, the temperature field is nearly
+at both ends (C-C). As shown in Figure 4-15, the temperature field is nearly
 independent of the support type, the peak mid-point temperature staying in the
 narrow band 0.926 to 0.929, since the mechanical support does not directly alter
 the thermal problem.
@@ -410,6 +479,8 @@ The effect of the internal pressure is examined with a sweep at 0, 10, 50
 because thermal and mechanical loading are linked only through the weak coupling
 term of the energy equation, and pressure is not a direct driver of temperature.
 
+**Figure 4-16.**
+
 ![Effect of the internal pressure P_i = 0 / 10 / 50 / 100 MPa; the mechanical response grows linearly.](figures_ch4_bw/G_pressure.png){width=6in}
 
 By contrast, the mechanical response grows linearly with pressure. The
@@ -430,13 +501,15 @@ consistent with the loading boundary condition.
 
 ## 4-12. Effect of the cylinder length and the long-cylinder limit
 
-![Effect of the cylinder length l = 1 / 2.1 / 5 / 10 m and the approach to the long-cylinder limit.](figures_ch4_bw/Q_length.png){width=6in}
+**Figure 4-17.**
+
+![Effect of the cylinder length L = 1 / 2.1 / 5 / 10 m and the approach to the long-cylinder limit.](figures_ch4_bw/Q_length.png){width=6in}
 
 To examine the limiting behavior of a long cylinder, the length is increased from
-1 m through the reference 2.1 m to 5 and 10 m. As shown in Figure 4-12, the peak
+1 m through the reference 2.1 m to 5 and 10 m. As shown in Figure 4-17, the peak
 mid-point temperature is length-independent, remaining at 0.926 to 0.927. The
 mechanical response, however, tends to a limit as the length grows. The very short
-cylinder (l = 1 m) is dominated by its two close end supports: its mid-length
+cylinder (L = 1 m) is dominated by its two close end supports: its mid-length
 inner-surface hoop stress is compressive (−1.477) and its displacement is small
 (3.42). As the length increases the mid-length section moves away from the end
 constraints, the inner hoop stress becomes tensile and approaches an asymptote of
@@ -452,7 +525,9 @@ porosity to be the most favorable thermally. This section examines the full
 interaction by computing all twenty-five combinations of the five GPL patterns
 with the five porosity patterns, each combination labeled (for example X-GPL +
 V-Por). The dimensionless outer-surface temperature and the hoop-stress profile
-of every combination are shown as a 5×5 matrix in Figure 4-13.
+of every combination are shown as a 5×5 matrix in Figure 4-18.
+
+**Figure 4-18.**
 
 ![Full 25-case GPL x porosity matrix: through-wall dimensionless temperature T*(xi) for every pattern pair; porosity A is a universal thermal barrier.](figures_ch4_bw/matrix25_Tstar.png){width=6in}
 
@@ -465,6 +540,8 @@ roughly twenty-six-fold reduction with respect to the reference (0.883) — whil
 its stress state remains benign (the inner hoop stress is a small compressive
 −0.378). This confirms the design recommendation of the thesis for thermal
 protection.
+
+**Figure 4-19.**
 
 ![Full 25-case GPL x porosity matrix: hoop-stress profile Sigma_thth(xi) for every pattern pair.](figures_ch4_bw/matrix25_Sigma_thth.png){width=6in}
 
@@ -487,9 +564,11 @@ this work.
 
 ## 4-14. Effect of the coupling of the equations
 
+**Figure 4-20.**
+
 ![Effect of thermo-mechanical coupling: fully coupled versus uncoupled energy equation.](figures_ch4_bw/I_coupling.png){width=6in}
 
-Figure 4-14 compares the fully coupled model with the uncoupled one (the
+Figure 4-20 compares the fully coupled model with the uncoupled one (the
 dilatation-rate term removed from the energy equation). At the reference
 conditions the uncoupled model overestimates the peak mid-point temperature by
 about 1.2 % (0.937 versus 0.926) and the outer-surface temperature by a similar
@@ -502,9 +581,11 @@ should be solved when the wave signature matters, despite its higher cost.
 
 ## 4-15. Effect of the outer-surface convection coefficient
 
+**Figure 4-21.**
+
 ![Effect of the outer-surface convection coefficient h_c = 10 / 100 / 1000 W/m2K.](figures_ch4_bw/J_convection.png){width=6in}
 
-Figure 4-15 examines the outer-surface convection coefficient for h_c = 10, 100
+Figure 4-21 examines the outer-surface convection coefficient for h_c = 10, 100
 and 1000 W/m²K, corresponding to Biot numbers Bi = h_c h/k̄ ≈ 0.07 to 6.6. As h_c
 increases, the outer surface turns from nearly adiabatic into an effective heat
 sink: the outer-surface temperature drops from 0.883 through 0.591 to 0.107, the
@@ -517,9 +598,11 @@ distinguished in design.
 
 ## 4-16. Effect of the wall thickness
 
+**Figure 4-22.**
+
 ![Effect of the wall thickness, radius ratio R_o/R_i = 1.25 / 1.5 / 2.0 (inner radius fixed).](figures_ch4_bw/K_thickness.png){width=6in}
 
-Figure 4-16 compares three cylinders with radius ratios R_o/R_i = 1.25, 1.5 and
+Figure 4-22 compares three cylinders with radius ratios R_o/R_i = 1.25, 1.5 and
 2.0 (inner radius fixed at 1 m; wall thickness 0.25, 0.5 and 1.0 m); the time
 scale of each is nondimensionalized with its own wall thickness. The thin wall
 (ratio 1.25) is crossed quickly by the thermal wave, so its outer surface heats
@@ -535,17 +618,19 @@ against a large, mildly stressed but strongly compressive thick wall.
 
 ## 4-17. Response to a Gaussian thermal shock
 
+**Figure 4-23.**
+
 ![Response to a Gaussian thermal shock: Lord-Shulman versus Fourier; the LS pulse arrives later, stronger and persists.](figures_ch4_bw/M_gauss_shock.png){width=6in}
 
 In this study the sustained ramp is replaced by a short Gaussian pulse of the
 inner-surface temperature, and the response is compared under the Lord-Shulman and
-Fourier theories (Figure 4-17). The loading exposes the essential difference
+Fourier theories (Figure 4-23). The loading exposes the essential difference
 between wave-like and diffusive transport: under Fourier conduction the pulse
 arrives at the mid-thickness early, smeared and weak (peak 0.195 at Fo ≈ 0.18) and
 has practically vanished by the end of the interval. Under the Lord-Shulman theory
 the pulse travels as a coherent wave packet: it arrives later (Fo ≈ 0.31), about
 two and a half times stronger (peak 0.478), and leaves persistent oscillations
-behind. The accompanying wave-front figures (Figure 4-17b) show the sharp
+behind. The Lord-Shulman solution shows a sharp
 second-sound front marching through the wall — the clearest visual signature of the
 finite propagation speed. Under impulsive loads the classical theory therefore
 substantially underestimates the transient thermal, and hence mechanical, severity
@@ -556,9 +641,9 @@ of the shock — a strong argument in favor of the generalized theory.
 To position the Newmark scheme used in this thesis, five alternative time
 integrators were run on the identical benchmark problem (transient conduction with
 known exact solution; error measure: maximum temperature error at t = 10 s). The
-results are summarized in Table 4-3.
+results are summarized in Table 4-7.
 
-**Table 4-3: Comparison of time-integration methods on the same spatial system.**
+**Table 4-7: Comparison of time-integration methods on the same spatial system.**
 
 | method | max error (K) | CPU time (s) |
 |---|---|---|
@@ -602,6 +687,8 @@ work over comparable previous studies.
 
 ## 4-20. Comparison of the generalized thermoelasticity theories
 
+**Figure 4-24.**
+
 ![Comparison of the generalized thermoelasticity theories: Fourier / Lord-Shulman / dual-phase-lag / Green-Naghdi III.](figures_ch4_bw/T3_theories.png){width=6in}
 
 In the final extension study the reference problem is solved under four
@@ -609,7 +696,7 @@ thermoelasticity theories with matched parameters: the classical coupled Fourier
 theory, the Lord-Shulman theory [4], the dual-phase-lag (DPL) theory [74] with
 τ_q = τ0 and τ_T = τ_q/2, and the Green-Naghdi type-III theory [67] with
 k* = k/τ0 (so that its wave speed equals the Lord-Shulman one). According to
-Figure 4-18, the peak mid-point temperatures order as Fourier 0.950 < DPL 0.956 <
+Figure 4-24, the peak mid-point temperatures order as Fourier 0.950 < DPL 0.956 <
 Lord-Shulman 0.962 < Green-Naghdi 1.581. Two observations follow. First, at the
 mild reference relaxation time the Fourier, DPL and Lord-Shulman peaks lie close
 together, because the wave is weak; DPL interpolates between Fourier and
@@ -661,4 +748,7 @@ The main findings of this chapter can be summarized as follows:
    points per direction than finite differences or linear finite elements; and the
    four-theory map (Fourier / Lord-Shulman / DPL / Green-Naghdi) charts where the
    theories diverge for this class of structures.
+
+
+
 

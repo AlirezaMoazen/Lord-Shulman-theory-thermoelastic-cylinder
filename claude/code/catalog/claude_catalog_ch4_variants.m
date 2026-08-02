@@ -84,8 +84,7 @@ for qty=1:2
         plot(xi,y,'-','Color',cl,'LineWidth',1.0); grid on; box on;
         set(gca,'FontName','Times New Roman','FontSize',6);
         title(sprintf('%s-GPL + %s-Por',pats{gi},pats{pj}),'FontSize',6,'FontWeight','normal');
-        if pj==1, ylabel(ql{qty},'FontSize',7); end
-        if gi==5, xlabel('\xi','FontSize',7); end
+        ylabel(ql{qty},'FontSize',6); xlabel('\xi','FontSize',6);   % Prom.4: axis labels on every subplot
     end, end
     sgtitle(sprintf('25-case GPL \\times porosity matrix — %s',ql{qty}),'FontName','Times New Roman','FontSize',13);
     print(fg,fullfile(co,['matrix25_' qn{qty} '.png']),'-dpng','-r120'); close(fg); fprintf('color matrix %s\n',qn{qty});

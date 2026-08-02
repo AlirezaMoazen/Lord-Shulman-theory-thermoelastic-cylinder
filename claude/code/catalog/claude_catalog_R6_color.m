@@ -10,7 +10,7 @@ Ust=@(u,h) u./((1-nu_ref).*alp_ref.*T_inf.*h); Sst=@(s)(1+nu_ref).*s./(E_ref.*al
 
 % COLOUR style set (up to 5 curves)
 STY.co={[0 0.447 0.741],[0.850 0.325 0.098],[0.466 0.674 0.188],[0.494 0.184 0.556],[0.20 0.20 0.20]};
-STY.ls={'-','-','-','-','--'}; STY.mk={'o','s','^','d','v'};
+STY.ls={'-','-','-','-','-'}; STY.mk={'o','s','^','d','v'};   % Prom.4: solid lines only in colour plots
 STY.lw=[1.6 1.4 1.4 1.4 1.4]; FNT='Times New Roman'; FSZ=9;
 
 studies = { ...
@@ -55,7 +55,7 @@ for si=1:size(studies,1)
     subplot(2,2,4); hold on;
     for ci=1:numel(cnames), d=D{ci}; Ri=d.r_nodes{1}(1); Ro=d.r_nodes{end}(end); xi=(d.r_all(:)-Ri)/(Ro-Ri); curve(xi,Sst(d.S_tt),ci,STY); end
     fin(gca,FNT,FSZ,'\xi','\Sigma_{\theta\theta}','(4) \Sigma_{\theta\theta}(\xi)');
-    sgtitle(strrep(sname,'_','\_'),'FontName',FNT,'FontSize',12);
+    % Prom.4: no sgtitle on the figure (number/caption added in the document)
     print(f1,fullfile(cdir,[sname '.png']),'-dpng','-r130'); savefig(f1,fullfile(cdir,[sname '.fig'])); close(f1);
     made{end+1}=sname; fprintf('R6 color: %s\n',sname); %#ok<SAGROW>
 end
