@@ -107,7 +107,7 @@ plot(tstar, Ustar, 'b-', 'LineWidth', 1.6); hold on;
 plot(ref_paper(:,1), ref_paper(:,2), 'ks', 'MarkerSize',9, 'MarkerFaceColor','k');
 plot(ref_ansys(:,1), ref_ansys(:,2), 'r^', 'MarkerSize',9);
 xlabel('t^* = t/t_0'); ylabel('U^* = u k^*/(P_0 h)');
-legend('Present (claude\_R2)','Malekzadeh & Heydarpour (2012)','ANSYS', ...
+legend('Present','Malekzadeh & Heydarpour (2012)','ANSYS', ...
        'Location','northwest');
 grid on; box on;
 title('Radial displacement at inner surface, z = L/2');

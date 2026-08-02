@@ -403,14 +403,14 @@ properties.
 [شکل: C_relaxation]
 
 Figure 4-14 compares Fourier conduction (τ* = 0) with four dimensionless
-relaxation times τ* = 0.04, 0.15, 0.44 and 0.87. Under Fourier conduction the
+relaxation times τ* = 0.04, 0.15 and 0.44. Under Fourier conduction the
 mid-point temperature increases monotonically and never exceeds the driving value
 (peak 0.950), since classical diffusion, with its unbounded propagation speed,
 cannot produce an overshoot. With the relaxation time active in the Lord-Shulman
 theory the heat propagates as a wave of finite speed √(α̂/τ0): the peak grows to
-0.953, 0.962, 1.166 and 1.271 as τ* increases, and for the two larger values the
-temperature **overshoots** even the inner-surface value — reaching 1.271 at
-τ* = 0.87 — a purely hyperbolic phenomenon impossible in the parabolic Fourier
+0.953, 0.962 and 1.166 as τ* increases, and at the largest value the
+temperature **overshoots** even the inner-surface value — reaching 1.166 at
+τ* = 0.44 — a purely hyperbolic phenomenon impossible in the parabolic Fourier
 theory. At the mild reference value τ* = 0.15 the overshoot is still small (0.962),
 which is why the reference histories of the other studies show only a gentle peak;
 the wave signature becomes dominant only as the relaxation time is increased. The
@@ -670,7 +670,7 @@ The main findings of this chapter can be summarized as follows:
    (converged from N_L = 3–5) and time step (Δt ≤ 2 s) — before the solver was
    verified in five independent tests against exact solutions and references.
 2. The Lord-Shulman thermal wave produces a mid-wall temperature overshoot that
-   grows with the relaxation time, up to T* = 1.271 at τ* = 0.87 — impossible under
+   grows with the relaxation time, up to T* = 1.166 at τ* = 0.44 — impossible under
    Fourier conduction — with the characteristic peak-trough shape of the reflecting
    wave; at the mild reference τ* = 0.15 the overshoot is small.
 3. Placing the GPLs at the heated surface (pattern V) and the pores at the cooled

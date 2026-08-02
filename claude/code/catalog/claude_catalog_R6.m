@@ -40,7 +40,7 @@ studies = { ...
  'E_porosity_level',  {'E_EM3_9675','BASE','E_EM3_7776'}, {'e_{m3}=0.9675','0.8604','0.7776'};
  'D_wt_low',          {'D_W_001','BASE','D_W_005','D_W_009','D_W_015'}, {'W=0.1%','0.3%','0.5%','0.9%','1.5%'};
  'D2_wt_high',        {'D2_W_010','D2_W_020','D2_W_040','D2_W_080'}, {'W=1%','2%','4%','8%'};
- 'C_relaxation',      {'C_FOURIER','C_TAU_004','C_TAU_015','C_TAU_044','C_TAU_087'}, {'Fourier','\tau^*=0.04','0.15','0.44','0.87'};
+ 'C_relaxation',      {'C_FOURIER','C_TAU_004','C_TAU_015','C_TAU_044'}, {'Fourier','\tau^*=0.04','0.15','0.44'};
  'F_end_BC',          {'BASE','F_BC_SC','F_BC_C'}, {'S-S','S-C','C-C'};
  'G_pressure',        {'G_P000','G_P010','BASE','G_P100'}, {'P_i=0','10 MPa','50 MPa','100 MPa'};
  'I_coupling',        {'BASE','I_UNCOUPLED'}, {'coupled','uncoupled'};

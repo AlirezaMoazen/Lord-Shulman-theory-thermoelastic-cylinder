@@ -58,7 +58,7 @@ for qty=1:2
         title(sprintf('%s-GPL + %s-Por',pats{gi},pats{pj}),'FontSize',6,'FontWeight','normal');
         ylabel(qlab{qty},'FontSize',6); xlabel('\xi','FontSize',6);   % Prom.4: axis labels on every subplot
     end, end
-    sgtitle(sprintf('25-case GPL \\times porosity matrix  —  %s',qlab{qty}),'FontName','Times New Roman','FontSize',13);
+    % Prom.4: no top title on the 25-matrix figure
     print(f,fullfile(cdir,['matrix25_' qnames{qty} '.png']),'-dpng','-r120');
     savefig(f,fullfile(cdir,['matrix25_' qnames{qty} '.fig'])); close(f);
     fprintf('matrix25: %s\n',qnames{qty});
