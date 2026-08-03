@@ -29,12 +29,12 @@ for li=1:numel(L)
     subplot(1,2,1); hold on;
     for ci=1:nc, d=D{ci}; k=mod(ci-1,6)+1; plot(gx(d),Sst(d.S_tt),'Color',CO{k},'LineStyle',LS{k},'LineWidth',1.4); end
     grid on; box on; set(gca,'FontName','Times New Roman','FontSize',10);
-    xlabel('\xi'); ylabel('\Sigma_{\theta\theta}'); title('(a) hoop-stress profile','FontWeight','normal');
+    xlabel('\xi'); ylabel('\Sigma_{\theta\theta}');   % Prom.5: panel title removed per author
     legend(lg,'Location','best','FontSize',8);
     subplot(1,2,2); hold on;
     for ci=1:nc, d=D{ci}; k=mod(ci-1,6)+1; plot(gx(d),Tst(d.T_all),'Color',CO{k},'LineStyle',LS{k},'LineWidth',1.4); end
     grid on; box on; set(gca,'FontName','Times New Roman','FontSize',10);
-    xlabel('\xi'); ylabel('T^*'); title('(b) temperature profile','FontWeight','normal');
+    xlabel('\xi'); ylabel('T^*');   % Prom.5: panel title removed per author
     print(fg,fullfile(outdir,[L(li).nm '.png']),'-dpng','-r140'); close(fg);
   end
   fprintf('conv2 %s\n',L(li).nm);

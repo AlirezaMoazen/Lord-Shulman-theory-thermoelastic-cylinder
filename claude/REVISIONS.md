@@ -2,8 +2,9 @@
 <!-- Author directive 2026-07-28: apply the revision-number rule to ALL files so
      the changes and progress are followable. THIS file is the single place to
      track it. Rule: every deliverable carries _R<n>; the first version is R1;
-     any change = a NEW revision file (never edit a working file in place);
-     audit fixes = _R<n>_<m>. git commits are the dated timeline (bottom). -->
+     any change = a NEW revision file (never edit a working file in place).
+     Author directive 2026-08-03: MINOR change = _R<n>.<m> (e.g. R4.1, R4.2); MAJOR change = _R<n+1>.
+     git commits are the dated timeline (bottom). -->
 
 ## How to read this
 - **Current** = the revision you should use now. Older revisions are kept (frozen) for provenance.
@@ -31,7 +32,7 @@
 ## 4. Results chapter 4
 | Artifact | Current | History |
 |---|---|---|
-| `RESULTS_CHAPTER_FA/EN*_R#.md` (+ docx) | **R4** | base → R2 (authored FA+EN) → R3 (old geometry: split convergence/validation, aspect+infinite, 4×4 matrix, pressure 0–100 MPa, peak-trough/mirror) → **R4 = full rebuild for the NEW geometry (R_i 1 / R_o 1.5 / l 2.1), Heydarpour dimensionless convention (Fo=α̂t/h²), notation l=length/h=thickness; all 21 sections' numbers re-extracted from `param_studies_ch4`; Prom.3 applied (25-case matrix, a/b & b/t legends, sine study dropped); delivered as 4 docx (EN/FA × bw/color, 23 inlined figures each) built from `figures_ch4_bw` / `figures_ch4_color`. Open: Heydarpour citation [x], figure numbers, optional 4-17 wave-front.** |
+| `RESULTS_CHAPTER_FA/EN*_R#.md` (+ docx) | **R4.1** | base → R2 (authored FA+EN) → R3 (old geometry: split convergence/validation, aspect+infinite, 4×4 matrix, pressure 0–100 MPa, peak-trough/mirror) → **R4 = full rebuild for the NEW geometry (R_i 1 / R_o 1.5 / l 2.1), Heydarpour dimensionless convention (Fo=α̂t/h²), notation l=length/h=thickness; all 21 sections' numbers re-extracted from `param_studies_ch4`; Prom.3 applied (25-case matrix, a/b & b/t legends, sine study dropped); delivered as 4 docx (EN/FA × bw/color, 23 inlined figures each) built from `figures_ch4_bw` / `figures_ch4_color`. Heydarpour citation resolved to [69].** → **R4.1 (minor, Prom.5)** = removed the descriptive top-title from every figure (4-panel study, convergence, benchmarks — axis labels + legends kept, per author's "delete the title on top, keep the legend"); dropped Fig 4-6 (bench3: only the present solution was plotted, no Bagri & Eslami data overlaid → not a real comparison) and renumbered figures to **4-6…4-23** in both EN & FA (also fixed a stale pressure-figure cross-reference, 4-11→4-15); cropped benchmark 1 (Fig 4-4) to t*∈[0,0.5] to zoom the three-point match; benchmark 2 (Fig 4-5) title removed, legend upper-right. 4 docx rebuilt (23 figures each). **R4 kept frozen.** Open: optional §4-17 wave-front; final animation.** |
 | `FIGURE_CAPTIONS*.md` | **R3** | base → R2 → **R3** (22 figs, new numbering) |
 
 ## 5. Other thesis deliverables (each is at R1 unless noted; next change → R2)

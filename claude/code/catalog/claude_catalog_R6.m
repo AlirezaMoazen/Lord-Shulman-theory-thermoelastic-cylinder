@@ -117,5 +117,5 @@ end
 function fin(ax,FNT,FSZ,xl,yl,tl)
     grid(ax,'on'); box(ax,'on'); set(ax,'FontName',FNT,'FontSize',FSZ);
     xlabel(ax,xl,'FontName',FNT); ylabel(ax,yl,'FontName',FNT);
-    title(ax,tl,'FontName',FNT,'FontWeight','normal','FontSize',FSZ+1);
+    % Prom.5: panel title removed per author; panel identified by axis labels + figure number (tl unused)
 end

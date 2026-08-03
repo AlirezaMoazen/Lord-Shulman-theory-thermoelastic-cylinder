@@ -110,7 +110,8 @@ xlabel('t^* = t/t_0'); ylabel('U^* = u k^*/(P_0 h)');
 legend('Present','Malekzadeh & Heydarpour (2012)','ANSYS', ...
        'Location','northwest');
 grid on; box on;
-title('Radial displacement at inner surface, z = L/2');
+xlim([0 0.5]);   % Prom.5: crop to matching half (reference data only at t*=0.1,0.3,0.5; response symmetric about t*=0.5 peak) to zoom on the agreement
+% title('Radial displacement at inner surface, z = L/2');   % Prom.5: top title removed per author
 saveas(fig1, fullfile(outdir,sprintf('bench1_U_NL%d.fig',NL)));
 print(fig1, fullfile(outdir,sprintf('bench1_U_NL%d.png',NL)), '-dpng', '-r300');
 
@@ -123,7 +124,7 @@ xlabel('t^* = t/t_0'); ylabel('S^*_{ii} = \sigma_{ii}/P_0');
 legend('S^*_{\theta\theta}','S^*_{zz}','S^*_{rr}','Reference values', ...
        'Location','northwest');
 grid on; box on;
-title('Stresses at inner surface, z = L/2');
+% title('Stresses at inner surface, z = L/2');   % Prom.5: top title removed per author
 saveas(fig2, fullfile(outdir,sprintf('bench1_S_NL%d.fig',NL)));
 print(fig2, fullfile(outdir,sprintf('bench1_S_NL%d.png',NL)), '-dpng', '-r300');
 
