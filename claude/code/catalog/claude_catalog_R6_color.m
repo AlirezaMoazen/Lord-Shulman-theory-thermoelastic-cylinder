@@ -26,7 +26,7 @@ studies = { ...
  'J_convection',      {'BASE','J_HC_100','J_HC_1000'}, {'h_c=10','100','1000'};
  'K_thickness',       {'K_RO_125','BASE','K_RO_200'}, {'R_o/R_i=1.25','1.5','2.0'};
  'L_layers',          {'L_NL_3','L_NL_5','BASE','L_NL_9','L_NL_15'}, {'N_L=3','5','7','9','15'};
- 'Q_length',          {'Q_L_1','BASE','Q_L_5','Q_L_10'}, {'l=1','2.1','5','10'};
+ 'Q_length',          {'Q_L_1','BASE','Q_L_5','Q_L_10'}, {'L=1','2.1','5','10'};
  'O_aspect_ab',       {'O_AB_100','BASE','O_AB_267'}, {'a/b=1.0','1.67','2.67'};
  'P_aspect_bt',       {'P_BT_500','BASE','P_BT_2000'}, {'b/t=500','1000','2000'};
  'M_gauss_shock',     {'M_GAUSS_LS','M_GAUSS_FOU'}, {'LS','Fourier'};
