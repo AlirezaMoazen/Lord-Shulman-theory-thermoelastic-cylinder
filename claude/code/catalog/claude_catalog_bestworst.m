@@ -15,28 +15,29 @@ pdir=fullfile(base,'param_studies_ch4');
 ahat=8.9708e-5; E_ref=4.433e9; nu_ref=0.3395; alp_ref=5.9814e-5; T_inf=300;
 Fo=@(t,h) ahat.*t./h.^2; Tst=@(T)(T-T_inf)./T_inf;
 Ust=@(u,h) u./((1-nu_ref).*alp_ref.*T_inf.*h); Sst=@(s)(1+nu_ref).*s./(E_ref.*alp_ref.*T_inf);
-cases ={'H_UD_UD','H_V_A','H_A_UD','H_X_V'};
-labels={'UD-UD (reference)','V-A (best thermal)','A-UD (worst thermal)','X-V (worst stress)'};
-D={}; for ci=1:4, D{ci}=load(fullfile(pdir,[cases{ci} '.mat']),'tv','hist_T','hist_U','r_nodes','r_all','T_all','S_tt'); end
-% B&W: reference black, best-thermal solid-grey, worst-thermal dashed-black, worst-stress dashed-grey
-BW.co={[0 0 0],[0.45 0.45 0.45],[0 0 0],[0.55 0.55 0.55]}; BW.ls={'-','-','--','--'}; BW.mk={'o','^','s','d'}; BW.lw=[1.5 1.4 1.4 1.4];
-% colour: reference grey, best-thermal blue (cool), worst-thermal red (hot), worst-stress green
-CO.co={[0.20 0.20 0.20],[0 0.447 0.741],[0.850 0.325 0.098],[0.466 0.674 0.188]}; CO.ls={'-','-','-','-'}; CO.mk={'o','^','s','d'}; CO.lw=[1.6 1.5 1.5 1.5];
+% UD-UD reference; V-A best thermal & best mechanical (inner-surface hoop); A-UD worst thermal;
+% X-V worst mechanical; O-A second-best mechanical (also second-best thermal). Legend = bare names
+% (Prom 5: no parenthetical descriptors); best/worst spelled out in the caption and section 4-13 text.
+cases ={'H_UD_UD','H_V_A','H_A_UD','H_X_V','H_O_A'};
+labels={'UD-UD','V-A','A-UD','X-V','O-A'};
+D={}; for ci=1:5, D{ci}=load(fullfile(pdir,[cases{ci} '.mat']),'tv','hist_T','hist_U','r_nodes','r_all','T_all','S_tt'); end
+BW.co={[0 0 0],[0.45 0.45 0.45],[0 0 0],[0.55 0.55 0.55],[0.72 0.72 0.72]}; BW.ls={'-','-','--','--',':'}; BW.mk={'o','^','s','d','v'}; BW.lw=[1.5 1.4 1.4 1.4 1.3];
+CO.co={[0.20 0.20 0.20],[0 0.447 0.741],[0.850 0.325 0.098],[0.466 0.674 0.188],[0.494 0.184 0.556]}; CO.ls={'-','-','-','-','-'}; CO.mk={'o','^','s','d','v'}; CO.lw=[1.6 1.5 1.5 1.5 1.4];
 FNT='Times New Roman'; FSZ=9;
 for mode=1:2
   if mode==1, STY=BW; outdir=fullfile(base,'figures_ch4_bw'); else, STY=CO; outdir=fullfile(base,'figures_ch4_color'); end
   f1=figure('Position',[30 50 1180 820],'Color','w');
   subplot(2,2,1); hold on;
-  for ci=1:4, d=D{ci}; hh=d.r_nodes{end}(end)-d.r_nodes{1}(1); cv(Fo(d.tv,hh),Tst(d.hist_T),ci,STY); end
+  for ci=1:5, d=D{ci}; hh=d.r_nodes{end}(end)-d.r_nodes{1}(1); cv(Fo(d.tv,hh),Tst(d.hist_T),ci,STY); end
   fn(gca,FNT,FSZ,'Fo','T^*'); legend(labels,'Location','best','FontSize',8,'FontName',FNT);
   subplot(2,2,2); hold on;
-  for ci=1:4, d=D{ci}; hh=d.r_nodes{end}(end)-d.r_nodes{1}(1); cv(Fo(d.tv,hh),Ust(d.hist_U,hh),ci,STY); end
+  for ci=1:5, d=D{ci}; hh=d.r_nodes{end}(end)-d.r_nodes{1}(1); cv(Fo(d.tv,hh),Ust(d.hist_U,hh),ci,STY); end
   fn(gca,FNT,FSZ,'Fo','U^*');
   subplot(2,2,3); hold on;
-  for ci=1:4, d=D{ci}; Ri=d.r_nodes{1}(1); Ro=d.r_nodes{end}(end); xi=(d.r_all(:)-Ri)/(Ro-Ri); cv(xi,Tst(d.T_all),ci,STY); end
+  for ci=1:5, d=D{ci}; Ri=d.r_nodes{1}(1); Ro=d.r_nodes{end}(end); xi=(d.r_all(:)-Ri)/(Ro-Ri); cv(xi,Tst(d.T_all),ci,STY); end
   fn(gca,FNT,FSZ,'\xi','T^*');
   subplot(2,2,4); hold on;
-  for ci=1:4, d=D{ci}; Ri=d.r_nodes{1}(1); Ro=d.r_nodes{end}(end); xi=(d.r_all(:)-Ri)/(Ro-Ri); cv(xi,Sst(d.S_tt),ci,STY); end
+  for ci=1:5, d=D{ci}; Ri=d.r_nodes{1}(1); Ro=d.r_nodes{end}(end); xi=(d.r_all(:)-Ri)/(Ro-Ri); cv(xi,Sst(d.S_tt),ci,STY); end
   fn(gca,FNT,FSZ,'\xi','\Sigma_{\theta\theta}');
   print(f1,fullfile(outdir,'bestworst.png'),'-dpng','-r130'); savefig(f1,fullfile(outdir,'bestworst.fig')); close(f1);
   fprintf('bestworst -> %s\n',outdir);

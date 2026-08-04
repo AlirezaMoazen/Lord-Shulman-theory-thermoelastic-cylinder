@@ -578,11 +578,11 @@ While the 5×5 matrix gives the complete overview at a glance, the same twenty-f
 **4-23**
 
 ![Figure 4-23: GPL pattern comparison (UD, O, X, V, A) at A-type porosity [R_i=1, R_o=1.5, L=2.1 m, N_L=7, W_GPL=0.3%, e_m3=0.8604, A porosity, τ*=0.15, P_i=50 MPa, simply supported]](figures_ch4_bw/gplpor_porA.png){width=6in}
-To distil the interaction into a single view, Figure 4-24 draws the extreme combinations together against the UD-UD reference: the best thermal case V-A, which holds the outer-surface temperature at T* = 0.034, the worst thermal case A-UD (0.896), and the worst mechanical case X-V, whose peak hoop stress reaches 4.20 — while the UD-UD reference is itself the best mechanical case (lowest peak hoop, 2.11). The figure makes the design trade-off explicit: V-A minimizes the outer-surface temperature at the price of a larger displacement, whereas X-V is benign thermally but the most highly stressed of all twenty-five combinations.
+To distil the interaction into a single view, Figure 4-24 draws the extreme combinations together against the UD-UD reference. In thermal terms the best case is V-A (outer-surface T* = 0.034) and the worst is A-UD (0.896); in mechanical terms, measured by the inner-surface hoop stress as in Section 4-5, the best case is again V-A (a mild compressive −0.38) and the worst is X-V (4.15). Because V-A is optimal on both counts, the second-best mechanical case O-A (−0.37, which is also the second-best thermal case at T* = 0.064) is added as the next practical option. The figure makes the design trade-off explicit: the porosity-A combinations V-A and O-A minimize both the outer-surface temperature and the inner-surface stress, whereas X-V is thermally mild but by far the most highly stressed of all twenty-five combinations.
 
 **4-24**
 
-![Figure 4-24: Best and worst GPL x porosity combinations in thermal and mechanical terms: V-A (best thermal, outer T*=0.034), A-UD (worst thermal, 0.896) and X-V (worst hoop stress, 4.20), against the UD-UD reference (best mechanical, peak hoop 2.11) [R_i=1, R_o=1.5, L=2.1 m, N_L=7, W_GPL=0.3%, e_m3=0.8604, τ*=0.15, P_i=50 MPa, simply supported]](figures_ch4_bw/bestworst.png){width=6in}
+![Figure 4-24: Best and worst GPL x porosity combinations against the UD-UD reference: V-A (best thermal, outer T*=0.034, and best mechanical by inner-surface hoop stress, -0.38), A-UD (worst thermal, 0.896), X-V (worst mechanical, inner hoop 4.15), and O-A (second-best mechanical, -0.37) [R_i=1, R_o=1.5, L=2.1 m, N_L=7, W_GPL=0.3%, e_m3=0.8604, τ*=0.15, P_i=50 MPa, simply supported]](figures_ch4_bw/bestworst.png){width=6in}
 ## 4-14. Effect of the coupling of the equations
 
 **4-25**

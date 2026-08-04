@@ -532,7 +532,7 @@ While the 5×5 matrix gives the complete overview at a glance, the same twenty-f
 [شکل: gplpor_porV]
 
 [شکل: gplpor_porA]
-To distil the interaction into a single view, Figure 4-24 draws the extreme combinations together against the UD-UD reference: the best thermal case V-A, which holds the outer-surface temperature at T* = 0.034, the worst thermal case A-UD (0.896), and the worst mechanical case X-V, whose peak hoop stress reaches 4.20 — while the UD-UD reference is itself the best mechanical case (lowest peak hoop, 2.11). The figure makes the design trade-off explicit: V-A minimizes the outer-surface temperature at the price of a larger displacement, whereas X-V is benign thermally but the most highly stressed of all twenty-five combinations.
+To distil the interaction into a single view, Figure 4-24 draws the extreme combinations together against the UD-UD reference. In thermal terms the best case is V-A (outer-surface T* = 0.034) and the worst is A-UD (0.896); in mechanical terms, measured by the inner-surface hoop stress as in Section 4-5, the best case is again V-A (a mild compressive −0.38) and the worst is X-V (4.15). Because V-A is optimal on both counts, the second-best mechanical case O-A (−0.37, which is also the second-best thermal case at T* = 0.064) is added as the next practical option. The figure makes the design trade-off explicit: the porosity-A combinations V-A and O-A minimize both the outer-surface temperature and the inner-surface stress, whereas X-V is thermally mild but by far the most highly stressed of all twenty-five combinations.
 
 [شکل: bestworst]
 ## 4-14. Effect of the coupling of the equations
