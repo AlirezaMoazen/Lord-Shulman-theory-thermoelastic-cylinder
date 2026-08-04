@@ -532,11 +532,14 @@ While the 5×5 matrix gives the complete overview at a glance, the same twenty-f
 [شکل: gplpor_porV]
 
 [شکل: gplpor_porA]
+To distil the interaction into a single view, Figure 4-24 draws the extreme combinations together against the UD-UD reference: the best thermal case V-A, which holds the outer-surface temperature at T* = 0.034, the worst thermal case A-UD (0.896), and the worst mechanical case X-V, whose peak hoop stress reaches 4.20 — while the UD-UD reference is itself the best mechanical case (lowest peak hoop, 2.11). The figure makes the design trade-off explicit: V-A minimizes the outer-surface temperature at the price of a larger displacement, whereas X-V is benign thermally but the most highly stressed of all twenty-five combinations.
+
+[شکل: bestworst]
 ## 4-14. Effect of the coupling of the equations
 
 [شکل: I_coupling]
 
-Figure 4-24 compares the fully coupled model with the uncoupled one (the
+Figure 4-25 compares the fully coupled model with the uncoupled one (the
 dilatation-rate term removed from the energy equation). At the reference
 conditions the uncoupled model overestimates the peak mid-point temperature by
 about 1.2 % (0.937 versus 0.926) and the outer-surface temperature by a similar
@@ -551,7 +554,7 @@ should be solved when the wave signature matters, despite its higher cost.
 
 [شکل: J_convection]
 
-Figure 4-25 examines the outer-surface convection coefficient for h_c = 10, 100
+Figure 4-26 examines the outer-surface convection coefficient for h_c = 10, 100
 and 1000 W/m²K, corresponding to Biot numbers Bi = h_c h/k̄ ≈ 0.07 to 6.6. As h_c
 increases, the outer surface turns from nearly adiabatic into an effective heat
 sink: the outer-surface temperature drops from 0.883 through 0.591 to 0.107, the
@@ -566,7 +569,7 @@ distinguished in design.
 
 [شکل: K_thickness]
 
-Figure 4-26 compares three cylinders with radius ratios R_o/R_i = 1.25, 1.5 and
+Figure 4-27 compares three cylinders with radius ratios R_o/R_i = 1.25, 1.5 and
 2.0 (inner radius fixed at 1 m; wall thickness 0.25, 0.5 and 1.0 m); the time
 scale of each is nondimensionalized with its own wall thickness. The thin wall
 (ratio 1.25) is crossed quickly by the thermal wave, so its outer surface heats
@@ -586,7 +589,7 @@ against a large, mildly stressed but strongly compressive thick wall.
 
 In this study the sustained ramp is replaced by a short Gaussian pulse of the
 inner-surface temperature, and the response is compared under the Lord-Shulman and
-Fourier theories (Figure 4-27). The loading exposes the essential difference
+Fourier theories (Figure 4-28). The loading exposes the essential difference
 between wave-like and diffusive transport: under Fourier conduction the pulse
 arrives at the mid-thickness early, smeared and weak (peak 0.195 at Fo ≈ 0.18) and
 has practically vanished by the end of the interval. Under the Lord-Shulman theory
@@ -637,7 +640,7 @@ exact Bessel-series solution, using the identical Newmark time march. The number
 points required for each method's error to reach the time-step floor is: about 9
 to 11 for differential quadrature, about 21 for quadratic finite elements, and
 about 161 for linear finite elements and finite differences. The linear-FEM and
-FDM curves coincide at slope −2; quadratic FEM gains roughly one order of magnitude
+FDM curves coincide with the slope −2 reference line — second-order convergence, along which the error falls as N⁻² so that halving the node spacing quarters the error; quadratic FEM gains roughly one order of magnitude
 per refinement step; and the DQM error falls quasi-exponentially until the temporal
 floor. At equal accuracy the DQM system is therefore about fifteen times smaller
 per direction — squared in the (r,z) plane — which is the quantitative
@@ -647,6 +650,9 @@ of radial points already delivered three-digit accuracy. Adding the two Galerkin
 finite-element formulations to this comparison is one of the extensions of this
 work over comparable previous studies.
 
+Figure 4-29 plots the maximum error of each method against the number of radial nodes N on logarithmic axes, together with the dotted slope −2 reference line.
+
+[شکل: spatial_convergence]
 ## 4-20. Comparison of the generalized thermoelasticity theories
 
 [شکل: T3_theories]
@@ -656,7 +662,7 @@ thermoelasticity theories with matched parameters: the classical coupled Fourier
 theory, the Lord-Shulman theory [4], the dual-phase-lag (DPL) theory [74] with
 τ_q = τ0 and τ_T = τ_q/2, and the Green-Naghdi type-III theory [67] with
 k* = k/τ0 (so that its wave speed equals the Lord-Shulman one). According to
-Figure 4-28, the peak mid-point temperatures order as Fourier 0.950 < DPL 0.956 <
+Figure 4-30, the peak mid-point temperatures order as Fourier 0.950 < DPL 0.956 <
 Lord-Shulman 0.962 < Green-Naghdi 1.581. Two observations follow. First, at the
 mild reference relaxation time the Fourier, DPL and Lord-Shulman peaks lie close
 together, because the wave is weak; DPL interpolates between Fourier and
