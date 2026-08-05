@@ -16,12 +16,15 @@
 ## 1. Solver (MATLAB)
 | Artifact | Current | History |
 |---|---|---|
-| `claude_R#.m` (main solver) | **R7** | R1 fixed the broken dynamic solver (frozen) → R2 cfg engine + full-history + sine pressure → R2_1 audit fix → R3 BC options → R3_1 final porosity → R4 Gaussian shock → R5 theory switch (Fourier/LS/DPL/GN3) → R6 per-end BC + cfg-overridable GPL dims → **R7 explicit DOF numbering/mapping matrix (NodeMap + DOFmap + GridDOF + CSV export); physics digit-identical to R6 (Prom.2 p.4)** |
+| `claude_R#.m` (main solver) | **R8** | R1 fixed the broken dynamic solver (frozen) → R2 cfg engine + full-history + sine pressure → R2_1 audit fix → R3 BC options → R3_1 final porosity → R4 Gaussian shock → R5 theory switch (Fourier/LS/DPL/GN3) → R6 per-end BC + cfg-overridable GPL dims → **R7 explicit DOF numbering/mapping matrix (NodeMap + DOFmap + GridDOF + CSV export); physics digit-identical to R6 (Prom.2 p.4) → **R8 FINAL/DEFINITIVE revision — physics byte-identical to R7; default config set to the thesis reference case (LS, N_L=7, R_i=1.0, R_o=1.5, L=2.1, N_r=15, N_z=11, W=0.3%, h_c=10, 300→600 K, P_i=50 MPa, tau0=418 s, 3000 s / dt=1) so a standalone run reproduces the thesis; porosity patterns left for the author to finalize per MZ (A7)** |
 
 ## 2. Parametric-campaign figure scripts
 | Artifact | Current | History |
 |---|---|---|
-| `claude_param_figures*.m` | **R4** (+ `_R4_color`) | base → R2 → R3 → **R4** (adds pressure sweep, weight-fill, aspect, infinite, matrix; legend fix) + `R4_color` |
+| `claude_param_figures*.m` | **ARCHIVED** (old geometry) | base → R2 → R3 → R4 (+`_R4_color`). OLD-geometry Ch4 figure lineage that read the now-deleted `param_studies\`; **superseded in practice by the `claude_catalog_R6*` family** (§3, which reads `param_studies_ch4\` → `figures_ch4_*`). Moved to `code/_archive/` in the 2026-08-05 code audit (Prom 5 #6). |
+
+<!-- 2026-08-05 CODE AUDIT / REORG (Prom 5 #6): current solver = claude_R8 (physics ≡ R7; the Ch4 campaign still invokes R7). Current campaign = campaign/run_ch4_campaign.ps1 + run_nz_sweep.ps1 → param_studies_ch4 (86 cases). Current Ch4 figures = claude_catalog_R6* family. Current stats = code/misc/claude_chapter_stats_ch4.m → chapter_stats.csv. ARCHIVED to code/_archive/ (17 files): param_figures lineage, catalog_R1..R5(+color), old claude_chapter_stats.m, test_r5_hooke.m, claude_T2_spatial_methods.m (superseded by T2_1). ARCHIVED to campaign/_archive/ (7 files): run_param_studies v1..v6, run_R6_verify.ps1. The old param_studies/ folder (old-geometry NL=5 runs) was deleted. Both code_docs updated to R8/current pipeline; matrix documented as epoxy. -->
+
 
 ## 3. Quantity CATALOG (figure-selection tool)
 | Artifact | Current | History |

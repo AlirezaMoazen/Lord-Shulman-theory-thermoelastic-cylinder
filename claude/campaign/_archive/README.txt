@@ -1,0 +1,1 @@
+﻿Archived old-geometry / superseded scripts (see git history). code/_archive: param_figures lineage, catalog_R1..R5(+color), old chapter_stats, test_r5_hooke, T2 (superseded by T2_1). campaign/_archive: run_param_studies v1..v6, run_R6_verify.
