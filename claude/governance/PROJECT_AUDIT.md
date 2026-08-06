@@ -3,6 +3,17 @@
      author has set, and audit the whole project for anything missed. Verified
      against the current repo (HEAD 64806ea), not from memory alone. -->
 
+> **⚠️ STALE SNAPSHOT (2026-07-28) — do not trust for current status.**
+> This audit was written against the OLD geometry and the R3 results chapter,
+> both long since superseded (new geometry + Results Chapter R4.4, see
+> `REVISIONS.md`). At least one item below is now actively **wrong** (item 5,
+> Part 1 — the V/A porosity runtime warning was intentionally removed in
+> R3_1/later and no longer exists; see `code_docs/CODE_DOC_usage_FA.md`).
+> Kept as a historical record only. For current status use:
+> - `REVISIONS.md` — what's current for every artifact
+> - `THESIS_TODO.md` — what's done / remaining, refreshed 2026-08-06
+> - `DECISIONS_NEEDED.md` — genuinely open author-facing questions
+
 ## Part 1 — Protocols & frameworks you have set (adherence)
 
 | # | Rule | Status |
