@@ -124,23 +124,30 @@ Pm.O  = 1 - em1*cos(pi*zet);
 Pm.X  = 1 - em2*(1 - cos(pi*zet));
 Pm.V  = 2*em4*cos(pi*zet/2 + pi/4);                   % max at INNER face
 Pm.A  = 2*em5*cos(pi*zet/2 - pi/4);                   % max at OUTER face
+% Porosity (stiffness-side) coefficient e = E/E_s = (rho/rhos)^2 = P_m^2
+% (thesis eq. 3-39/3-40..3-44: e_i is the POROSITY coefficient, e_mi is the
+% MASS coefficient; e = P_m^2 pointwise for every pattern). Plotted here
+% instead of the mass factor P_m so the figure matches "porosity intensity"
+% as used in the thesis text, not the mass-retention factor.
+Pf.UD = Pm.UD.^2; Pf.O = Pm.O.^2; Pf.X = Pm.X.^2; Pf.V = Pm.V.^2; Pf.A = Pm.A.^2;
 % NOTE: patterns plotted EXACTLY as the solver computes them (no clipping).
-% The V/A formulas overshoot P_m>1 near their peak face — shown faithfully so
-% the schematic represents the actual model (relevant to the A7 porosity review).
+% The V/A formulas overshoot P_m>1 (so e=P_m^2>1) near their peak face —
+% shown faithfully so the schematic represents the actual model (relevant
+% to the A7 porosity review).
 zlay = ((1:NL)-4)/NL;                                 % 7 layer-centre coords
 xilay = zlay + 0.5;
 mIdx = arrayfun(@(v) find(abs(xi-v)==min(abs(xi-v)),1), xilay);      % marker pos
 
 fig = figure('Units','inches','Position',[1 1 7.4 5],'Color','w'); hold on; box on;
 for ci = 1:5
-    plot(xi, Pm.(pat{ci}),'LineStyle','-','Color',CO{ci},'LineWidth',1.8,...
+    plot(xi, Pf.(pat{ci}),'LineStyle','-','Color',CO{ci},'LineWidth',1.8,...
          'Marker',MK{ci},'MarkerIndices',mIdx,'MarkerSize',7,'MarkerFaceColor','w');
 end
 grid on; set(gca,'FontSize',FSZ);
 xlabel('through-thickness coordinate  \xi = (r-R_i)/h   ( \zeta = \xi - 1/2 )','FontSize',FSZ);
-ylabel('porosity mass factor  P_m = \rho / \rho_s','FontSize',FSZ);
+ylabel('porosity coefficient  e = E/E_s = (\rho/\rho_s)^2','FontSize',FSZ);
 legend(pat,'Location','southoutside','Orientation','horizontal','FontSize',10);
-xlim([0 1]); ylim([0 1.5]); yline(1,'-','Color',[0.5 0.5 0.5],'HandleVisibility','off');
+xlim([0 1]); ylim([0 2.2]); yline(1,'-','Color',[0.5 0.5 0.5],'HandleVisibility','off');
 exportgraphics(fig,fullfile(outdir,'porosity_patterns_schematic.png'),'Resolution',300);
 close(fig); fprintf('done: porosity_patterns_schematic.png\n');
 
