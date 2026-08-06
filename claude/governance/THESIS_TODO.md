@@ -1,66 +1,99 @@
 # THESIS MASTER TO-DO — start → defense
 
-Legend: ✅ done · 🔄 in progress · ⬜ remaining · ⏸ blocked on user
-Last updated: 2026-07-27. Priority for autonomous work = topmost 🔄/⬜ item.
+Legend: ✅ done · 🔄 in progress · ⬜ remaining · ⏸ blocked on author
+Last updated: 2026-08-06. Rewritten from scratch — the previous version (dated
+2026-07-27) predated the geometry change, the full Ch1–3 draft, Ch4 R4.4, and
+everything else below; it was actively misleading rather than just outdated.
+For open author-facing questions in detail, see `DECISIONS_NEEDED.md`.
 
-## PHASE 0 — Understanding & setup
-1. ✅ Understand the problem: transient coupled Lord-Shulman thermoelasticity of a multilayer porous GPL-reinforced hollow cylinder; layerwise DQM (r,z) + Newmark (t), MATLAB.
-2. ✅ Read the repository, the math spec (MZ-R 0.docx), the Rezaei twin thesis, and the 169-paper library (annotated bibliography).
-3. ✅ Diagnose the long-broken dynamic solver (4 fatal bug families).
+## PHASE 0 — Understanding, solver correctness ✅ DONE
+1. ✅ Understood the problem; read the repo, MZ spec, Rezaei twin thesis, 169-paper library.
+2. ✅ Diagnosed the original broken dynamic solver (4 fatal bugs) — see `code_docs/CODE_FIX_HISTORY_EN/FA.md`.
+3. ✅ Rewrote it as `claude_R1.m` (frozen, verified against the static solver).
 
-## PHASE 1 — Solver line (claude/)
-4. ✅ Fix solver → claude_R1 (frozen, verified).
-5. ✅ Feature revisions: R2 (cfg engine), R3 (BC options), R3_1 (final porosity), R4 (Gaussian shock), R5 (theory switch FOURIER/LS/DPL/GN3), R6 (per-end BC + cfg-overridable GPL dims).
-6. ✅ Six-benchmark validation (static 2e-11; IJPVP table; exact Bessel; ode15s; Bagri-Eslami waves; layer convergence).
+## PHASE 1 — Solver line ✅ DONE (R1 → R9)
+4. ✅ R1 (fixed, frozen) → R2 (cfg engine) → R3/R3_1 (BC options, final porosity) →
+   R4 (Gaussian shock) → R5 (theory switch FOURIER/LS/DPL/GN3) → R6 (per-end BC) →
+   R7 (explicit DOF-numbering matrices) → **R8 (FINAL/DEFINITIVE, thesis-of-record
+   — default config = thesis reference case)** → R9 (2026-08-06, performance-only,
+   vectorized assembly, ~2.1× faster, validated digit-identical to R8 — not
+   adopted as thesis-of-record, available on request). Full history in
+   `REVISIONS.md` §1.
+5. ✅ Six-benchmark validation suite (static-limit 2e-11; IJPVP Table 6 + ANSYS;
+   exact Bessel conduction; Newmark vs `ode15s`; Bagri-Eslami LS waves;
+   spatial/time-integrator convergence).
 
-## PHASE 2 — Decisions closed
-7. ✅ Physics/spec decisions: porosity patterns final; loading (600/300 K, h_c=10, P=1 MPa base); geometry R_i=0.1, R_o=0.2 (thick wall); dimensionless set; end-BC S base + C compare (F/R excluded from thesis).
+## PHASE 2 — Geometry, loading, mesh: all locked ✅ DONE
+6. ✅ Thesis reference case: R_i=1.0 m, R_o=1.5 m, L=2.1 m, N_L=7, N_r=15, N_z=11
+   (mesh locked 2026-08-01 after an independent convergence study —
+   see `REVIEW3_PROM3.md` item 4). W_GPL=0.3%, e_m3=0.8604, T 300→600 K,
+   h_c=10, P_i=50 MPa, τ*=0.15 (τ₀=418 s), total_time=3000 s, dt=1 s.
+7. ⏸ Porosity pattern formulas — author finalizing against the MZ file
+   personally (see `DECISIONS_NEEDED.md` item 5). Current code porosity is
+   frozen/correct as-is until then; nothing else waits on this.
 
-## PHASE 3 — Base campaign & extensions
-8. ✅ 33-case base campaign (studies A–N), 0 failures.
-9. ✅ Extensions T1 (6 time integrators), T2 (DQM vs FDM vs FEM), T3 (4 theories).
-10. ✅ Dimensionless production figures (R2/R3 scripts).
+## PHASE 3 — Parametric campaign (new geometry) ✅ DONE
+8. ✅ 86-case campaign (`param_studies_ch4/`, via `campaign/run_ch4_campaign.ps1` +
+   `run_nz_sweep.ps1`), including the full 25-case GPL×porosity matrix (Prom.3).
+9. ✅ Figure catalog rebuilt for the new geometry: `claude_catalog_R6*` family
+   (4-panel selection, full-component, wave-fronts, 25-matrix, convergence),
+   `claude_catalog_gplpor.m`, `claude_catalog_bestworst.m`.
+10. ✅ `chapter_stats.csv` regenerated correctly (2026-08-05 fix — the old
+    generator was reading a stale old-geometry folder; new one is
+    `code/misc/claude_chapter_stats_ch4.m`).
 
-## PHASE 4 — Supervisor review round 1 (Prom 3-7) → results chapter R3
-11. ✅ Receive, transcribe, and confirm the handwritten review (authoritative Google-Doc version).
-12. ✅ Categorize review into delete / correct / add lists.
-13. ✅ Run v4 cases: pressure sweep 0–100 MPa (no گسست), layers N_L=9/15, weight fraction W=2–3.5%.
-14. ✅ Build & verify claude_R6 (regression vs R5 = 0) for mixed BC + GPL aspect ratios.
-15. ✅ Run v5 cases: infinite-length (L=1/2/4), mixed support (S-C), GPL aspect ratios, full 4×4 GPL×porosity matrix.
-16. ✅ Generate B&W (figures_print) and COLOR (figures_color) figure sets.
-17. ✅ Draft the 10 new/revised chapter-4 sections bilingually (6 via workflow + 4 in main loop). All recovered from journal + WIP.
-18. ✅ Assemble the full R3 chapter FA + EN (21 sections): convergence (4-3) and validation (4-4) split; new sections aspect-ratio (4-8) + infinite-length (4-12); full 4×4 interaction matrix (4-13); pressure sweep 0–100 MPa (4-11); mixed support (4-10); peak-trough + mirror-pattern interpretations added; figures renumbered 4-1…4-22; captions → FIGURE_CAPTIONS_R3.md.
-19. ✅ Build the TWO Persian Word docs (RESULTS_CHAPTER_FA_R3_bw.docx via figures_print + RESULTS_CHAPTER_FA_R3_color.docx via figures_color) and the English doc (RESULTS_CHAPTER_EN_R3.docx); 22 figures embedded; fig-4-2 legend now top-right.
-20. 🔄 Referee number-check (per Prom.2 method) → commit & push the R3 chapter package.
+## PHASE 4 — Chapter 4 (Results) ✅ DONE — currently R4.4
+11. ✅ Full chapter built and iterated through supervisor review rounds
+    Prom.2/3/4/5 (see `REVISIONS.md` §4 for the complete R4→R4.4 history):
+    30 figures, 4 docx (EN/FA × bw/color), convergence/validation split into
+    dedicated sections, jump/anomaly explanations added (incl. the LS
+    second-sound spike at ξ≈0.75, §4-5), best/worst summary figure,
+    spatial-convergence table. Project-wide plotting-rule sweep applied
+    2026-08-06 (no titles/floating text, solid color lines).
+12. ⏸ Ch4-frozen examiner-flagged inconsistencies (hoop-stress double value,
+    Newmark-best claim vs its own table, GN3 dissipation wording) — need
+    author decision since Ch4 is frozen (`DECISIONS_NEEDED.md` item 7).
+13. ⏸ §4-17 wave-front animation — author-blocked on view/case/format choice.
 
-## PHASE 4b — Supervisor review round 2 (Prom.2, received 2026-07-27)
-R2a. ⬜ Color-coded editing of chapters 1–3: deletions RED, additions GREEN, default BLACK + a second version where deletions are marked but not removed (Prom.2 الف).
-R2b. ⬜ Complete the "blue"/un-analyzed sections with analysis + figures (Prom.2 ب,ج).
-R2c. ⬜ Hyperlink the table-of-contents entries to sections; complete English abstract (Prom.2 د,ه).
-R2d. ✅ Write an appendix explaining the Newmark method + briefly the comparison methods (DQM/FDM/FEM, integrators) (Prom.2 و). Done bilingually: APPENDIX_A_methods_FA/EN.md + .docx via pandoc (93 native Word equations; FA is RTL with 49 bidi paragraphs). **Validates the pandoc LaTeX→Word equation pipeline for Chapter 3.**
-R2e. ⏸ Replace porosity patterns with the NEW patterns in the MZ file, then re-run porosity cases (Prom.2 ز) — NEEDS user-confirmed formulas.
-R2f. ⏸ Fix length/thickness notation (not L / h) (Prom.2 ح) — NEEDS user's chosen symbols.
-R2g. ✅ Code documentation (Prom.2 pages 3–4): (1) short usage manual `code_docs/CODE_DOC_usage_FA.docx` (run modes, cfg mechanism, param studies, figures, outputs, revision map); (2) full technical description `code_docs/CODE_DOC_technical_FA.docx` (7-section architecture, governing eqs, DOF-numbering matrix idx_Th/U/W, M/C/K assembly, BCs, equilibration, Newmark, post-proc, helpers, verification). Both Persian RTL via pandoc.
-R2h. ⬜ Answer the GPL wt% question (0.1–2 % in lit vs up to 4 % here) — draft justification in §4-7, confirm with user.
-R2i. ✅ (Prom-1 follow-up "more graphs per part") Quantity CATALOG for figure selection, in B&W + COLOR, split into TWO parts per study with SMOOTHED curves (makima densification to ~300 pts). Revision lineage (per the revision-number rule): **`claude_catalog_R1.m` = frozen original (one 9-panel image)**; **`claude_catalog_R2.m` / `claude_catalog_R2_color.m` = current (two-part + smoothed)**. Output → `figures_catalog{,_color}/<study>_hist.png` (T*/u*/w* histories) + `_prof.png` (T*/u*/ε_θθ + σ*rr/σ*θθ/σ*zz profiles) for 19 studies. Assembled into `FIGURE_CATALOG_R5_FA.docx` (B&W) + `FIGURE_CATALOG_R5_color_FA.docx` (color) — deliverable filenames carry the revision number (currently R5). NOTE: stress/strain TIME-histories need a full-history re-run (only T/u/w histories were stored) — offered to the user.
+## PHASE 5 — Remaining thesis chapters ✅ DONE
+14. ✅ Chapter 1 (framework), Chapter 2 (literature review), Chapter 3
+    (formulation — governing equations as native Word/OMML equations via
+    pandoc, DQM+Newmark derivation, all 5 schematic figures embedded,
+    porosity schematic corrected 2026-08-06 to plot the actual porosity
+    coefficient rather than the mass factor).
+15. ✅ Chapter 5 (conclusions + future work) — kept in sync with Ch4 R4.4's
+    real numbers through the `chapter_stats.csv` fix.
+16. ✅ Appendix A (Newmark + comparison methods) and Appendix B (validation
+    diagrams, 6 figures, ANSYS framing corrected).
+17. ✅ Both abstracts (FA + EN), Master TOC, Master Figure List, Figures
+    Flipbook (36 figures).
 
-## PHASE 5 — Remaining thesis chapters
-21. ⬜ Chapter 3 (formulation & method): render the governing equations as editable Word equations via pandoc; use δ for the Newmark parameter (γ reserved for the percolation exponent); match the implemented scheme exactly.
-22. ⬜ Chapter 1 (introduction / framework) and Chapter 2 (literature review) from the annotated bibliography; establish novelty.
-23. ✅ Chapter 5 (conclusions + future work): CHAPTER5_conclusions_FA/EN.md + .docx (pandoc). 10 findings + contributions + 7 future-work items (F/R end treatment, vectorized assembly, temperature-dependent properties, radiation BC, damage/failure model for rupture, updated porosity patterns, geometric/loading extensions). Notation-light pending ح.
-24. ⬜ Validation content: ensure each benchmark has a comparison-to-paper diagram (review requirement).
+## PHASE 6 — Code documentation & governance ✅ DONE
+18. ✅ `CODE_DOC_usage_FA` / `CODE_DOC_technical_FA` — kept current through
+    every pipeline change, now mention R9.
+19. ✅ `CODE_FIX_HISTORY_EN/FA` — evidence-based writeup of the original
+    solver's bugs vs. `claude_R1.m`'s fixes.
+20. ✅ `CODE_WRITING_GUIDE_EN/FA` — teaches the codebase's recurring patterns.
+21. ✅ `EXAMINER_REVIEW_FA` (strict critique), `IMPROVEMENT_SUGGESTIONS_FA`
+    (27 items), `DEFENSE_QA_FA` (37 Q&A pairs), `BACKGROUND_EN`.
+22. ✅ Code audit/reorg (2026-08-05): 24 stale files archived to `_archive/`
+    folders (not deleted), old `param_studies/` folder deleted, both
+    code_docs corrected, matrix documented as epoxy.
+23. ✅ 13+ editable Word (.docx) versions of every chapter/report so they can
+    be read/edited outside Markdown.
 
-## PHASE 6 — Finalization & defense
-25. ⏸ Citation fixes: correct list entry #71 DOI (currently points to Hosseini 108108, not Omidi Bidgoli); add Tzou 1995 as reference [74] for the DPL theory. (needs user)
-26. ⏸ Obtain 3 must-cite papers via university access: TWS 2022 spinning FG-GPLRC LS cylinder (10.1016/j.tws.2022.109367), Sherief 2004 (10.1080/01495730490498331), Karimi Zeverdejani & Kiani 2022 (10.1080/17455030.2020.1788746). (needs user)
-27. ⬜ Persian editing pass: DELETE the free/roller (F/R) boundary conditions from the text (author directive); enforce terminology; avoid invented Persian terms (use واژه‌یاب/برساد); proofread 2–3×.
-28. ⬜ Full thesis assembly: front matter, table of contents, nomenclature, figure/table lists, reference list.
-29. ⏸ Supervisor review round 2 → apply revisions. (needs user + supervisor)
-30. ⬜ Prepare defense slides.
-31. ⏸ Thesis defense (presentation). (final milestone)
+## PHASE 7 — Finalization & defense
+24. ⏸ Citation fixes: entry #71 DOI, add Tzou 1995 as [74] (needs author).
+25. ⏸ Obtain 3 must-cite paywalled papers (needs author, see `DECISIONS_NEEDED.md`).
+26. ⬜ Full thesis assembly: front matter, final TOC, nomenclature, reference
+    list. **Deliberately held** until the thesis is otherwise final — assembling
+    early just means redoing it after every chapter edit.
+27. ⏸ Re-run porosity-dependent studies + figures once the author delivers the
+    MZ-corrected porosity formulas (Phase 2, item 7).
+28. ⬜ Defense slides — premature until the defense date is closer.
+29. ⏸ Thesis defense (final milestone).
 
-## Immediate next actions (autonomous priority order)
-- A. Recover the 6 workflow drafts from journal.jsonl and write the 4 remaining sections (pressure, supports, infinite, matrix) — main-loop, no subagents needed.
-- B. Assemble FA_R3 + EN_R3 markdown (step 18).
-- C. Build the two Persian docx + English docx (step 19) and push (step 20).
-- D. Then advance to Phase 5 (step 21, Chapter 3 equations).
+## Currently no blocking work in the main loop
+Everything not marked ⏸/⬜ above is complete and pushed. The active blockers
+are all on the author's side (see `DECISIONS_NEEDED.md`); until one of those
+resolves, the codebase/thesis text are in a stable, complete, defensible state.
