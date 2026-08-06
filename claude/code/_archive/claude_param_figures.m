@@ -84,7 +84,7 @@ for si = 1:size(studies,1)
     for ci = 1:numel(cnames)
         plot(Fo(D{ci}.tv), Tst(D{ci}.hist_T), '-', 'Color',cols(ci,:), 'LineWidth',1.5);
     end
-    xlabel('Fo'); ylabel('T^*'); grid on; box on; title('Mid-point temperature');
+    xlabel('Fo'); ylabel('T^*'); grid on; box on;
     legend(labels,'Location','best','FontSize',8);
 
     % (2) mid-point radial displacement history
@@ -92,7 +92,7 @@ for si = 1:size(studies,1)
     for ci = 1:numel(cnames)
         plot(Fo(D{ci}.tv), ust(D{ci}.hist_U), '-', 'Color',cols(ci,:), 'LineWidth',1.5);
     end
-    xlabel('Fo'); ylabel('u^*'); grid on; box on; title('Mid-point radial displacement');
+    xlabel('Fo'); ylabel('u^*'); grid on; box on;
 
     % (3) final radial temperature profile vs xi
     subplot(2,2,3); hold on;
@@ -101,7 +101,7 @@ for si = 1:size(studies,1)
         xi = (D{ci}.r_all - Ri_c)/(Ro_c - Ri_c);
         plot(xi, Tst(D{ci}.T_all), '.-', 'Color',cols(ci,:), 'LineWidth',1.2);
     end
-    xlabel('\xi'); ylabel('T^*'); grid on; box on; title('T(\xi) at final time, z = L/2');
+    xlabel('\xi'); ylabel('T^*'); grid on; box on;
 
     % (4) final hoop-stress profile
     subplot(2,2,4); hold on;
@@ -111,7 +111,6 @@ for si = 1:size(studies,1)
         plot(xi, sst(D{ci}.S_tt), '.-', 'Color',cols(ci,:), 'LineWidth',1.2);
     end
     xlabel('\xi'); ylabel('\sigma^*_{\theta\theta}'); grid on; box on;
-    title('Hoop stress at final time, z = L/2');
 
     saveas(fig, fullfile(fdir, [sname '.fig']));
     print(fig, fullfile(fdir, [sname '.png']), '-dpng', '-r300');

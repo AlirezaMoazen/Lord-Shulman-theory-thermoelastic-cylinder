@@ -9,7 +9,8 @@
 %  Anchor = BASE (N_r15, N_z11, N_L7, dt1), common to every ladder.
 %  New revision file; reads param_studies_ch4; modifies nothing else.
 clearvars; clc; close all;
-pdir='param_studies_ch4'; cdir='figures_ch4'; if ~exist(cdir,'dir'), mkdir(cdir); end
+CLROOT='c:/Users/InfosaicUser/Desktop/MSc/Lord-Shulman-theory-thermoelastic-cylinder/claude';
+pdir=fullfile(CLROOT,'param_studies_ch4'); cdir=fullfile(CLROOT,'figures_ch4'); if ~exist(cdir,'dir'), mkdir(cdir); end
 T_inf=300; E_ref=4.433e9; nu_ref=0.3395; alp_ref=5.9814e-5;
 Sst=@(s)(1+nu_ref).*s./(E_ref.*alp_ref.*T_inf);
 Tst=@(T)(T-T_inf)./T_inf;
@@ -55,8 +56,8 @@ for li=1:numel(L)
     fin(gca,'\xi','T^*','(b) temperature profile');
     subplot(2,2,3);
     semilogy(nv,max(eL2,1e-4),'ko-','LineWidth',1.5,'MarkerFaceColor','k'); hold on;
-    semilogy(nv,max(ein,1e-4),'s--','Color',[.55 .55 .55],'LineWidth',1.2,'MarkerFaceColor',[.55 .55 .55]);
-    yline(1,'-.'); yline(0.1,':'); fin(gca,L(li).xl,'rel. error vs finest (%)','(c) convergence');
+    semilogy(nv,max(ein,1e-4),'s-','Color',[.55 .55 .55],'LineWidth',1.2,'MarkerFaceColor',[.55 .55 .55]);
+    yline(1,'-','Color',[0.3 0.3 0.3]); yline(0.1,'-','Color',[0.7 0.7 0.7]); fin(gca,L(li).xl,'rel. error vs finest (%)','(c) convergence');
     legend({'L_2 profile','inner hoop','1%','0.1%'},'Location','best','FontSize',8);
     subplot(2,2,4);
     if strcmp(L(li).ct,'time'), cc=L(li).cost; m=~isnan(cc);
@@ -64,7 +65,6 @@ for li=1:numel(L)
     elseif strcmp(L(li).ct,'steps'), plot(nv,3000./nv,'ko-','LineWidth',1.5,'MarkerFaceColor','k'); yl='N_{steps}';
     else, plot(nv,nd,'ko-','LineWidth',1.5,'MarkerFaceColor','k'); yl='N_{dof}=3 N_L N_r N_z'; end
     fin(gca,L(li).xl,yl,'(d) cost');
-    sgtitle(sprintf('Convergence — %s',strrep(L(li).nm,'_','\_')),'FontName','Times New Roman','FontSize',13);
     print(fg,fullfile(cdir,[L(li).nm '.png']),'-dpng','-r140'); savefig(fg,fullfile(cdir,[L(li).nm '.fig'])); close(fg);
     fprintf('%s  L2err=[%s]  innerHoopErr=[%s] %%\n',L(li).nm,sprintf('%.3f ',eL2),sprintf('%.3f ',ein));
     if ~strcmp(L(li).nm,'conv_dt')        % dt does not change Ndof -> not on the Ndof master
@@ -77,15 +77,15 @@ fgm=figure('Position',[60 60 820 620],'Color','w','Name','conv_master'); hold on
 mk={'o','s','^','d'}; cm=lines(numel(master));
 for i=1:numel(master), [ns,is]=sort(master(i).nd);
     semilogy(ns,master(i).er(is),['-' mk{i}],'Color',cm(i,:),'LineWidth',1.6,'MarkerFaceColor',cm(i,:),'MarkerSize',6); end
-set(gca,'YScale','log'); yline(1,'k-.'); yline(0.1,'k:');
+set(gca,'YScale','log'); yline(1,'-','Color',[0.3 0.3 0.3]); yline(0.1,'-','Color',[0.7 0.7 0.7]);
 fin(gca,'N_{dof} = 3 N_L N_r N_z','L_2 error in hoop profile (%)','Minimum nodes: error vs problem size, by direction');
 legend([{master.lab},{'1%','0.1%'}],'Location','best','FontSize',9);
 print(fgm,fullfile(cdir,'conv_master.png'),'-dpng','-r140'); savefig(fgm,fullfile(cdir,'conv_master.fig')); close(fgm);
 fprintf('conv figures done -> %s\n',cdir);
 
-function fin(ax,xl,yl,tl)
+function fin(ax,xl,yl,tl) %#ok<INUSD>
     grid(ax,'on'); box(ax,'on'); set(ax,'FontName','Times New Roman','FontSize',10);
-    xlabel(ax,xl); ylabel(ax,yl); title(ax,tl,'FontWeight','normal');
+    xlabel(ax,xl); ylabel(ax,yl);
 end
 function [xu,yu]=deal_unique(x,y)
     [xu,iu]=unique(round(x(:),10)); yu=y(iu);

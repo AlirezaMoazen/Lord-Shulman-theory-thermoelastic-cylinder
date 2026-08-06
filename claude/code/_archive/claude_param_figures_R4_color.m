@@ -132,7 +132,7 @@ if all(cellfun(@(c) exist(fullfile(pdir,[c '.mat']),'file'), pc))
     legend({'P_i=0','P_i=50 MPa','P_i=100 MPa'},'Location','best','FontSize',9,'FontName',FNT);
     subplot(1,2,2); hold on;                       % linear trends vs P_i
     plot(Pv, sig_in, 'ko-','LineWidth',1.4,'MarkerFaceColor','k');
-    plot(Pv, u_end, 'ks--','LineWidth',1.2,'MarkerFaceColor','w');
+    plot(Pv, u_end, 'ks-','LineWidth',1.2,'MarkerFaceColor','w');
     prep(gca,FNT,FSZ,'P_i (MPa)','dimensionless value','Inner hoop stress & final u^* vs pressure');
     legend({'\sigma^*_{\theta\theta} (inner)','u^* (final)'},'Location','northwest','FontSize',9,'FontName',FNT);
     saveall(fig, fdir_camp, 'G2_pressure_components'); fprintf('fig: G2_pressure_components\n'); close(fig);
@@ -151,10 +151,8 @@ if ~any(isnan(HM(:)))
     imagesc(HM); colormap(parula); cb=colorbar; ylabel(cb,'outer-surface T^*','FontName',FNT);
     set(gca,'XTick',1:4,'XTickLabel',pp,'YTick',1:4,'YTickLabel',gg,'FontName',FNT,'FontSize',FSZ);
     xlabel('porosity pattern'); ylabel('GPL pattern');
-    title('Outer-surface T^* : GPL \times porosity interaction','FontWeight','normal');
     for ig=1:4, for ip=1:4
         tc = 'k'; if HM(ig,ip)<0.4, tc='w'; end
-        text(ip,ig,sprintf('%.2f',HM(ig,ip)),'HorizontalAlignment','center','Color',tc,'FontName',FNT,'FontSize',9);
     end, end
     saveall(fig, fdir_camp, 'S_interaction_matrix'); fprintf('fig: S_interaction_matrix\n'); close(fig);
 end
@@ -170,7 +168,7 @@ for q=1:numel(meth)
         'Marker',STY.mk{q},'MarkerSize',5.5,'MarkerFaceColor','w'); hold on;
 end
 mF=strcmp(Tt.method,'FDM'); NF=Tt.N(mF); eF=Tt.max_err_K(mF);
-loglog(NF, eF(1)*(NF(1)./NF).^2, ':','Color',[0.55 0.55 0.55],'LineWidth',0.9);
+loglog(NF, eF(1)*(NF(1)./NF).^2, '-','Color',[0.55 0.55 0.55],'LineWidth',0.9);
 prep(gca,FNT,FSZ,'number of radial points N','max error at t = 10 s (K)','Spatial convergence: DQM vs FDM vs FEM');
 legend([mlab,{'slope -2'}],'Location','northeast','FontSize',9,'FontName',FNT);   % <-- review fix
 saveall(fig, fdir_ext, 'T2_spatial_convergence'); fprintf('fig: T2_spatial_convergence (legend NE)\n'); close(fig);
@@ -195,7 +193,7 @@ function idx=histmarks(n,ci), idx=unique(max(1,round(linspace(1+(ci-1)*floor(n/4
 function idx=profmarks(n,ci), idx=unique(max(1,round(linspace(1+mod(ci-1,3),n,12)))); end
 function prep(ax,fnt,fsz,xl,yl,ttl)
     set(ax,'FontName',fnt,'FontSize',fsz); grid(ax,'on'); box(ax,'on');
-    xlabel(ax,xl); ylabel(ax,yl); title(ax,ttl,'FontWeight','normal');
+    xlabel(ax,xl); ylabel(ax,yl);
 end
 function saveall(fig,fdir,name)
     saveas(fig,fullfile(fdir,[name '.fig']));

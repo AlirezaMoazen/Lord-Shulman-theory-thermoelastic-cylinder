@@ -116,8 +116,6 @@ for si = 1:size(studies,1)
     for ci=1:numel(cnames), curve(xiOf(D{ci}), sst(D{ci}.S_zz), ci, STY); end
     fin(gca,FNT,FSZ,'\xi','\sigma^*_{zz}','(9) \sigma^*_{zz}(\xi) final');
 
-    sgtitle(sprintf('%s  —  quantity catalog (choose panels for the thesis)', strrep(sname,'_','\_')), ...
-        'FontName',FNT,'FontSize',12);
     print(fig, fullfile(cdir,[sname '_catalog.png']), '-dpng','-r130');
     savefig(fig, fullfile(cdir,[sname '_catalog.fig']));
     close(fig);
@@ -137,5 +135,4 @@ end
 function fin(ax,FNT,FSZ,xl,yl,tl)
     grid(ax,'on'); box(ax,'on'); set(ax,'FontName',FNT,'FontSize',FSZ);
     xlabel(ax,xl,'FontName',FNT); ylabel(ax,yl,'FontName',FNT);
-    title(ax,tl,'FontName',FNT,'FontWeight','normal','FontSize',FSZ+1);
 end

@@ -128,7 +128,6 @@ for kk = 1:numel(tsel)
 end
 xlabel('r (m)'); ylabel('T (K)'); grid on; box on;
 legend('DQM+Newmark  t=2 s','Exact','t=10 s','Exact','t=40 s','Exact','Location','northeast');
-% title('Transient conduction: solver vs exact Bessel-series solution');   % Prom.5: top title removed per author
 saveas(figA, fullfile(outdir,'bench2_T_profiles.fig'));
 print(figA, fullfile(outdir,'bench2_T_profiles.png'), '-dpng','-r300');
 
@@ -190,11 +189,10 @@ fprintf('%-22s %-14.4f\n','Newmark vs ode15s',  max(abs(th_newm - th_ode)));
 
 figB = figure('Position',[120 120 750 520],'Color','w');
 plot(tsol, 300+th_ex_t,'k-','LineWidth',1.8); hold on;
-plot(tsol, 300+th_newm,'b--','LineWidth',1.4);
-plot(tsol, 300+th_ode ,'r:','LineWidth',1.6);
+plot(tsol, 300+th_newm,'b-','LineWidth',1.4);
+plot(tsol, 300+th_ode ,'r-','LineWidth',1.6);
 xlabel('t (s)'); ylabel('T (K)'); grid on; box on;
 legend('Exact','DQM + Newmark','DQM + ode15s','Location','southeast');
-% title(sprintf('Temperature history at r=%.3f m (mid-thickness)', r_probe));   % Prom.5: top title removed per author
 saveas(figB, fullfile(outdir,'bench2_T_history.fig'));
 print(figB, fullfile(outdir,'bench2_T_history.png'), '-dpng','-r300');
 

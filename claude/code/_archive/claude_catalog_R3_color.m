@@ -90,7 +90,6 @@ for si = 1:size(studies,1)
     subplot(1,3,3); hold on;
     for ci=1:numel(cnames), curve(Fo(D{ci}.tv), ust(D{ci}.hist_W), ci, STY); end
     fin(gca,FNT,FSZ,'Fo','w^*','(3) w^* history (axial)');
-    sgtitle(sprintf('%s  —  part 1: time histories (color)', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
     print(f1, fullfile(cdir,[sname '_hist.png']), '-dpng','-r130');
     savefig(f1, fullfile(cdir,[sname '_hist.fig'])); close(f1);
 
@@ -122,7 +121,6 @@ for si = 1:size(studies,1)
     subplot(2,4,8); hold on;
     for ci=1:numel(cnames), curve(xiOf(D{ci}), sst(D{ci}.S_zz), ci, STY); end
     fin(gca,FNT,FSZ,'\xi','\sigma^*_{zz}','(8) \sigma^*_{zz}(\xi)');
-    sgtitle(sprintf('%s  —  part 2: radial profiles at final time (strains + stresses) (color)', strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
     print(f2, fullfile(cdir,[sname '_prof.png']), '-dpng','-r130');
     savefig(f2, fullfile(cdir,[sname '_prof.fig'])); close(f2);
 
@@ -178,8 +176,7 @@ function curve(x,y,ci,STY)
     plot(xf,yf,'Color',STY.co{k},'LineStyle',STY.ls{k},'LineWidth',STY.lw(k),...
         'Marker',STY.mk{k},'MarkerIndices',mi,'MarkerSize',4.5,'MarkerFaceColor','w');
 end
-function fin(ax,FNT,FSZ,xl,yl,tl)
+function fin(ax,FNT,FSZ,xl,yl,tl) %#ok<INUSD>
     grid(ax,'on'); box(ax,'on'); set(ax,'FontName',FNT,'FontSize',FSZ);
     xlabel(ax,xl,'FontName',FNT); ylabel(ax,yl,'FontName',FNT);
-    title(ax,tl,'FontName',FNT,'FontWeight','normal','FontSize',FSZ+1);
 end

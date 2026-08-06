@@ -162,7 +162,7 @@ function idx = profmarks(n, ci)
 end
 function prep(ax, fnt, fsz, xl, yl, ttl)
     set(ax,'FontName',fnt,'FontSize',fsz); grid(ax,'on'); box(ax,'on');
-    xlabel(ax, xl); ylabel(ax, yl); title(ax, ttl, 'FontWeight','normal');
+    xlabel(ax, xl); ylabel(ax, yl);
 end
 function saveall(fig, fdir, name)
     saveas(fig, fullfile(fdir,[name '.fig']));

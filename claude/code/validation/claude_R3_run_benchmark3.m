@@ -151,7 +151,6 @@ for kk = 1:numel(tshow)
          'DisplayName',sprintf('t = %.1f',tshow(kk)));
 end
 xlabel('r'); ylabel('\theta'); grid on; box on; legend('Location','northeast');
-title('LS cylinder: temperature (cf. Bagri & Eslami Fig. 2)');
 saveas(figA, fullfile(outdir,'bench3_theta.fig'));
 print(figA, fullfile(outdir,'bench3_theta.png'), '-dpng','-r300');
 
@@ -164,7 +163,6 @@ for kk = 1:numel(tshow)
          'DisplayName',sprintf('t = %.1f',tshow(kk)));
 end
 xlabel('r'); ylabel('\sigma_{rr}'); grid on; box on; legend('Location','southeast');
-title('LS cylinder: radial stress (cf. Bagri & Eslami Fig. 3)');
 saveas(figB, fullfile(outdir,'bench3_srr.fig'));
 print(figB, fullfile(outdir,'bench3_srr.png'), '-dpng','-r300');
 
@@ -177,7 +175,6 @@ for kk = 1:numel(tshow)
          'DisplayName',sprintf('t = %.1f',tshow(kk)));
 end
 xlabel('r'); ylabel('\sigma_{\theta\theta}'); grid on; box on; legend('Location','southeast');
-title('LS cylinder: hoop stress (cf. Bagri & Eslami Fig. 4)');
 saveas(figC, fullfile(outdir,'bench3_stt.fig'));
 print(figC, fullfile(outdir,'bench3_stt.png'), '-dpng','-r300');
 

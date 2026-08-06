@@ -12,8 +12,6 @@ for j=1:3
   for e=1:NL,for ir=1:Nr,q=q+1;g=(e-1)*Nr*Nz+(ir-1)*Nz+iz0;Tt(q)=d.X_hist(g,n)/T_inf;end,end
   subplot(1,3,j); pcolor(Xc,Yc,repmat(Tt(iu),1,numel(th))); shading interp; axis equal off; colormap(jet);
   clim([0 1]); cb=colorbar; cb.Label.String='T^*';
-  title(sprintf('Fo = %.2f   (t = %d s)',ahat*tv(n)/h^2,tsel(j)),'FontName','Times New Roman','FontSize',11);
 end
-sgtitle('Gaussian thermal shock (Lord\_Shulman) — temperature ring, second-sound wave','FontName','Times New Roman','FontSize',13);
 print(f,'figures_ch4/anim_preview_MGAUSS.png','-dpng','-r120'); close(f);
 fprintf('preview done\n');

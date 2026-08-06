@@ -30,7 +30,6 @@ for k=1:numel(frames)
   Ttu=Tt(iu); ZZ=repmat(Ttu,1,numel(th));
   clf; pcolor(Xc,Yc,ZZ); shading interp; axis equal off; colormap(jet);
   cb=colorbar; cb.Label.String='T^*'; try, clim([0 cmax]); catch, caxis([0 cmax]); end
-  title(sprintf('%s   —   T^*   —   Fo = %.2f   (t = %.0f s)', strrep(casename,'_','\_'), ahat*tv(n)/h^2, tv(n)), 'FontName','Times New Roman','FontSize',11);
   drawnow; fr=getframe(f); im=frame2im(fr); [A,map]=rgb2ind(im,256);
   if k==1, imwrite(A,map,gif,'gif','LoopCount',inf,'DelayTime',0.07);
   else,   imwrite(A,map,gif,'gif','WriteMode','append','DelayTime',0.07); end

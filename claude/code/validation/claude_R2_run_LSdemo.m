@@ -115,13 +115,12 @@ fig1 = figure('Position',[80 80 860 560],'Color','w'); hold on;
 cols = lines(numel(tshow));
 for kk = 1:numel(tshow)
     n_t = round(tshow(kk)/dt)+1;
-    plot(r_pts, 300 + D(3).X_hist(rT,n_t), '-',  'Color',cols(kk,:), 'LineWidth',1.8);
-    plot(r_pts, 300 + D(1).X_hist(rT,n_t), '--', 'Color',cols(kk,:), 'LineWidth',1.2);
+    plot(r_pts, 300 + D(3).X_hist(rT,n_t), '-', 'Color',cols(kk,:), 'LineWidth',1.8);
+    plot(r_pts, 300 + D(1).X_hist(rT,n_t), '-', 'Color',cols(kk,:), 'LineWidth',1.2);
 end
 xlabel('r (m)'); ylabel('T (K)'); grid on; box on;
 legend('LS \tau_0=2 s,  t=1 s','Fourier, t=1 s','t=3 s','t=3 s', ...
        't=6 s','t=6 s','t=10 s','t=10 s','Location','northeast');
-title('Finite-speed heat wave (LS, solid) vs infinite-speed diffusion (Fourier, dashed)');
 saveas(fig1, fullfile(outdir,'LSdemo_T_profiles.fig'));
 print(fig1, fullfile(outdir,'LSdemo_T_profiles.png'), '-dpng','-r300');
 
@@ -134,7 +133,6 @@ for c = 1:4
 end
 xlabel('t (s)'); ylabel('T (K)'); grid on; box on;
 legend(names,'Location','southeast');
-title('Temperature history at mid-thickness: arrival delay grows with \tau_0');
 saveas(fig2, fullfile(outdir,'LSdemo_T_history.fig'));
 print(fig2, fullfile(outdir,'LSdemo_T_history.png'), '-dpng','-r300');
 
@@ -146,7 +144,6 @@ for c = 1:4
 end
 xlabel('t (s)'); ylabel('u (\mum)'); grid on; box on;
 legend(names,'Location','southeast');
-title('Radial displacement at mid-thickness for different relaxation times');
 saveas(fig3, fullfile(outdir,'LSdemo_U_history.fig'));
 print(fig3, fullfile(outdir,'LSdemo_U_history.png'), '-dpng','-r300');
 

@@ -5,7 +5,8 @@
 %   and B&W matrix already exist there; those are copied into the two folders by
 %   the PowerShell step. This script only renders what is genuinely missing.)
 clearvars; clc; close all;
-pdir='param_studies_ch4'; bw='figures_ch4_bw'; co='figures_ch4_color';
+CLROOT='c:/Users/InfosaicUser/Desktop/MSc/Lord-Shulman-theory-thermoelastic-cylinder/claude';
+pdir=fullfile(CLROOT,'param_studies_ch4'); bw=fullfile(CLROOT,'figures_ch4_bw'); co=fullfile(CLROOT,'figures_ch4_color');
 if ~exist(bw,'dir'), mkdir(bw); end
 if ~exist(co,'dir'), mkdir(co); end
 T_inf=300; E_ref=4.433e9; nu_ref=0.3395; alp_ref=5.9814e-5;
@@ -47,7 +48,6 @@ for li=1:numel(L)
     elseif strcmp(L(li).ct,'steps'), plot(nv,3000./nv,'k-o','LineWidth',1.5,'MarkerFaceColor','k'); yl='N_{steps}';
     else, plot(nv,nd,'k-o','LineWidth',1.5,'MarkerFaceColor','k'); yl='N_{dof}'; end
     fin(gca,L(li).xl,yl,'(d) cost');
-    sgtitle(sprintf('Convergence — %s',strrep(L(li).nm,'_','\_')),'FontName','Times New Roman','FontSize',13);
     print(fg,fullfile(bw,[L(li).nm '.png']),'-dpng','-r140'); close(fg); fprintf('bw %s\n',L(li).nm);
 end
 
@@ -68,7 +68,6 @@ for wc=1:size(wf,1)
         plot(xi,Tt,'-','Color',cmap(j,:),'LineWidth',1.0); end
     grid on; box on; set(gca,'FontName','Times New Roman','FontSize',10);
     xlabel('\xi   (inner \rightarrow outer)'); ylabel('T^*');
-    title(sprintf('%s — thermal-wave front',strrep(nm,'_','\_')),'FontWeight','normal');
     print(fg,fullfile(bw,[nm '_wavefront.png']),'-dpng','-r130'); close(fg); fprintf('bw wf %s\n',nm);
 end
 
@@ -91,9 +90,9 @@ for qty=1:2
 end
 fprintf('DONE variants\n');
 
-function fin(ax,xl,yl,tl)
+function fin(ax,xl,yl,tl) %#ok<INUSD>
     grid(ax,'on'); box(ax,'on'); set(ax,'FontName','Times New Roman','FontSize',10);
-    xlabel(ax,xl); ylabel(ax,yl); title(ax,tl,'FontWeight','normal');
+    xlabel(ax,xl); ylabel(ax,yl);
 end
 function s=lgd(vals,nm)
     s=cell(1,numel(vals));

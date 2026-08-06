@@ -3,7 +3,8 @@
 %              showing the Lord-Shulman second-sound front cross the wall.
 %  25-matrix : 5x5 grid (GPL pattern x porosity pattern), Sigma_thth(xi) and T*(xi).
 clearvars; clc; close all;
-pdir='param_studies_ch4'; cdir='figures_ch4';
+CLROOT='c:/Users/InfosaicUser/Desktop/MSc/Lord-Shulman-theory-thermoelastic-cylinder/claude';
+pdir=fullfile(CLROOT,'param_studies_ch4'); cdir=fullfile(CLROOT,'figures_ch4');
 T_inf=300; E_ref=4.433e9; nu_ref=0.3395; alp_ref=5.9814e-5;
 Sst=@(s) (1+nu_ref).*s./(E_ref.*alp_ref.*T_inf);
 
@@ -33,7 +34,6 @@ for wc=1:size(wf,1)
     end
     grid on; box on; set(gca,'FontName','Times New Roman','FontSize',10);
     xlabel('\xi   (inner \rightarrow outer)'); ylabel('T^*');
-    title(sprintf('%s — thermal-wave front through the thickness',strrep(nm,'_','\_')),'FontWeight','normal');
     cb=colorbar; cb.Label.String='time (early \rightarrow late)';
     try, clim([tv(ns(1)) tv(ns(end))]); catch, caxis([tv(ns(1)) tv(ns(end))]); end
     colormap(parula);

@@ -13,7 +13,8 @@
 %  Reference props = BASE material (W=0.3%, e_m3=0.8604), fixed for all cases.
 %  New revision file; modifies no solver or earlier catalog.
 clearvars; clc; close all;
-pdir='param_studies_ch4'; cdir='figures_ch4'; if ~exist(cdir,'dir'), mkdir(cdir); end
+CLROOT='c:/Users/InfosaicUser/Desktop/MSc/Lord-Shulman-theory-thermoelastic-cylinder/claude';
+pdir=fullfile(CLROOT,'param_studies_ch4'); cdir=fullfile(CLROOT,'figures_ch4'); if ~exist(cdir,'dir'), mkdir(cdir); end
 
 ahat=8.9708e-5; E_ref=4.433e9; nu_ref=0.3395; alp_ref=5.9814e-5; T_inf=300;
 Fo =@(t,h) ahat.*t./h.^2;
@@ -68,7 +69,6 @@ for si=1:size(studies,1)
     subplot(1,3,3); hold on;
     for ci=1:numel(cnames), d=D{ci}; curve(Fo(d.tv,hOf(d)),Ust(d.hist_W,hOf(d)),ci,STY); end
     fin(gca,FNT,FSZ,'Fo','w^*','(3) w^* history (axial)');
-    sgtitle(sprintf('%s  —  part 1: time histories',strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
     print(f1,fullfile(cdir,[sname '_hist.png']),'-dpng','-r130'); savefig(f1,fullfile(cdir,[sname '_hist.fig'])); close(f1);
 
     % ===== PART 2: final radial profiles (2x4): T*, 3 strains, u*, 3 stresses =====
@@ -97,7 +97,6 @@ for si=1:size(studies,1)
     subplot(2,4,8); hold on;
     for ci=1:numel(cnames), d=D{ci}; curve(xiOf(d),Sst(d.S_zz),ci,STY); end
     fin(gca,FNT,FSZ,'\xi','\Sigma_{zz}','(8) \Sigma_{zz}(\xi)');
-    sgtitle(sprintf('%s  —  part 2: final-time radial profiles (strains + stresses)',strrep(sname,'_','\_')),'FontName',FNT,'FontSize',12);
     print(f2,fullfile(cdir,[sname '_prof.png']),'-dpng','-r130'); savefig(f2,fullfile(cdir,[sname '_prof.fig'])); close(f2);
 
     made{end+1}=sname; %#ok<SAGROW>
@@ -146,8 +145,7 @@ function curve(x,y,ci,STY)
     plot(xf,yf,'Color',STY.co{k},'LineStyle',STY.ls{k},'LineWidth',STY.lw(k),...
         'Marker',STY.mk{k},'MarkerIndices',mi,'MarkerSize',4.5,'MarkerFaceColor','w');
 end
-function fin(ax,FNT,FSZ,xl,yl,tl)
+function fin(ax,FNT,FSZ,xl,yl,tl) %#ok<INUSD>
     grid(ax,'on'); box(ax,'on'); set(ax,'FontName',FNT,'FontSize',FSZ);
     xlabel(ax,xl,'FontName',FNT); ylabel(ax,yl,'FontName',FNT);
-    title(ax,tl,'FontName',FNT,'FontWeight','normal','FontSize',FSZ+1);
 end

@@ -146,10 +146,8 @@ if ~any(isnan(HM(:)))
     imagesc(HM); colormap(flipud(gray)); cb=colorbar; ylabel(cb,'outer-surface T^*','FontName',FNT);
     set(gca,'XTick',1:4,'XTickLabel',pp,'YTick',1:4,'YTickLabel',gg,'FontName',FNT,'FontSize',FSZ);
     xlabel('porosity pattern'); ylabel('GPL pattern');
-    title('Outer-surface T^* : GPL \times porosity interaction','FontWeight','normal');
     for ig=1:4, for ip=1:4
         tc = 'k'; if HM(ig,ip)>0.8, tc='w'; end
-        text(ip,ig,sprintf('%.2f',HM(ig,ip)),'HorizontalAlignment','center','Color',tc,'FontName',FNT,'FontSize',9);
     end, end
     saveall(fig, fdir_camp, 'S_interaction_matrix'); fprintf('fig: S_interaction_matrix\n'); close(fig);
 end
@@ -190,7 +188,7 @@ function idx=histmarks(n,ci), idx=unique(max(1,round(linspace(1+(ci-1)*floor(n/4
 function idx=profmarks(n,ci), idx=unique(max(1,round(linspace(1+mod(ci-1,3),n,12)))); end
 function prep(ax,fnt,fsz,xl,yl,ttl)
     set(ax,'FontName',fnt,'FontSize',fsz); grid(ax,'on'); box(ax,'on');
-    xlabel(ax,xl); ylabel(ax,yl); title(ax,ttl,'FontWeight','normal');
+    xlabel(ax,xl); ylabel(ax,yl);
 end
 function saveall(fig,fdir,name)
     saveas(fig,fullfile(fdir,[name '.fig']));

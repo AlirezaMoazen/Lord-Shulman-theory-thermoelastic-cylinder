@@ -56,22 +56,11 @@ for k = 1:NL+1                                        % interface circles
     plot(Rb(k)*cos(th),Rb(k)*sin(th),'-','Color',[0.25 0.25 0.25],'LineWidth',lw);
 end
 na = 12; ang = linspace(0,2*pi,na+1); ang(end) = [];
-quiver(Ri*cos(ang),Ri*sin(ang),0.14*cos(ang),0.14*sin(ang),0,...   % inner load
-       'Color',CO{2},'LineWidth',1.2,'MaxHeadSize',0.55);
-quiver(Ro*cos(ang),Ro*sin(ang),0.11*cos(ang),0.11*sin(ang),0,...   % outer conv.
-       'Color',CO{1},'LineWidth',1.0,'MaxHeadSize',0.55);
-a0 = -pi/3;                                           % radius call-out
-plot([0 Ro*cos(a0)],[0 Ro*sin(a0)],'k-','LineWidth',0.6);
-plot(Ri*cos(a0),Ri*sin(a0),'ko','MarkerFaceColor','k','MarkerSize',3);
-plot(Ro*cos(a0),Ro*sin(a0),'ko','MarkerFaceColor','k','MarkerSize',3);
-text(Ri*cos(a0)+0.02,Ri*sin(a0)-0.16,'R_i = 1.0 m','FontSize',9);
-text(Ro*cos(a0)+0.02,Ro*sin(a0)-0.14,'R_o = 1.5 m','FontSize',9);
-text(0,Ro+0.30,'thermal shock T_{in}(t) + pressure P_i','Color',CO{2},...
-     'FontSize',9,'HorizontalAlignment','center');
-text(0,-(Ro+0.22),['(a) Cross-section (r, \theta),  N_L = 7 layers'],...
-     'FontSize',10,'HorizontalAlignment','center');
-text(-(Ro+0.05),0,'convection  h_c','Color',CO{1},'FontSize',9,...
-     'HorizontalAlignment','center','Rotation',90);
+qi = quiver(Ri*cos(ang),Ri*sin(ang),0.14*cos(ang),0.14*sin(ang),0,...   % inner load
+       'Color',CO{2},'LineWidth',1.2,'MaxHeadSize',0.55,'DisplayName','inner: T_{in}(t) + P_i');
+qo = quiver(Ro*cos(ang),Ro*sin(ang),0.11*cos(ang),0.11*sin(ang),0,...   % outer conv.
+       'Color',CO{1},'LineWidth',1.0,'MaxHeadSize',0.55,'DisplayName','outer: convection h_c');
+legend([qi(1) qo(1)],'Location','southoutside','Orientation','horizontal','FontSize',9,'Box','off');
 xlim(ax1,[-(Ro+0.55) Ro+0.55]); ylim(ax1,[-(Ro+0.5) Ro+0.5]);
 
 % ---------- (b) r-z computational domain ----------
@@ -91,26 +80,8 @@ quiver(zc,Ri*ones(size(zc)),zeros(size(zc)),-0.07*ones(size(zc)),0,...
        'Color',CO{2},'LineWidth',1.1,'MaxHeadSize',0.45);
 quiver(zc,Ro*ones(size(zc)),zeros(size(zc)), 0.07*ones(size(zc)),0,...
        'Color',CO{1},'LineWidth',1.1,'MaxHeadSize',0.45);
-text(L/2,Ri-0.135,'inner r = R_i :  thermal shock T_{in}(t) + pressure P_i',...
-     'Color',CO{2},'FontSize',9,'HorizontalAlignment','center');
-text(L/2,Ro+0.115,'outer r = R_o :  convection h_c , T_\infty = 300 K',...
-     'Color',CO{1},'FontSize',9,'HorizontalAlignment','center');
-text(-0.075*L,(Ri+Ro)/2,'insulated  (z = 0)','Rotation',90,'FontSize',9,...
-     'HorizontalAlignment','center','Color',[0.15 0.15 0.15]);
-text( 1.075*L,(Ri+Ro)/2,'insulated  (z = L)','Rotation',90,'FontSize',9,...
-     'HorizontalAlignment','center','Color',[0.15 0.15 0.15]);
-% dimension annotations
-plot([0.15*L 0.45*L],[Ri+0.055 Ri+0.055],'k-','LineWidth',0.8);
-plot([0.15*L 0.15*L],[Ri+0.04 Ri+0.07],'k-'); plot([0.45*L 0.45*L],[Ri+0.04 Ri+0.07],'k-');
-text(0.30*L,Ri+0.088,'L = 2.1 m','FontSize',9,'HorizontalAlignment','center');
-plot([0.94*L 0.94*L],[Ri Ro],'k-','LineWidth',0.8);
-plot([0.925*L 0.955*L],[Ri Ri],'k-'); plot([0.925*L 0.955*L],[Ro Ro],'k-');
-text(0.905*L,(Ri+Ro)/2,'h = 0.5 m','FontSize',9,'HorizontalAlignment','center','Rotation',90);
-text(L/2,Ri+0.62*(Ro-Ri),'N_L = 7 layers','FontSize',10,...
-     'HorizontalAlignment','center','BackgroundColor','w');
 xlabel(ax2,'z  (m)','FontSize',FSZ); ylabel(ax2,'r  (m)','FontSize',FSZ);
 set(ax2,'FontSize',10,'Layer','top');
-title(ax2,'(b) Axial r-z computational domain','FontWeight','normal','FontSize',10);
 xlim(ax2,[-0.17*L 1.17*L]); ylim(ax2,[Ri-0.20 Ro+0.20]);
 exportgraphics(fig,fullfile(outdir,'geometry_schematic.png'),'Resolution',300);
 close(fig); fprintf('done: geometry_schematic.png\n');
@@ -128,7 +99,7 @@ pat = {'UD','O','X','V','A'};
 
 fig = figure('Units','inches','Position',[1 1 7 5],'Color','w'); hold on; box on;
 for ci = 1:5
-    plot(e, Wg.(pat{ci})*100,'LineStyle',LS{ci},'Color',CO{ci},'LineWidth',1.8,...
+    plot(e, Wg.(pat{ci})*100,'LineStyle','-','Color',CO{ci},'LineWidth',1.8,...
          'Marker',MK{ci},'MarkerSize',7,'MarkerFaceColor','w');
 end
 grid on; set(gca,'FontSize',FSZ,'XTick',1:NL);
@@ -162,22 +133,22 @@ mIdx = arrayfun(@(v) find(abs(xi-v)==min(abs(xi-v)),1), xilay);      % marker po
 
 fig = figure('Units','inches','Position',[1 1 7.4 5],'Color','w'); hold on; box on;
 for ci = 1:5
-    plot(xi, Pm.(pat{ci}),'LineStyle',LS{ci},'Color',CO{ci},'LineWidth',1.8,...
+    plot(xi, Pm.(pat{ci}),'LineStyle','-','Color',CO{ci},'LineWidth',1.8,...
          'Marker',MK{ci},'MarkerIndices',mIdx,'MarkerSize',7,'MarkerFaceColor','w');
 end
 grid on; set(gca,'FontSize',FSZ);
 xlabel('through-thickness coordinate  \xi = (r-R_i)/h   ( \zeta = \xi - 1/2 )','FontSize',FSZ);
 ylabel('porosity mass factor  P_m = \rho / \rho_s','FontSize',FSZ);
 legend(pat,'Location','southoutside','Orientation','horizontal','FontSize',10);
-text(0.02,0.03,sprintf('e_{m3} = %.4f',em3),'Units','normalized','FontSize',9,...
-     'VerticalAlignment','bottom','Color',[0.3 0.3 0.3]);
-xlim([0 1]); ylim([0 1.5]); yline(1,':','Color',[0.5 0.5 0.5],'HandleVisibility','off');
+xlim([0 1]); ylim([0 1.5]); yline(1,'-','Color',[0.5 0.5 0.5],'HandleVisibility','off');
 exportgraphics(fig,fullfile(outdir,'porosity_patterns_schematic.png'),'Resolution',300);
 close(fig); fprintf('done: porosity_patterns_schematic.png\n');
 
 %% ================================================================= FIG 4
 %  DQM_nodes_schematic.png : (a) radial CGL nodes/layer, (b) axial CGL nodes
-Nr = 15; Nz = 11;
+%  N=9 used for both panels (illustrative point count, not the production
+%  mesh N_r=15/N_z=11 used in the actual computations).
+Nr = 9; Nz = 9;
 cgl = @(a,b,N) a + (b-a)/2*(1 - cos(pi*(0:N-1)/(N-1)));
 fig = figure('Units','inches','Position',[1 1 12 4.6],'Color','w');
 
@@ -199,10 +170,6 @@ for k = 1:NL
 end
 set(axr,'YTick',[],'FontSize',10); xlim(axr,[Ri-0.012 Ro+0.012]); ylim(axr,[-0.78 0.62]);
 xlabel(axr,'radial coordinate  r  (m)','FontSize',FSZ);
-title(axr,'(a) Radial CGL nodes:  N_r = 15 per layer  ( \times 7 = 105 )',...
-      'FontWeight','normal','FontSize',10);
-text((Ri+Ro)/2,-0.68,'clustered near every layer interface','FontSize',9,...
-     'HorizontalAlignment','center','Color',CO{2});
 
 % (b) axial
 axz = subplot(1,2,2); hold(axz,'on'); box(axz,'on');
@@ -212,9 +179,6 @@ for j = 1:Nz, plot([zn(j) zn(j)],[-0.14 0.14],'-','Color',CO{4},'LineWidth',0.7)
 plot(zn,zeros(size(zn)),'s','MarkerFaceColor',CO{4},'MarkerEdgeColor',CO{4},'MarkerSize',5.5);
 set(axz,'YTick',[],'FontSize',10); xlim(axz,[-0.04 L+0.04]); ylim(axz,[-0.78 0.62]);
 xlabel(axz,'axial coordinate  z  (m)','FontSize',FSZ);
-title(axz,'(b) Axial CGL nodes:  N_z = 11','FontWeight','normal','FontSize',10);
-text(L/2,-0.68,'clustered near the ends  z = 0  and  z = L','FontSize',9,...
-     'HorizontalAlignment','center','Color',CO{2});
 exportgraphics(fig,fullfile(outdir,'DQM_nodes_schematic.png'),'Resolution',300);
 close(fig); fprintf('done: DQM_nodes_schematic.png\n');
 

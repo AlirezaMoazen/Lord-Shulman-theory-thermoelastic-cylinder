@@ -99,15 +99,15 @@ outdir='results_extensions';  fdir=fullfile(outdir,'figures');
 if ~exist(fdir,'dir'), mkdir(fdir); end
 fig = figure('Position',[100 100 780 560],'Color','w');
 loglog(Ns_dqm, err_dqm, 'bo-', 'LineWidth',1.6,'MarkerFaceColor','b'); hold on;
-loglog(Ns_dqm, err_dqu, 'ms--','LineWidth',1.3);
+loglog(Ns_dqm, err_dqu, 'ms-','LineWidth',1.3);
 loglog(Ns_fdm, err_fdm, 'r^-', 'LineWidth',1.6,'MarkerFaceColor','r');
 loglog(Ns_fe1, err_fe1, 'gd-', 'LineWidth',1.6,'MarkerFaceColor','g');
 loglog(Ns_fe2, err_fe2, 'kv-', 'LineWidth',1.6,'MarkerFaceColor',[.4 .4 .4]);
-loglog(Ns_fdm, err_fdm(1)*(Ns_fdm(1)./Ns_fdm).^2, 'k:', 'LineWidth',1);
+loglog(Ns_fdm, err_fdm(1)*(Ns_fdm(1)./Ns_fdm).^2, 'k-', 'LineWidth',1);
 xlabel('number of radial points N'); ylabel('max error at t = 10 s (K)');
 legend('DQM (Chebyshev)','DQM (uniform)','FDM (2nd order)', ...
        'FEM (linear)','FEM (quadratic)','slope -2','Location','southwest');
-grid on; box on; title('Spatial convergence: DQM vs FDM vs FEM (transient conduction)');
+grid on; box on;
 saveas(fig, fullfile(fdir,'T2_spatial_convergence.fig'));
 print(fig, fullfile(fdir,'T2_spatial_convergence.png'), '-dpng','-r300');
 T = table([Ns_dqm.'; Ns_dqm.'; Ns_fdm.'; Ns_fe1.'; Ns_fe2.'], ...
