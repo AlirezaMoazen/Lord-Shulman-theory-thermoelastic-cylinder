@@ -16,10 +16,10 @@ ahat=8.9708e-5; E_ref=4.433e9; nu_ref=0.3395; alp_ref=5.9814e-5; T_inf=300;
 Fo=@(t,h) ahat.*t./h.^2; Tst=@(T)(T-T_inf)./T_inf;
 Ust=@(u,h) u./((1-nu_ref).*alp_ref.*T_inf.*h); Sst=@(s)(1+nu_ref).*s./(E_ref.*alp_ref.*T_inf);
 % UD-UD reference; V-A best thermal & best mechanical (inner-surface hoop); A-UD worst thermal;
-% X-V worst mechanical; O-A second-best mechanical (also second-best thermal). Legend = bare names
-% (Prom 5: no parenthetical descriptors); best/worst spelled out in the caption and section 4-13 text.
+% X-V worst mechanical; O-A second-best mechanical (also second-best thermal). Legend spells out
+% GPL-/porosity- per label (author request); best/worst still spelled out in the caption and §4-13 text.
 cases ={'H_UD_UD','H_V_A','H_A_UD','H_X_V','H_O_A'};
-labels={'UD-UD','V-A','A-UD','X-V','O-A'};
+labels={'GPL-UD, porosity-UD','GPL-V, porosity-A','GPL-A, porosity-UD','GPL-X, porosity-V','GPL-O, porosity-A'};
 D={}; for ci=1:5, D{ci}=load(fullfile(pdir,[cases{ci} '.mat']),'tv','hist_T','hist_U','r_nodes','r_all','T_all','S_tt'); end
 BW.co={[0 0 0],[0.45 0.45 0.45],[0 0 0],[0.55 0.55 0.55],[0.72 0.72 0.72]}; BW.ls={'-','-','--','--',':'}; BW.mk={'o','^','s','d','v'}; BW.lw=[1.5 1.4 1.4 1.4 1.3];
 CO.co={[0.20 0.20 0.20],[0 0.447 0.741],[0.850 0.325 0.098],[0.466 0.674 0.188],[0.494 0.184 0.556]}; CO.ls={'-','-','-','-','-'}; CO.mk={'o','^','s','d','v'}; CO.lw=[1.6 1.5 1.5 1.5 1.4];
