@@ -1,7 +1,9 @@
 <!-- CHAPTER5_conclusions_EN — English mirror of CHAPTER5_conclusions_FA.
-     Drawn from Chapter 4 findings (RESULTS_CHAPTER_EN_R3). Length/thickness
-     symbols pending Prom.2 item h; words are used instead of symbols where
-     possible. All figures are taken from chapter_stats.csv. -->
+     Drawn from Chapter 4 findings (RESULTS_CHAPTER_FA/EN_R4.4). §5-2/5-3
+     numbers re-aligned 2026-08-22 to match the FA chapter exactly (were
+     stale pre-R4.4 figures until then — see DECISIONS_NEEDED.md item 10).
+     Length/thickness symbols: L = length, h = thickness, applied throughout.
+     All figures are taken from chapter_stats.csv. -->
 
 # Chapter 5: Conclusions and Recommendations
 
@@ -21,32 +23,35 @@ contributions, and the recommendations for future work.
 
 1. **Thermal wave and temperature overshoot.** Unlike classical Fourier
    conduction, in which the mid-wall temperature never exceeds the driving
-   value, the Lord-Shulman theory — through the finite wave-propagation speed —
-   produces a temperature overshoot up to a dimensionless value of 1.41 in the
-   reference case and 1.78 in the thin wall. The temperature histories show the
-   characteristic "peak-trough" shape of the wave travelling and reflecting from
-   the outer surface, a phenomenon decisive in short-time analyses.
+   value, the Lord-Shulman theory permits a temperature overshoot (above unity)
+   because of its finite wave-propagation speed. In the reference case the peak
+   mid-wall temperature is 0.926 and does not exceed unity, but a genuine
+   overshoot appears in cases such as porosity pattern V (1.109) and a high GPL
+   weight fraction (up to 1.115). The temperature histories show the
+   characteristic "peak-trough" shape produced by the wave travelling back and
+   forth and reflecting from the outer surface, a phenomenon decisive in
+   short-time analyses.
 
 2. **GPL distribution pattern.** Placing the conductive platelets at the heated
    inner surface (pattern V) gives the most favorable behavior, lowering the
-   peak temperature by about 16 % relative to the uniform case and the
-   inner-surface hoop stress by about 5.5 times. Pattern A is the mirror image
+   peak temperature by about 29 % relative to the uniform case and the
+   inner-surface hoop stress by about 3 times. Pattern A is the mirror image
    of V and the worst case in all three quantities (temperature, stress and
    displacement).
 
 3. **Porosity pattern and level.** Porosity pattern A, concentrating the pores
    at the outer surface, acts as a "thermal barrier" and reduces the
-   outer-surface temperature by about 5.6 times, but it also reverses the sign
+   outer-surface temperature by about 8 times, but it also reverses the sign
    of the inner-surface hoop stress. Pattern V concentrates the pores at the
-   inner surface and produces the largest transient peak of the group (1.61).
+   inner surface and produces the largest transient peak of the group (1.11).
 
 4. **Synergetic GPL-porosity interaction.** Combining GPL-V (conductive facing
    the heat source) with porosity-A (insulating facing the environment) is
-   synergetic and reduces the outer-surface temperature by about **nine-fold**
-   at benign stress levels; this combination is the design recommendation of
-   this work for thermal-protection applications. The complete 4×4 matrix showed
+   synergetic and reduces the outer-surface temperature by about **26-fold**
+   at a benign stress level; this combination is the design recommendation of
+   this work for thermal-protection applications. The complete 5×5 matrix showed
    that the mirror patterns V and A can be synergetic (GPL-V with porosity-A →
-   0.15) or cancelling (GPL-V with porosity-V → 1.24), so the alignment or
+   0.034) or cancelling (GPL-V with porosity-V → 0.692), so the alignment or
    opposition of the two patterns is decisive.
 
 5. **Weight fraction and percolation threshold.** A percolation threshold near a
@@ -55,27 +60,28 @@ contributions, and the recommendations for future work.
    penetration only smoothly but mainly raises the thermal stresses (the stress
    doubles at 8 %).
 
-6. **Platelet aspect ratio.** Of the two aspect ratios, the width-to-thickness
-   ratio is the dominant reinforcement lever (about 20 % change in stress),
-   whereas the length-to-width ratio plays a second-order role (about 3 % change
-   in temperature).
+6. **Platelet aspect ratio.** At the (low) reference weight fraction, both
+   aspect ratios have only a second-order effect, and the width-to-thickness
+   ratio is the least influential of the two (under 2 % change in stress,
+   negligible change in temperature); only at high GPL weight fractions does
+   the width-to-thickness ratio become the dominant reinforcement lever.
 
 7. **Coupling of the equations.** The fully coupled solution damps the thermal
-   wave by about 8 % (thermoelastic damping); uncoupled models are
+   wave by about 1 % (thermoelastic damping); uncoupled models are
    non-conservative exactly at the wave fronts.
 
 8. **Internal pressure and supports.** The internal pressure is a second-order
    effect at small engineering magnitude, but in the 70–100 MPa range it becomes
    a genuine secondary effect (up to about 50 % of the inner hoop stress); the
    response nonetheless remains thermally dominated and, in the present linear
-   model, no discontinuity occurs up to 100 MPa. Clamped supports convert the
-   blocked axial expansion into about a 35 % increase of the radial
-   displacement; support effects are localized at the ends, and as the cylinder
+   model, no discontinuity occurs up to 100 MPa. Clamped supports, by blocking
+   axial expansion, reduce the peak mid-length radial displacement by about
+   9 %; support effects are localized at the ends, and as the cylinder
    lengthens the mid-length response converges to the infinite-length limit.
 
 9. **Impulsive thermal shock.** Under a Gaussian pulse, the classical theory
-   underestimates the stress response by about **50 times** — the strongest
-   single argument of this work in favor of the generalized theory.
+   underestimates the peak temperature by about **2.5 times** — one of the
+   strongest arguments of this work in favor of the generalized theory.
 
 10. **Methodological findings.** Newmark offers the best accuracy-to-cost ratio
     of the six tested integrators; differential quadrature needs about 15 times
@@ -90,7 +96,7 @@ contributions, and the recommendations for future work.
   GPL-reinforced cylinder by a two-dimensional $(r,z)$ layerwise differential
   quadrature method.
 - Identification of the synergetic interaction of the GPL-V and porosity-A
-  patterns and presentation of the complete 4×4 interaction matrix, which has no
+  patterns and presentation of the complete 5×5 interaction matrix, which has no
   counterpart in previous references.
 - Reporting the "peak-trough" and mirror behavior of the patterns and linking it
   to the wave-like nature of the conduction.

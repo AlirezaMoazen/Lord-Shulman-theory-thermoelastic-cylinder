@@ -46,15 +46,6 @@ most of its "open" items were resolved weeks ago and it was missing newer ones.
    to formally use R9 as the source-of-record — R8's saved results don't need to
    change, since R9 reproduces them exactly).
 
-10. **`CHAPTER5_conclusions_EN.md` numbers are stale (found 2026-08-21).** While adding
-    the new §5-4 "Limitations" section, found that the EN chapter's §5-2 findings still
-    report the old pre-R4.4 numbers (e.g. overshoot 1.41/1.78 vs FA's 1.109/1.115, GPL-V
-    effect −16%/5.5× vs FA's −29%/3×, a 4×4 GPL×porosity matrix vs FA's actual 5×5,
-    headline "9-fold"/"50 times" figures vs FA's 26×/2.5×) — despite `REVISIONS.md`
-    previously logging EN as "refreshed in place" to R4.4. FA is correct/current; only EN
-    is wrong. Say the word and I'll re-derive the EN §5-2 numbers from the same source
-    FA now uses (`chapter_stats.csv`) and regenerate the EN docx.
-
 ## C. Resolved (kept for the record, no action needed)
 - ✅ Layers-study placement: kept in the convergence section only.
 - ✅ Pressure sweep 0–100 MPa: linear, no گسست — the model's linear-elastic
@@ -76,6 +67,8 @@ most of its "open" items were resolved weeks ago and it was missing newer ones.
 - ✅ Author name — never to be touched or asked about again (permanent rule).
 - ✅ V/A porosity pattern wording — no "inversion" issue; code stores a mass
   factor, your descriptions are porosity-intensity-based (permanent rule).
+- ✅ `CHAPTER5_conclusions_EN.md` stale numbers (found 2026-08-21, fixed 2026-08-22):
+  §5-2/5-3 rewritten number-for-number to match the current FA/R4.4 chapter.
 
 ## Still open, lower priority / no blocker
 - Full thesis assembly (front matter, final TOC, references) — deliberately
