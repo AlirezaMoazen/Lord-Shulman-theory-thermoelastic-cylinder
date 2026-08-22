@@ -25,6 +25,11 @@
 
 <!-- 2026-08-05 CODE AUDIT / REORG (Prom 5 #6): current solver = claude_R8 (physics ≡ R7; the Ch4 campaign still invokes R7). Current campaign = campaign/run_ch4_campaign.ps1 + run_nz_sweep.ps1 → param_studies_ch4 (86 cases). Current Ch4 figures = claude_catalog_R6* family. Current stats = code/misc/claude_chapter_stats_ch4.m → chapter_stats.csv. ARCHIVED to code/_archive/ (17 files): param_figures lineage, catalog_R1..R5(+color), old claude_chapter_stats.m, test_r5_hooke.m, claude_T2_spatial_methods.m (superseded by T2_1). ARCHIVED to campaign/_archive/ (7 files): run_param_studies v1..v6, run_R6_verify.ps1. The old param_studies/ folder (old-geometry NL=5 runs) was deleted. Both code_docs updated to R8/current pipeline; matrix documented as epoxy. -->
 
+### 2a. Methodological extension studies (T1/T2/T3, `code/extensions/`, output → `results_extensions/`)
+| Artifact | Current | History |
+|---|---|---|
+| `claude_T2*_spatial_methods.m` (spatial-discretization comparison: DQM vs FDM vs FEM) | **T2.2** | T2 (archived, superseded) → **T2_1** = added FEM (linear + quadratic Galerkin) alongside DQM/FDM, kept T2 frozen → **T2.2 (2026-08-22, minor)** = extended the DQM node sweep from `[7 9 11 15 21 31]` to `[7 9 11 15 21 31 41 61 81 121 161 201]` (author request: DQM curves stopped around N≈20–31 while FDM/FEM ran out to N=321, making the comparison look incomplete). Finding: **Chebyshev-node DQM stays well-conditioned and plateaus at the same temporal-error floor (~1.1e-3 K) as FDM/FEM all the way through N=121**, then fails (NaN) at N≥161 — evidence it converges over a comparable range, just like FEM. **Uniform-node DQM diverges catastrophically beyond N=31** (error ~1e47–1e52 at N=41/61, then NaN) — classic Runge-phenomenon ill-conditioning of a global polynomial basis on equally spaced nodes; annotated directly on the figure rather than left unexplained. y-axis capped at `[1e-4, 3e-1]` so the divergent uniform-DQM branch doesn't flatten the readable curves. `T2_1` kept frozen/untouched — the fix was made in a new `T2_2` copy per the revision-number rule. |
+
 
 ## 3. Quantity CATALOG (figure-selection tool)
 | Artifact | Current | History |
