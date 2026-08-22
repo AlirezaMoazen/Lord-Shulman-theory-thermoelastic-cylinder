@@ -98,7 +98,47 @@ contributions, and the recommendations for future work.
   four spatial discretizations (including linear/quadratic Galerkin finite
   elements) and four thermoelasticity theories with matched parameters.
 
-## 5-4. Recommendations for future work
+## 5-4. Limitations of the study
+
+As with any numerical study, this work was carried out within a specific set of
+assumptions and boundaries that should be kept in mind when interpreting or
+generalizing the results:
+
+1. **Linear elastic model, no damage/failure criterion.** Stresses and
+   displacements throughout this work — including under large loads such as a
+   100 MPa internal pressure or an impulsive thermal shock — are reported under
+   the linear-elasticity assumption. The model has no yield, cracking, or
+   interlayer-separation criterion; under very large loads, the results should
+   therefore be read as the mathematical extrapolation of a linear model, not a
+   prediction of actual material failure.
+2. **Temperature-independent material properties.** Young's modulus, thermal
+   conductivity, the thermal expansion coefficient, and specific heat are held
+   constant throughout the solution, while the reference loading takes the
+   inner-surface temperature from 300 to 600 K; over this range, the real
+   temperature-dependence of the material properties is not negligible.
+3. **Isotropic homogenization of the composite layer.** The elastic matrix of the
+   GPL-matrix layer is reduced to a single effective isotropic modulus via the
+   Halpin-Tsai average ($E_s=\tfrac38 E_L+\tfrac58 E_T$); a real nanocomposite
+   sheet is inherently transversely isotropic, and this simplification can shift
+   the axial response somewhat.
+4. **Ideal layer-to-layer bonding.** Interfaces between layers enforce full
+   continuity of temperature, flux, displacement, and traction; the thermal and
+   mechanical contact resistance that is always present in a real layered
+   structure is not included in the model.
+5. **Qualitative validation of the wave-propagation core.** The central claim of
+   this work — the second-sound wave overshoot — is validated only qualitatively
+   (matching the trend of speed and reflection) against the Bagri and Eslami
+   results; no quantitative error metric is reported for this specific test.
+6. **Selected porosity patterns.** The porosity patterns used (UD, O, X, V, A)
+   were chosen based on the standard open-cell metal-foam model; this is a
+   deliberate modeling choice, not a complete representation of every possible
+   porous microstructure.
+7. **Geometric and loading scope.** The study is limited to a straight cylindrical
+   shell with simple/clamped/mixed supports and axisymmetric thermo-mechanical
+   loading; conical or rotating geometries, non-axisymmetric loading, and fully
+   three-dimensional effects lie outside the scope of this work.
+
+## 5-5. Recommendations for future work
 
 1. **Free/roller (F/R) supports:** a stable implementation of these supports and
    the addition of a true plane-strain reference for a direct comparison with
