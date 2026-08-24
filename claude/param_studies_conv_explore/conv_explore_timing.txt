@@ -1,0 +1,17 @@
+﻿CONV_EXPLORE SWEEP START 18:33:32
+DONE EXP_ANCHOR  Nr=11 Nz=13 NL=7  249 s  serial
+DONE EXP_NR05  Nr=5 Nz=13 NL=7  89 s  serial
+DONE EXP_NR07  Nr=7 Nz=13 NL=7  141 s  serial
+DONE EXP_NR09  Nr=9 Nz=13 NL=7  190 s  serial
+DONE EXP_NR13  Nr=13 Nz=13 NL=7  285 s  serial
+DONE EXP_NR15  Nr=15 Nz=13 NL=7  399 s  serial
+DONE EXP_NZ05  Nr=11 Nz=5 NL=7  117 s  serial
+DONE EXP_NZ07  Nr=11 Nz=7 NL=7  104 s  serial
+DONE EXP_NZ09  Nr=11 Nz=9 NL=7  137 s  serial
+DONE EXP_NZ11  Nr=11 Nz=11 NL=7  206 s  serial
+DONE EXP_NZ15  Nr=11 Nz=15 NL=7  298 s  serial
+DONE EXP_NL03  Nr=11 Nz=13 NL=3  110 s  serial
+DONE EXP_NL05  Nr=11 Nz=13 NL=5  152 s  serial
+DONE EXP_NL09  Nr=11 Nz=13 NL=9  322 s  serial
+DONE EXP_NL15  Nr=11 Nz=13 NL=15  730 s  serial
+CONV_EXPLORE SWEEP END 19:32:22
