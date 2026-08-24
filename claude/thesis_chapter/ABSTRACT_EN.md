@@ -34,45 +34,27 @@ The elastic properties of the layers are computed by means of the Halpin-Tsai
 theory and the rule of mixtures, and to account for the change in properties due to
 porosity the open-cell (open-pore) theory is used.
 
-**Findings:** Owing to the finite propagation speed of the thermal wave in the
-Lord-Shulman theory, the dimensionless mid-point temperature can overshoot (exceed unity); in the
-reference case it reaches about 0.926 without exceeding unity, whereas a genuine
-overshoot appears in specific cases — for example V-type porosity (1.109) and high
-graphene loading (up to 1.115) — and the temperature
-history exhibits a "peak-trough" pattern arising from the back-and-forth travel and
-reflection of the wave. Placing the conductive graphene platelets at the hot inner
-surface (pattern V) reduced the peak temperature by about 29 percent and the
-inner-surface circumferential (hoop) stress by a factor of about 3, whereas
-pattern A exhibited the worst behavior in all three quantities of temperature,
-stress, and displacement. Concentrating the porosity at the outer surface (pattern
-A) acted as a thermal barrier and reduced the outer-surface temperature by a factor of
-about 8. Combining V graphene with A porosity synergistically reduced the
-outer-surface temperature by a factor of about 26. The percolation threshold occurred
-at a weight fraction of about 1 percent, and increasing the graphene up to 8 percent
-roughly doubled the thermal stresses. At the reference weight fraction both platelet aspect ratios have a second-order
-effect (the width-to-thickness ratio being the weakest); the width-to-thickness
-ratio becomes the dominant reinforcement lever only at high graphene loading. The fully coupled solution damped the thermal wave by about
-1 percent, and under Gaussian-pulse loading the classical theory underestimated the
-peak temperature by about 2.5 times. Methodologically, the Newmark method offered the
-best accuracy-to-cost ratio among the six integrators tested, and the differential
-quadrature method reached the desired accuracy with about one-fifteenth of the nodes
-of the finite-difference and linear finite-element methods.
+**Findings:** Owing to the finite thermal-wave speed in the Lord-Shulman theory, the
+mid-wall temperature can overshoot the driving value (up to 1.115 at high graphene
+loading), and the temperature history shows the characteristic "peak-trough" pattern
+produced by wave reflection. Placing conductive graphene at the hot inner surface
+(pattern V) together with insulating porosity at the cold outer surface (pattern A)
+acts synergistically, reducing the outer-surface temperature by about 26-fold — the
+design configuration recommended by this work for thermal-protection applications.
+Under a Gaussian shock pulse, classical Fourier theory underestimates the peak
+temperature by about 2.5 times, a strong argument for the generalized theory.
+Methodologically, the differential-quadrature/Newmark combination reaches the desired
+accuracy at low computational cost, needing about one-fifteenth of the nodes required
+by competing methods.
 
-**Conclusion:** The results show that, for an accurate analysis of the transient
-thermal shock in these cylinders, applying the generalized Lord-Shulman theory is
-essential, because the classical Fourier theory severely underestimates the
-transient stresses, particularly under impulsive loading. From a design standpoint,
-aligning the conductive graphene pattern with the hot surface (V) and the insulating
-porosity pattern with the cold surface (A) provides the most favorable thermal
-behavior with the least stress penalty, and it is introduced as the recommended
-configuration for thermal-protection applications. Nevertheless, because the pairing
-of the two patterns can be either synergistic or neutralizing, and combinations such
-as X graphene with V porosity produce the maximum stress, the selection of patterns
-must be assessed simultaneously from the standpoints of both temperature and stress.
-Adding graphene beyond the percolation threshold yields a limited thermal benefit but
-an increasing stress penalty and must be undertaken with caution. Overall, the
-layerwise differential quadrature method together with Newmark integration provides
-an efficient, convergent, and verified tool for such coupled thermoelastic analyses.
+**Conclusion:** The results show that accurately analyzing transient thermal shock in
+these cylinders requires the generalized Lord-Shulman theory, since the classical
+theory severely underestimates transient stresses. From a design standpoint, aligning
+the graphene and porosity patterns (the V-A combination) gives the most favorable
+thermal behavior at the lowest stress penalty, though pattern selection must weigh
+both temperature and stress together. The layerwise differential quadrature method
+with Newmark integration provides an efficient, verified tool for such coupled
+thermoelastic analyses.
 
 **Keywords:** thermoelastic analysis, porous cylinder, graphene platelets,
 thermo-mechanical loading, Lord-Shulman theory, differential quadrature method,

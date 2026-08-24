@@ -166,3 +166,17 @@ generalizing the results:
 7. **Geometric and loading extensions:** functionally graded continuous
    distributions, other platelet geometries, a rotating cylinder, and
    three-dimensional effects.
+8. **Experimental validation:** fabricating physical specimens of the
+   multilayer porous GPL-reinforced cylinder and testing them under a real
+   thermal shock (e.g. laser or induction heating) to directly measure the
+   second-sound overshoot and quantitatively validate the model; also an
+   experimental measurement of the relaxation time $\tau_0$ for this
+   specific material combination (via laser-flash or DSC methods), which is
+   currently only a theoretical parameter.
+9. **Applied design guidance:** translating this work's design finding (the
+   GPL-V / porosity-A synergy) into a simple engineering selection chart or
+   table for designers of thermal-protection layers (e.g. nuclear-reactor
+   liners, hypersonic thermal-protection panels, industrial heat
+   exchangers), without needing to run the full solver for every case; and
+   a case study on standard industrial geometries (e.g. ASME dimensions) to
+   give directly usable numbers beyond the dimensionless reference case.
