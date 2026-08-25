@@ -45,7 +45,7 @@ Under a Gaussian shock pulse, classical Fourier theory underestimates the peak
 temperature by about 2.5 times, a strong argument for the generalized theory.
 Methodologically, the differential-quadrature/Newmark combination reaches the desired
 accuracy at low computational cost, needing about one-fifteenth of the nodes required
-by competing methods.
+by the finite-difference and linear finite-element methods.
 
 **Conclusion:** The results show that accurately analyzing transient thermal shock in
 these cylinders requires the generalized Lord-Shulman theory, since the classical
