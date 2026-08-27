@@ -26,6 +26,40 @@ PROTOCOL.md (code rules) and THESIS_TODO.md (task plan). Newest first.
    English (translation reference). Two Persian figure variants: B&W + color.
 7. **Autonomous loop** (author directive 2026-07-27): if idle or limit-reset,
    resume automatically; pick the highest-priority THESIS_TODO item; check ~hourly.
+8. **`.md`/`.docx` must never drift** (author directive 2026-08-26): many
+   deliverables exist as a Markdown source **and** a Word twin, and the `.docx`
+   is what the supervisor actually reads — so a `.md`-only edit silently leaves
+   the real deliverable stale. Before editing any `.md`, check for a
+   same-basename `.docx` next to it (`ls <dir>/<basename>.*`); if one exists,
+   regenerating it is part of the same task, not a follow-up:
+   `pandoc "<f>.md" -o "<f>.docx" --reference-doc="<repo-root>/پیش نویس پایان نامه (R 0.1).docx"`
+   Then **verify** the new text actually landed (`unzip -p "<f>.docx" word/document.xml`
+   and grep a distinctive phrase) — pandoc exits 0 even when it silently drops
+   content. Two exceptions found in practice: (a) the `*_R1.1_tracked` chapters
+   carry `TrackAdd`/`TrackDel` character styles that exist **only inside their own
+   docx**, so they must use *themselves* as `--reference-doc` or the red/green
+   colouring is lost; (b) `CHAPTER3_formulation_*` additionally holds 5 embedded
+   figures and 126 `\tag{}`-numbered equations that plain pandoc destroys — it
+   needs a preprocessing step and must not be naively regenerated.
+   Don't assume symmetry: some docs are `.md`-only or FA-only by design
+   (`APPENDIX_B_validation` has no EN twin) — check per file, never create a
+   missing twin just to make the set look uniform.
+9. **Repo hygiene — this is a single-branch, direct-to-`main` repo.** There is no
+   pull-request workflow, no `gh`, and exactly one remote branch (`origin/main`);
+   that is deliberate for a solo thesis repo and should stay that way. The failure
+   mode to guard against here is therefore *not* PR sprawl but its local
+   equivalent: finished work left sitting uncommitted, scratch scripts left
+   untracked, and stale branches accumulating. So: commit each completed unit of
+   work with a descriptive message and push it the same session (`git status`
+   should be empty of *finished* work before the session ends); never leave a
+   second long-lived branch alive — if one is created for an experiment, it is
+   either merged or deleted once `git merge-base --is-ancestor <b> main` confirms
+   it holds nothing unique; and keep genuinely throwaway scripts out of the tree
+   (scratchpad) rather than untracked in the repo. Governance lives in exactly
+   three files — `PROTOCOL.md` (code rules), this file (decisions + operating
+   rules), `THESIS_TODO.md` (task plan) — plus `REVISIONS.md` as the artifact
+   index; new rules are added to the right existing file, never to a new
+   protocol document.
 
 ## Key decisions & reasons (log)
 
