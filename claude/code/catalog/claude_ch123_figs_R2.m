@@ -2,7 +2,12 @@
 %  claude_ch123_figs_R2.m  —  SCHEMATIC FIGURES FOR CHAPTERS 2-3 (R2)
 %  Revision of claude_ch123_figs.m (kept frozen). Author request
 %  (2026-08-27): in the porosity V/A pattern formulas, the leading
-%  coefficient 2 -> 1.5 (Pm.V, Pm.A). No other change.
+%  coefficient 2 -> 1.5 (Pm.V, Pm.A). No other change. Per the author's
+%  revision-number rule, this script's porosity output is saved as a NEW
+%  file (porosity_patterns_schematic_R2.png) alongside the original
+%  (porosity_patterns_schematic.png, coefficient=2, untouched in git) --
+%  NOT overwriting it. The other 5 schematics still write to their
+%  original filenames since their content is unchanged by this edit.
 %  ------------------------------------------------------------------------
 %  Generates the 6 schematic PNGs referenced by the [شکل: ...] markers in the
 %  Persian thesis chapters 2-3 (and one taxonomy figure for chapter 2).
@@ -151,8 +156,8 @@ xlabel('\xi = (r-R_i)/h','FontSize',FSZ);
 ylabel('porosity coefficient  e = E/E_s = (\rho/\rho_s)^2','FontSize',FSZ);
 legend(pat,'Location','southoutside','Orientation','horizontal','FontSize',10);
 xlim([0 1]); ylim([0 2.2]); yline(1,'-','Color',[0.5 0.5 0.5],'HandleVisibility','off');
-exportgraphics(fig,fullfile(outdir,'porosity_patterns_schematic.png'),'Resolution',300);
-close(fig); fprintf('done: porosity_patterns_schematic.png\n');
+exportgraphics(fig,fullfile(outdir,'porosity_patterns_schematic_R2.png'),'Resolution',300);
+close(fig); fprintf('done: porosity_patterns_schematic_R2.png (R2 output -- porosity_patterns_schematic.png from claude_ch123_figs.m kept frozen/untouched)\n');
 
 %% ================================================================= FIG 4
 %  DQM_nodes_schematic.png : (a) radial CGL nodes/layer, (b) axial CGL nodes
