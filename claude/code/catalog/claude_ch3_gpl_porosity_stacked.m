@@ -69,7 +69,7 @@ end
 grid(ax2,'on'); set(ax2,'FontSize',FSZ);
 xlabel(ax2,'\xi = (r-R_i)/h','FontSize',FSZ);
 ylabel(ax2,'porosity coefficient  e = E/E_s = (\rho/\rho_s)^2','FontSize',FSZ);
-legend(ax2,pat,'Location','southoutside','Orientation','horizontal','FontSize',10);
+legend(ax2,pat,'Location','northoutside','Orientation','horizontal','FontSize',10);
 xlim(ax2,[0 1]); ylim(ax2,[0 2.2]); yline(ax2,1,'-','Color',[0.5 0.5 0.5],'HandleVisibility','off');
 
 exportgraphics(fig,fullfile(outdir,'GPL_porosity_stacked.png'),'Resolution',300);
