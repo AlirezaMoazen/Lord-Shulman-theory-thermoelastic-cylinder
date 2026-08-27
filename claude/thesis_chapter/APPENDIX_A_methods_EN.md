@@ -133,9 +133,14 @@ same transient-conduction benchmark (with a known exact solution):
 - **HHT-$\alpha$** ($\alpha = -0.1$): the Hilber-Hughes-Taylor generalization of
   Newmark that introduces controlled high-frequency damping while retaining
   second-order accuracy; practically as accurate as Newmark here.
-- **ode15s**: MATLAB's adaptive, variable-order stiff (BDF) solver, used as an
-  independent reference; about ten times more accurate but about eight times more
-  expensive than Newmark.
+- **ode15s**: MATLAB's adaptive, variable-step/variable-order stiff solver
+  (default NDF — a modified form of the backward differentiation formulas
+  BDF; the `'BDF'` option was not explicitly enabled), used as an
+  independent reference on a statically-condensed version of the system
+  (boundary-condition constraint rows eliminated algebraically, then
+  recast as a first-order state-space form with an analytic Jacobian);
+  about ten times more accurate but about eight times more expensive than
+  Newmark.
 - **Laplace-Durbin**: a Laplace-transform-in-time method with Durbin's numerical
   inversion, applicable only to the **thermal subsystem**. It is three orders of
   magnitude slower and, importantly, **cannot be applied to the full coupled
