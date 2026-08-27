@@ -144,7 +144,7 @@ for ci = 1:5
          'Marker',MK{ci},'MarkerIndices',mIdx,'MarkerSize',7,'MarkerFaceColor','w');
 end
 grid on; set(gca,'FontSize',FSZ);
-xlabel('through-thickness coordinate  \xi = (r-R_i)/h   ( \zeta = \xi - 1/2 )','FontSize',FSZ);
+xlabel('\xi = (r-R_i)/h','FontSize',FSZ);
 ylabel('porosity coefficient  e = E/E_s = (\rho/\rho_s)^2','FontSize',FSZ);
 legend(pat,'Location','southoutside','Orientation','horizontal','FontSize',10);
 xlim([0 1]); ylim([0 2.2]); yline(1,'-','Color',[0.5 0.5 0.5],'HandleVisibility','off');
