@@ -1,6 +1,6 @@
 # run_param_studies_v2.ps1 — FULL thesis parametric campaign, SEQUENTIAL
 # (parallel MATLAB instances hit license limits -> one at a time, robust)
-# All cases run claude_R4 (regression case BASE_R4 included).
+# All cases run LSTE_solver_R4 (regression case BASE_R4 included).
 $ErrorActionPreference = 'Continue'
 $here = "c:\Users\InfosaicUser\Desktop\MSc\Lord-Shulman-theory-thermoelastic-cylinder\claude"
 $out  = "$here\param_studies"
@@ -83,7 +83,7 @@ foreach ($name in $cases.Keys) {
         $cfg += " ov=struct($ovPairs); fo=fieldnames(ov); for ii=1:numel(fo), cfg.(fo{ii})=ov.(fo{ii}); end;"
     }
     $cfg += " cfg.out_name='param_studies\$name.mat'; cfg.store_full_history=false;"
-    $cmd = "cd('$here'); try, $cfg claude_R4; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); try, $cfg LSTE_solver_R4; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     "RUN  $name  $(Get-Date -Format 'HH:mm:ss')" | Add-Content $log -Encoding utf8
     & $matlab -batch $cmd -logfile "$out\$name.log" | Out-Null
     if ($LASTEXITCODE -eq 0 -and (Test-Path $mat)) {

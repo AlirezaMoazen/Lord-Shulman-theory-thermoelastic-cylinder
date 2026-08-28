@@ -6,7 +6,7 @@ lang: en-US
 <!-- CODE_FIX_HISTORY_EN — explains what was wrong with the author's original
      dynamic solver (New Cods/Main_Dyn.m and its Main_Dyn_R2..R4 follow-ups,
      supplied ~2 weeks before this document) and exactly what was changed to
-     produce the first working revision, claude_R1.m. All claims below are
+     produce the first working revision, LSTE_solver_R1.m. All claims below are
      grounded in a direct line-by-line comparison of the two files, not
      recollection — see the file paths cited in each section. -->
 
@@ -47,7 +47,7 @@ every later revision (`Main_Dyn_R2.m` .. `Main_Dyn_R4.m`) — it was never
 actually caught and fixed, only worked around by re-running with different
 settings.
 
-**Fix.** The rewritten solver (`claude/code/solver/claude_R1.m`) computes the
+**Fix.** The rewritten solver (`claude/code/solver/LSTE_solver_R1.m`) computes the
 full isotropic elastic-constant set per layer up front —
 `C11, C12, C13, C22, C23, C33, C55` (line 179–182) — and uses it
 consistently everywhere it's needed, so no stress term ever references an
@@ -80,12 +80,12 @@ state. In practice this freezes the visible response at roughly
 `beta*dt^2` of its true value: the solver runs, the numbers move, but they
 never approach the physically correct magnitude.
 
-**Fix.** `claude_R1.m` implements displacement-form Newmark the way it is
+**Fix.** `LSTE_solver_R1.m` implements displacement-form Newmark the way it is
 actually meant to be used: solve directly for the new displacement, then
 *derive* velocity/acceleration from it algebraically —
 
 ```matlab
-% claude_R1.m, lines 617-624
+% LSTE_solver_R1.m, lines 617-624
 rhs   = F + M*(a0*x + a2*xd + a3*xdd) + C*(a1*x + a4*xd + a5*xdd);
 x_new = Qf*(Uf\(Lf\(Pf_*rhs)));          % <- this IS the new displacement, used as such
 xdd_new = a0*(x_new - x) - a2*xd - a3*xdd;
@@ -95,7 +95,7 @@ x = x_new;  xd = xd_new;  xdd = xdd_new;
 
 The reference pattern for this (correctly-implemented, already working)
 displacement-form scheme is `M/Equation_Termo_Elastic_chand_layer_model_1.m`,
-an existing file in the repository — `claude_R1.m`'s header explicitly notes
+an existing file in the repository — `LSTE_solver_R1.m`'s header explicitly notes
 it was rewritten to match that reference exactly.
 
 ## 4. Problem 3 — the sign of the stiffness matrix is backwards
@@ -122,11 +122,11 @@ Problem 2's near-zero response scaling, this sign error mostly went
 unnoticed because the response was already too small to visibly diverge in
 most short test runs.
 
-**Fix.** `claude_R1.m` assembles every interior row with the operator
+**Fix.** `LSTE_solver_R1.m` assembles every interior row with the operator
 negated up front, documented explicitly at the top of the assembly section:
 
 ```matlab
-% claude_R1.m, lines 196-197
+% LSTE_solver_R1.m, lines 196-197
 % Convention:  M x'' + C x' + K x = F,  K = -(natural spatial operator).
 ...
 K(eqT,cT) = K(eqT,cT) - k_L(e)*( A_r{e}(ir,jr)/r + B_r{e}(ir,jr) );   % note the minus
@@ -158,11 +158,11 @@ in meters vs. the actual node coordinates) distorts the relative mass of
 every node arbitrarily and has no basis in the DQM formulation being used
 everywhere else in the same file.
 
-**Fix.** `claude_R1.m` uses the raw physical values with no invented
+**Fix.** `LSTE_solver_R1.m` uses the raw physical values with no invented
 geometric weighting, e.g. for mechanical mass:
 
 ```matlab
-% claude_R1.m, line 269
+% LSTE_solver_R1.m, line 269
 M(eqU,eqU) = M(eqU,eqU) + rho_L(e);       % just rho, no Veff
 ```
 
@@ -177,7 +177,7 @@ invented area/volume factor.
   traction condition, an interface-continuity equation) has to have its
   mass (`M`) and damping (`C`) matrix rows set to exactly zero, leaving only
   `K`, so the constraint is enforced exactly at every step rather than being
-  blended with inertia/damping terms. `claude_R1.m` does this systematically
+  blended with inertia/damping terms. `LSTE_solver_R1.m` does this systematically
   for every constraint row (search for `M(...)=0; C(...)=0;` throughout
   section 4.2 of the file) and adds a diagnostic check
   (`if ~isempty(zr), error('K_eff has empty rows...')`) that fails loudly if
@@ -186,8 +186,8 @@ invented area/volume factor.
 - **Row equilibration.** Thermal rows (~1e3 in magnitude), mechanical rows
   (~1e13), and constraint rows (~1) sit many orders of magnitude apart in
   the same sparse matrix, which makes the linear solve numerically
-  ill-conditioned. `claude_R1.m` divides every row by its largest
-  coefficient before factorizing (`claude_R1.m`, lines 564–577), improving
+  ill-conditioned. `LSTE_solver_R1.m` divides every row by its largest
+  coefficient before factorizing (`LSTE_solver_R1.m`, lines 564–577), improving
   the estimated reciprocal condition number from around `1e-24`
   (numerically singular) to around `1e-10` (solvable to full double
   precision) in later validation runs — see `claude/code_docs` and the
@@ -195,11 +195,11 @@ invented area/volume factor.
 
 ## 7. Net result
 
-`claude_R1.m` is a from-scratch rewrite built directly on top of the
+`LSTE_solver_R1.m` is a from-scratch rewrite built directly on top of the
 already-validated **static** solver (`Main-EN.m`), keeping its geometry,
 material-property, and mesh-assembly logic, but replacing the transient time
 -integration and matrix-sign conventions entirely. Its later revisions
-(`claude_R2` .. the current `claude_R8`) added features (FG-powerlaw
+(`LSTE_solver_R2` .. the current `LSTE_solver_R8`) added features (FG-powerlaw
 material mode, sine pressure loading, additional boundary-condition types,
 porosity patterns, GPL distribution patterns) without ever needing to
 revisit these four fixes — they were validated once, against six independent

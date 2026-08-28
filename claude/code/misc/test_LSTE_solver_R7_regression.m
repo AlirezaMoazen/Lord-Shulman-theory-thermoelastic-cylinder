@@ -1,11 +1,11 @@
-%% test_r7_regression.m — claude_R7 must equal claude_R6 in physics; DOF map correct
+%% test_r7_regression.m — LSTE_solver_R7 must equal LSTE_solver_R6 in physics; DOF map correct
 %  Runs both solvers at a small fast config and compares all physics outputs,
 %  then checks the R7 DOF-mapping artifacts (NodeMap, DOFmap, GridDOF).
 clc;
 % NOTE: each solver does `clearvars -except cfg` internally, so set cfg fresh
 % before each call (nothing else survives the call).
-cfg = struct('N_r',6,'N_z',7,'NL',3,'total_time',3,'dt',0.5,'store_full_history',false,'out_name','test_R6.mat'); claude_R6;
-cfg = struct('N_r',6,'N_z',7,'NL',3,'total_time',3,'dt',0.5,'store_full_history',false,'out_name','test_R7.mat'); claude_R7;
+cfg = struct('N_r',6,'N_z',7,'NL',3,'total_time',3,'dt',0.5,'store_full_history',false,'out_name','test_R6.mat'); LSTE_solver_R6;
+cfg = struct('N_r',6,'N_z',7,'NL',3,'total_time',3,'dt',0.5,'store_full_history',false,'out_name','test_R7.mat'); LSTE_solver_R7;
 
 clearvars;
 A = load('test_R6.mat'); B = load('test_R7.mat');

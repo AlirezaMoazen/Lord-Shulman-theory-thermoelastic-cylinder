@@ -1,9 +1,9 @@
 %% Compare_R1.m
-%  Cross-validation: static limit of the dynamic solver (claude_R1 with
+%  Cross-validation: static limit of the dynamic solver (LSTE_solver_R1 with
 %  pressure-only load) vs the independent validated static solver
 %  (Static_Baseline_R1 = Main-EN). Both use the same grid (NL=5,N_r=9,N_z=11),
 %  the same material config (W_GPL=0, UD porosity e3=0.7) and free ends.
-%  Run claude_R1 with cfg.out_name='Results_R5_verif.mat' (or edit below).
+%  Run LSTE_solver_R1 with cfg.out_name='Results_R5_verif.mat' (or edit below).
 clear; clc;
 
 S = load('Results_Static.mat');     % static baseline

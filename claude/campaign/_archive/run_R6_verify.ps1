@@ -1,4 +1,4 @@
-# run_R6_verify.ps1 — verify claude_R6 (per-end BC + overridable GPL dims)
+# run_R6_verify.ps1 — verify LSTE_solver_R6 (per-end BC + overridable GPL dims)
 #  (1) REGRESSION: identical cfg -> R6 must match R5 digit-for-digit
 #  (2) FEATURE: mixed BC (S at z=0, C at z=L) runs and sits between S-S and C-C
 #  (3) FEATURE: GPL aspect-ratio override changes the stiffness/result
@@ -21,12 +21,12 @@ function Run($solver, $extra, $name) {
 }
 
 Write-Output "== R6 verification =="
-Run "claude_R5" ""                          "R6ver_R5ref"
-Run "claude_R6" ""                          "R6ver_R6def"
-Run "claude_R6" ",'BC_z0','S','BC_zL','C'"  "R6ver_mixed"
-Run "claude_R6" ",'BC_z','S'"               "R6ver_SS"
-Run "claude_R6" ",'BC_z','C'"               "R6ver_CC"
-Run "claude_R6" ",'a_GPL',5.0e-6"           "R6ver_aspect"
+Run "LSTE_solver_R5" ""                          "R6ver_R5ref"
+Run "LSTE_solver_R6" ""                          "R6ver_R6def"
+Run "LSTE_solver_R6" ",'BC_z0','S','BC_zL','C'"  "R6ver_mixed"
+Run "LSTE_solver_R6" ",'BC_z','S'"               "R6ver_SS"
+Run "LSTE_solver_R6" ",'BC_z','C'"               "R6ver_CC"
+Run "LSTE_solver_R6" ",'a_GPL',5.0e-6"           "R6ver_aspect"
 
 # compare in MATLAB
 $cmp = @"

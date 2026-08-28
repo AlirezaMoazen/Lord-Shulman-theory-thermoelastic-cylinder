@@ -1,4 +1,4 @@
-%% claude_R9_compare.m — exact numerical diff between R8 and R9 check runs.
+%% LSTE_solver_R9_compare.m — exact numerical diff between R8 and R9 check runs.
 %  Not a revision file (no physics, no cfg) -- a one-off validation script,
 %  loads the chk_*_R8.mat / chk_*_R9.mat pairs written by the correctness
 %  sweep and reports max abs / max rel differences per field. Run this

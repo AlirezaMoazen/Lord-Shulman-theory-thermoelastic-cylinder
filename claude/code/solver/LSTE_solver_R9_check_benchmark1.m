@@ -1,7 +1,7 @@
-%% claude_R9_check_benchmark1.m — re-run validation benchmark 1 against R9.
-%  NOT a new revision, NOT a replacement for claude_R2_run_benchmark1.m (left
+%% LSTE_solver_R9_check_benchmark1.m — re-run validation benchmark 1 against R9.
+%  NOT a new revision, NOT a replacement for LSTE_solver_R2_run_benchmark1.m (left
 %  untouched in code/validation/). This is a one-off check: identical to
-%  claude_R2_run_benchmark1.m except (a) calls claude_R9 instead of claude_R2,
+%  LSTE_solver_R2_run_benchmark1.m except (a) calls LSTE_solver_R9 instead of LSTE_solver_R2,
 %  and (b) writes to a separate out_name/outdir so it cannot overwrite the
 %  original validation artifacts. Purpose: confirm R9's vectorized assembly
 %  reproduces the literature benchmark (Malekzadeh & Heydarpour, IJPVP 98
@@ -23,7 +23,7 @@ cfg = struct( ...
     'store_full_history',true, ...
     'out_name',sprintf('R9check_bench1_NL%d_Nr%d.mat',BENCH.NL,BENCH.N_r));
 
-claude_R9;    % run the R9 solver (vectorized assembly)
+LSTE_solver_R9;    % run the R9 solver (vectorized assembly)
 
 %% ---------------------- extract benchmark quantities --------------------
 P0     = 100e6;
@@ -61,7 +61,7 @@ ref_ansys = [0.1  0.201  1.109  0.232  -0.296 ;
              0.3  0.525  2.903  0.606  -0.774 ;
              0.5  0.652  3.589  0.749  -0.956 ];
 
-fprintf('\n========== BENCHMARK 1 re-check against claude_R9 (vectorized) ==========\n');
+fprintf('\n========== BENCHMARK 1 re-check against LSTE_solver_R9 (vectorized) ==========\n');
 fprintf('IJPVP 98 (2012) Table 6 -- FG cylinder, clamped ends, P(t)=P0*sin(pi*t)\n');
 fprintf('Grid: NL=%d layers, N_r=%d, N_z=%d\n', NL, N_r, N_z);
 fprintf('%-6s %-10s %10s %10s %10s %10s\n','t*','source','U*','S*_tt','S*_zz','S*_rr');
@@ -69,7 +69,7 @@ for k = 1:size(ref_paper,1)
     ts = ref_paper(k,1);
     [~,n_ts] = min(abs(tstar - ts));
     mine = [Ustar(n_ts) SttS(n_ts) SzzS(n_ts) SrrS(n_ts)];
-    fprintf('%-6.2f %-10s %10.3f %10.3f %10.3f %10.3f\n', ts,'claude_R9', mine);
+    fprintf('%-6.2f %-10s %10.3f %10.3f %10.3f %10.3f\n', ts,'LSTE_solver_R9', mine);
     fprintf('%-6s %-10s %10.3f %10.3f %10.3f %10.3f\n','','Paper',  ref_paper(k,2:5));
     fprintf('%-6s %-10s %10.3f %10.3f %10.3f %10.3f\n','','ANSYS',  ref_ansys(k,2:5));
     err = abs(mine - ref_paper(k,2:5)) ./ max(abs(ref_paper(k,2:5)), eps) * 100;

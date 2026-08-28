@@ -1,15 +1,7 @@
 %% ========================================================================
-%  claude_R5.m  —  DYNAMIC THERMOELASTIC ANALYSIS (MULTI-THEORY)
+%  LSTE_solver_R5.m  —  DYNAMIC THERMOELASTIC ANALYSIS (MULTI-THEORY)
 %  Multilayer porous GPL-reinforced cylinder, layerwise DQM + Newmark (beta)
 %  ------------------------------------------------------------------------
-%  REVISION R6 (additive, on verified R5 -- supervisor review Prom 3-7):
-%   (1) PER-END mechanical supports: BC_z0 (z=0) and BC_zL (z=L). Empty ->
-%       fall back to BC_z, so all previous single-BC runs are byte-identical.
-%       Enables the mixed case (one end simply supported, the other clamped).
-%   (2) GPL platelet dimensions a_GPL,b_GPL,t_GPL moved into the config block
-%       (before the cfg override) so the aspect-ratio study can set them via
-%       cfg. Defaults identical to R5 -> UD regression unchanged.
-%  ....................................................................
 %  REVISION R5 (additive): GENERALIZED THERMOELASTICITY THEORY SWITCH
 %   theory = 'FOURIER' : classical coupled (parabolic heat conduction)
 %            'LS'      : Lord-Shulman, one relaxation time tau0   (default)
@@ -21,7 +13,7 @@
 %                        rho*c*th'' + beta*T0*e''
 %                          = k_star*div(grad th) + k*div(grad th')
 %   Back-compat: cfg.LS_enabled=false maps to theory='FOURIER'.
-%   Regression: default (theory='LS') is digit-identical to claude_R4.
+%   Regression: default (theory='LS') is digit-identical to LSTE_solver_R4.
 %  ------------------------------------------------------------------------
 %  REVISION R4 (additive): generalized inner-surface thermal loading
 %   (+) T_in_mode 'ramp' (default, R3_1 behavior)
@@ -125,15 +117,6 @@ k_star = 1;                 % GN3 conductivity-rate constant k* (W/m/K/s)
 % Mechanical support at z = 0 and z = L :
 %   'S' simply, 'F' free, 'C' clamped, 'R' roller/plane-strain (R3 addition)
 BC_z = 'S';
-% (R6 addition) per-end override: leave '' to use BC_z at that end, or set to
-% 'S'/'F'/'C'/'R' for an asymmetric (mixed) support, e.g. BC_z0='S', BC_zL='C'.
-BC_z0 = '';                 % support at z = 0   ('' -> BC_z)
-BC_zL = '';                 % support at z = L   ('' -> BC_z)
-
-% (R6 addition) GPL platelet dimensions moved here (were below section 3) so
-% the aspect-ratio study can override them via cfg. length 2a, width 2b,
-% thickness t -> Halpin-Tsai xiL = 2a/t, xiT = 2b/t.
-a_GPL = 2.5e-6;  b_GPL = 1.5e-6;  t_GPL = 1.5e-9;
 
 % --- (R3 addition) boundary-condition type selectors ---------------------
 T_BC_in    = 'dirichlet';   % 'dirichlet': theta = ramp(t) | 'flux': -k dT/dr = q_in_fun(t)
@@ -160,7 +143,7 @@ em3  = 0.8980;              % mass-side UD coefficient  ->  e3 = 0.8064
 e3   = em3^2;               % kept for output/reporting
 
 % --- (R2 addition) material mode -----------------------------------------
-% 'GPL'         : GPL + porosity model from the docx spec (claude_R1 behavior)
+% 'GPL'         : GPL + porosity model from the docx spec (LSTE_solver_R1 behavior)
 % 'FG_powerlaw' : P(r) = P_i_val*(r/R_i)^n, evaluated at layer mid-radius
 material_mode = 'GPL';
 FG_E_i   = 223e9;   FG_nE   = 2;       % E at inner radius, exponent
@@ -170,7 +153,7 @@ FG_k     = 10;      FG_c    = 500;     % conductivity / heat capacity (unused if
 FG_alpha = 0;                          % thermal expansion (0 -> pure mechanics)
 
 % --- (R2 addition) pressure time function --------------------------------
-P_time_mode = 'step';       % 'step' (claude_R1 behavior) or 'sine'
+P_time_mode = 'step';       % 'step' (LSTE_solver_R1 behavior) or 'sine'
 t0_P        = 1.0;          % period parameter for 'sine': P(t)=P_i*sin(pi*t/t0_P)
 
 % --- (R2 addition) full time-history storage -----------------------------
@@ -216,7 +199,7 @@ dt         = 5e-4;          % time step (s)
 % Newmark parameters (gam > 0.5 adds numerical damping, useful for
 % verification runs that must settle to the static solution)
 gam = 0.5;  bet = 0.25;
-out_name = 'Results_claude_R5.mat';    % output file for saved results
+out_name = 'Results_LSTE_solver_R5.mat';    % output file for saved results
 % NOTE (R5/GN3): thermal boundary rows keep the standard -k*dth/dr flux form;
 % for GN3 this is an approximation of its rate-type flux (documented choice).
 
@@ -228,7 +211,7 @@ if exist('cfg','var') && isstruct(cfg)
         % any existing configuration variable (a misspelled field would
         % otherwise be silently ignored by the solver)
         if ~exist(fn{iov}, 'var')
-            warning('claude_R2_1:unknownCfgField', ...
+            warning('LSTE_solver_R2_1:unknownCfgField', ...
                 'cfg field "%s" does not match any configuration variable — check spelling!', fn{iov});
         end
         eval([fn{iov} ' = cfg.(fn{iov});']);   %#ok<EVLDOT>
@@ -264,8 +247,7 @@ end
 
 %% ========================= 3. Material properties (per layer, docx style) ========
 % GPL
-% (R6) a_GPL,b_GPL,t_GPL now set in the config block above (cfg-overridable);
-% the previous hardcoded assignment here is removed so cfg values survive.
+a_GPL = 2.5e-6;  b_GPL = 1.5e-6;  t_GPL = 1.5e-9;
 E_GPL = 1.01e12; rho_GPL = 1062.5; c_GPL = 644;
 alpha_GPL = 5e-6; k_GPL = 3000;  nu_GPL = 0.186;
 % Matrix (epoxy)
@@ -593,10 +575,7 @@ for e = 1:NL
         r = r_nodes{e}(ir);
         for iz = [1, N_z]
             rU = idx_U(e,ir,iz);  rW = idx_W(e,ir,iz);
-            bcE = BC_z;                                   % (R6) per-end support
-            if iz==1  && ~isempty(BC_z0), bcE = BC_z0; end
-            if iz==N_z && ~isempty(BC_zL), bcE = BC_zL; end
-            switch upper(bcE)
+            switch upper(BC_z)
                 case 'R'                    % (R3) rollers: tau_rz=0, w=0
                     K(rU,:)=0; C(rU,:)=0; M(rU,:)=0;
                     for jz = 1:N_z
@@ -756,10 +735,7 @@ for e = 2:NL
     r2 = r_nodes{e}(1);
     for iz = [1, N_z]
         rU2 = idx_U(e,1,iz);  rW2 = idx_W(e,1,iz);
-        bcE = BC_z;                                   % (R6) per-end support
-        if iz==1  && ~isempty(BC_z0), bcE = BC_z0; end
-        if iz==N_z && ~isempty(BC_zL), bcE = BC_zL; end
-        switch upper(bcE)
+        switch upper(BC_z)
             case 'R'                        % (R3) rollers at interface corners
                 K(rU2,:)=0; C(rU2,:)=0; M(rU2,:)=0;
                 for jz = 1:N_z
@@ -805,11 +781,8 @@ for e = 2:NL
 end
 
 % ---- (i) rigid-body pin (needed for S and F ends: axial translation) ----
-% (R3) 'R'/'C' ends already fix w at the ends -> no pin needed
-% (R6) with per-end supports, the pin is skipped if EITHER end is C or R
-bc0 = BC_z; if ~isempty(BC_z0), bc0 = BC_z0; end
-bcL = BC_z; if ~isempty(BC_zL), bcL = BC_zL; end
-if ~any(ismember(upper({bc0, bcL}), {'C','R'}))
+% (R3) 'R' ends already fix w at the ends -> no pin needed (like 'C')
+if upper(BC_z) ~= 'C' && upper(BC_z) ~= 'R'
     n = idx_W(1, round(N_r/2), round(N_z/2));
     K(n,:)=0; C(n,:)=0; M(n,:)=0; K(n,n)=1;   % w = 0 at one interior node
 end
@@ -887,7 +860,7 @@ for n = 1:Nt
     if strcmpi(P_time_mode, 'sine')
         P_now = P_i*sin(pi*t/t0_P);
     else
-        P_now = P_i;                        % step (claude_R1 behavior)
+        P_now = P_i;                        % step (LSTE_solver_R1 behavior)
     end
     F(rows_Pin) = -P_now.*rs_Pin;
 

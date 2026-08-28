@@ -2,7 +2,7 @@
 # (author request 2026-08-24): anchor N_r=11, N_z=13, N_L=7 (NOT the locked
 # reference mesh N_r=15/N_z=11 — that stays unchanged; this is a standalone
 # diagnostic study, output kept in its own folder so it never touches
-# param_studies_ch4). Runs claude_R9 (validated digit-identical to R8, ~2.1x
+# param_studies_ch4). Runs LSTE_solver_R9 (validated digit-identical to R8, ~2.1x
 # faster) serially for clean timing. Same reference-case physics as the
 # locked campaign (run_nz_sweep.ps1), only N_r/N_z/N_L differ per case.
 $here = "c:\Users\InfosaicUser\Desktop\MSc\Lord-Shulman-theory-thermoelastic-cylinder\claude"
@@ -28,7 +28,7 @@ foreach ($n in $cases.Keys) {
     if ((Test-Path $mat) -and ((Get-Item $mat).Length -gt 20kb)) { "SKIP $n" | Add-Content $tlog -Encoding utf8; continue }
     $nr=$cases[$n][0]; $nz=$cases[$n][1]; $nl=$cases[$n][2]
     $cfg = "cfg=struct($base); cfg.N_r=$nr; cfg.N_z=$nz; cfg.NL=$nl; cfg.out_name='param_studies_conv_explore/$n.mat';"
-    $cmd = "cd('$here'); addpath('code/solver'); try, $cfg claude_R9; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); addpath('code/solver'); try, $cfg LSTE_solver_R9; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     $el = (Measure-Command { & $matlab -batch $cmd -logfile "$out\$n.log" | Out-Null }).TotalSeconds
     $ok = ($LASTEXITCODE -eq 0) -and (Test-Path $mat)
     "$(if($ok){'DONE'}else{'FAIL'}) $n  Nr=$nr Nz=$nz NL=$nl  $([math]::Round($el)) s  serial" | Add-Content $tlog -Encoding utf8

@@ -1,6 +1,20 @@
 %% ========================================================================
-%  claude_R7.m  —  DYNAMIC THERMOELASTIC ANALYSIS (MULTI-THEORY)
+%  LSTE_solver_R8.m  —  DYNAMIC THERMOELASTIC ANALYSIS (MULTI-THEORY)  [FINAL REVISION]
 %  Multilayer porous GPL-reinforced cylinder, layerwise DQM + Newmark (beta)
+%  ------------------------------------------------------------------------
+%  REVISION R8 — FINAL / DEFINITIVE REVISION (the code the thesis and all
+%  Chapter-4 results are based on). Consolidates revisions R1..R7.
+%   * PHYSICS DIGIT-IDENTICAL to R7 (hence to R6): solver logic, matrix
+%     assembly and the Newmark march are byte-for-byte unchanged. ONLY the
+%     default model configuration was changed — set to the THESIS REFERENCE
+%     CASE so a standalone run reproduces the thesis reference results (R7
+%     defaulted to a small test geometry that had to be supplied via cfg).
+%   * Reference-case defaults: theory='LS', N_L=7, R_i=1.0, R_o=1.5, L=2.1 m,
+%     N_r=15, N_z=11, W_GPL=0.3%, h_c=10 W/m^2K, T_in 300->600 K (t0=2 s),
+%     P_i=50 MPa, tau0=418 s (tau*~0.15), total_time=3000 s, dt=1 s.
+%   * POROSITY PATTERNS left exactly as R7 and MARKED for the author to
+%     finalize against the MZ reference file (see section 0). No porosity
+%     equation or coefficient was modified in R8.
 %  ------------------------------------------------------------------------
 %  REVISION R7 (additive, on frozen R6 -- supervisor review Prom.2 page 4):
 %   EXPLICIT DOF NUMBERING / MAPPING MATRICES. Adds, right after the DOF index
@@ -34,7 +48,7 @@
 %                        rho*c*th'' + beta*T0*e''
 %                          = k_star*div(grad th) + k*div(grad th')
 %   Back-compat: cfg.LS_enabled=false maps to theory='FOURIER'.
-%   Regression: default (theory='LS') is digit-identical to claude_R4.
+%   Regression: default (theory='LS') is digit-identical to LSTE_solver_R4.
 %  ------------------------------------------------------------------------
 %  REVISION R4 (additive): generalized inner-surface thermal loading
 %   (+) T_in_mode 'ramp' (default, R3_1 behavior)
@@ -127,7 +141,7 @@ clearvars -except cfg; clc; close all;
 
 %% ========================= 0. Model configuration =========================
 LS_enabled = true;          % legacy switch (kept for old drivers; see theory)
-tau0       = 1e-5;          % relaxation time tau_q (s)
+tau0       = 418;           % relaxation time tau_q (s): thesis reference tau* ~ 0.15
 coupling_on = true;         % thermoelastic coupling term in the energy eq.
 
 % --- (R5 addition) thermoelasticity theory selector ----------------------
@@ -166,14 +180,18 @@ q_in_fun   = @(t) 0;        % inner heat-flux time function (used when T_BC_in='
 GPL_pattern      = 'UD';    % 'UD','O','X','V','A'
 porosity_on      = true;
 porosity_pattern = 'UD';    % 'UD','O','X','V','A'
-W_GPL_total = 0.04;         % total GPL mass fraction
+W_GPL_total = 0.003;        % total GPL mass fraction (thesis reference 0.3%)
+% >>> A7 — AUTHOR TO FINALIZE: the porosity-pattern equations (section for
+%     P_m below) and em3 are left EXACTLY as R7, pending correction against
+%     the MZ reference file. The porosity distribution is NOT final until
+%     that update; no porosity equation/coefficient was changed in R8. <<<
 % (R3_1) porosity level: set em3 (mass-side, primary). All other pattern
 % coefficients are DERIVED exactly (see header). e3 = em3^2.
 em3  = 0.8980;              % mass-side UD coefficient  ->  e3 = 0.8064
 e3   = em3^2;               % kept for output/reporting
 
 % --- (R2 addition) material mode -----------------------------------------
-% 'GPL'         : GPL + porosity model from the docx spec (claude_R1 behavior)
+% 'GPL'         : GPL + porosity model from the docx spec (LSTE_solver_R1 behavior)
 % 'FG_powerlaw' : P(r) = P_i_val*(r/R_i)^n, evaluated at layer mid-radius
 material_mode = 'GPL';
 FG_E_i   = 223e9;   FG_nE   = 2;       % E at inner radius, exponent
@@ -183,19 +201,19 @@ FG_k     = 10;      FG_c    = 500;     % conductivity / heat capacity (unused if
 FG_alpha = 0;                          % thermal expansion (0 -> pure mechanics)
 
 % --- (R2 addition) pressure time function --------------------------------
-P_time_mode = 'step';       % 'step' (claude_R1 behavior) or 'sine'
+P_time_mode = 'step';       % 'step' (LSTE_solver_R1 behavior) or 'sine'
 t0_P        = 1.0;          % period parameter for 'sine': P(t)=P_i*sin(pi*t/t0_P)
 
 % --- (R2 addition) full time-history storage -----------------------------
 store_full_history = false; % true: save x at every step in X_hist (Ndof x Nt+1)
 
 %% ========================= 1. Geometry and discretization =========================
-NL  = 5;                    % number of layers
-R_i = 0.1;                  % inner radius (m)
-R_o = 0.2;                  % outer radius (m)
-L   = 0.5;                  % cylinder length (m)
-N_r = 9;                    % radial DQ points per layer
-N_z = 11;                   % axial DQ points
+NL  = 7;                    % number of layers (thesis reference)
+R_i = 1.0;                  % inner radius (m) (thesis reference)
+R_o = 1.5;                  % outer radius (m) (thesis reference)
+L   = 2.1;                  % cylinder length (m) (thesis reference)
+N_r = 15;                   % radial DQ points per layer (locked mesh)
+N_z = 11;                   % axial DQ points (locked mesh)
 
 % NOTE (R2_1): this first grid build is only used when the script runs with
 % no cfg overrides; if cfg overrides geometry, everything below is rebuilt
@@ -218,18 +236,18 @@ end
 %% ========================= 2. Loading and time parameters =========================
 T_ref    = 300;             % reference / initial temperature (K)
 T_inf    = 300;             % ambient temperature for outer convection (K)
-h_c      = 100;             % convection coefficient (W/m^2K)
-T_in_val = 500;             % final inner surface temperature (K)
-t0_ramp  = 0.01;            % ramp time constant (s)
-P_i      = 1e6;             % internal pressure (Pa), applied as step for t>0
+h_c      = 10;              % convection coefficient (W/m^2K) (thesis reference)
+T_in_val = 600;             % final inner surface temperature (K): 300 -> 600
+t0_ramp  = 2;               % ramp time constant (s) (thesis reference)
+P_i      = 50e6;            % internal pressure (Pa) = 50 MPa (thesis reference)
 
-total_time = 0.05;          % total simulation time (s)
-dt         = 5e-4;          % time step (s)
+total_time = 3000;          % total simulation time (s) (thesis reference)
+dt         = 1;             % time step (s) (thesis reference)
 
 % Newmark parameters (gam > 0.5 adds numerical damping, useful for
 % verification runs that must settle to the static solution)
 gam = 0.5;  bet = 0.25;
-out_name = 'Results_claude_R5.mat';    % output file for saved results
+out_name = 'Results_LSTE_solver_R5.mat';    % output file for saved results
 % NOTE (R5/GN3): thermal boundary rows keep the standard -k*dth/dr flux form;
 % for GN3 this is an approximation of its rate-type flux (documented choice).
 
@@ -241,7 +259,7 @@ if exist('cfg','var') && isstruct(cfg)
         % any existing configuration variable (a misspelled field would
         % otherwise be silently ignored by the solver)
         if ~exist(fn{iov}, 'var')
-            warning('claude_R2_1:unknownCfgField', ...
+            warning('LSTE_solver_R2_1:unknownCfgField', ...
                 'cfg field "%s" does not match any configuration variable — check spelling!', fn{iov});
         end
         eval([fn{iov} ' = cfg.(fn{iov});']);   %#ok<EVLDOT>
@@ -385,7 +403,7 @@ idx_W  = @(e,ir,iz) 2*Nn + (e-1)*N_r*N_z + (ir-1)*N_z + iz;
 %  axial index iz fastest, then radial ir, then layer e. The objects below make
 %  that numbering EXPLICIT and inspectable (supervisor's page-4 note), in exactly
 %  the same order the K/C/M equations use -- they add NO physics and change no
-%  result (K, C, M, the solve and every output are identical to claude_R6).
+%  result (K, C, M, the solve and every output are identical to LSTE_solver_R6).
 %
 %  (1) NodeMap : rectangular (N_r x N_z) grid-numbering matrix for one layer;
 %      NodeMap(ir,iz) = local node index 1..N_r*N_z  (axial index iz fastest).
@@ -940,7 +958,7 @@ for n = 1:Nt
     if strcmpi(P_time_mode, 'sine')
         P_now = P_i*sin(pi*t/t0_P);
     else
-        P_now = P_i;                        % step (claude_R1 behavior)
+        P_now = P_i;                        % step (LSTE_solver_R1 behavior)
     end
     F(rows_Pin) = -P_now.*rs_Pin;
 

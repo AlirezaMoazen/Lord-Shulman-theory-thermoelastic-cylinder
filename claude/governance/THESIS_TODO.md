@@ -9,7 +9,7 @@ For open author-facing questions in detail, see `DECISIONS_NEEDED.md`.
 ## PHASE 0 — Understanding, solver correctness ✅ DONE
 1. ✅ Understood the problem; read the repo, MZ spec, Rezaei twin thesis, 169-paper library.
 2. ✅ Diagnosed the original broken dynamic solver (4 fatal bugs) — see `code_docs/CODE_FIX_HISTORY_EN/FA.md`.
-3. ✅ Rewrote it as `claude_R1.m` (frozen, verified against the static solver).
+3. ✅ Rewrote it as `LSTE_solver_R1.m` (frozen, verified against the static solver).
 
 ## PHASE 1 — Solver line ✅ DONE (R1 → R9)
 4. ✅ R1 (fixed, frozen) → R2 (cfg engine) → R3/R3_1 (BC options, final porosity) →
@@ -72,7 +72,7 @@ For open author-facing questions in detail, see `DECISIONS_NEEDED.md`.
 18. ✅ `CODE_DOC_usage_FA` / `CODE_DOC_technical_FA` — kept current through
     every pipeline change, now mention R9.
 19. ✅ `CODE_FIX_HISTORY_EN/FA` — evidence-based writeup of the original
-    solver's bugs vs. `claude_R1.m`'s fixes.
+    solver's bugs vs. `LSTE_solver_R1.m`'s fixes.
 20. ✅ `CODE_WRITING_GUIDE_EN/FA` — teaches the codebase's recurring patterns.
 21. ✅ `EXAMINER_REVIEW_FA` (strict critique), `IMPROVEMENT_SUGGESTIONS_FA`
     (27 items), `DEFENSE_QA_FA` (37 Q&A pairs), `BACKGROUND_EN`.

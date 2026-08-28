@@ -1,4 +1,4 @@
-# run_ch4_campaign.ps1 — full Chapter-4 campaign at the NEW geometry (claude_R7)
+# run_ch4_campaign.ps1 — full Chapter-4 campaign at the NEW geometry (LSTE_solver_R7)
 # Base: R_i=1, R_o=1.5, h=0.5, l=2.1, N_L=7, W=0.3%, e_m3=0.8604, T_in=600, P_i=50 MPa,
 #       LS tau0=418 (tau*=0.15), total_time=3000 s, dt=1 s. Prom.1/2/3 folded in.
 # store_full_history=true only for shock studies (relaxation C, gaussian M, theory T3).
@@ -57,7 +57,7 @@ foreach ($name in $cases.Keys) {
     if ((Test-Path $mat) -and ((Get-Item $mat).Length -gt 50kb)) { "SKIP $name" | Add-Content $log -Encoding utf8; continue }
     $ov = $cases[$name].TrimStart(',')
     $cfg = "cfg=struct($base); ov=struct($ov); fo=fieldnames(ov); for ii=1:numel(fo), cfg.(fo{ii})=ov.(fo{ii}); end; cfg.out_name='param_studies_ch4/$name.mat';"
-    $cmd = "cd('$here'); addpath('code/solver'); try, $cfg claude_R7; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); addpath('code/solver'); try, $cfg LSTE_solver_R7; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     while (@($jobs | Where-Object { $_.State -eq 'Running' }).Count -ge $maxPar) { Start-Sleep -Seconds 5 }
     "RUN  $name  $(Get-Date -Format 'HH:mm:ss')" | Add-Content $log -Encoding utf8
     $jobs += Start-Job -Name $name -ScriptBlock {

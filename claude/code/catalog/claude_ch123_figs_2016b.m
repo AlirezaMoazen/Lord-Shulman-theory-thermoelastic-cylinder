@@ -13,7 +13,7 @@
 %  Persian thesis chapters 2-3 (and one taxonomy figure for chapter 2).
 %  All figure text is in ENGLISH (MATLAB renders RTL/Persian unreliably).
 %
-%  Ground-truth formulas taken from the FROZEN solver claude_R7.m:
+%  Ground-truth formulas taken from the FROZEN solver LSTE_solver_R7.m:
 %    * GPL weight-fraction patterns  (switch upper(GPL_pattern), lines 315-322)
 %    * porosity mass-factor patterns (switch upper(porosity_pattern), 350-357)
 %      with coefficients em1..em5 (lines 294-297) and centered coord zet.
@@ -120,7 +120,7 @@ close(fig); fprintf('done: GPL_patterns_schematic.png\n');
 
 %% ================================================================= FIG 3
 %  porosity_patterns_schematic.png : mass-factor P_m vs xi, 5 patterns
-%  EXACT reproduction of claude_R7.m switch upper(porosity_pattern) block.
+%  EXACT reproduction of LSTE_solver_R7.m switch upper(porosity_pattern) block.
 em3 = 0.8980;                                         % solver default (e3=0.8064)
 em1 = (pi/2)*(1-em3);
 em2 = (1-em3)/(1-2/pi);

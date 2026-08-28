@@ -1,4 +1,4 @@
-# run_param_studies_v5.ps1 — REVISION cases needing claude_R6
+# run_param_studies_v5.ps1 — REVISION cases needing LSTE_solver_R6
 #   infinite-length limit, mixed end supports, GPL aspect-ratio study,
 #   full GPL x porosity interaction matrix.
 # Parallel (3 concurrent), field-by-field cfg merge, skip-existing.
@@ -56,7 +56,7 @@ foreach ($name in $cases.Keys) {
     $ov  = $cases[$name].TrimStart(',')
     $cfg = "cfg=struct($base); ov=struct($ov); fo=fieldnames(ov); for ii=1:numel(fo), cfg.(fo{ii})=ov.(fo{ii}); end;"
     $cfg += " cfg.out_name='param_studies\$name.mat'; cfg.store_full_history=false;"
-    $cmd = "cd('$here'); try, $cfg claude_R6; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); try, $cfg LSTE_solver_R6; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     while (@($jobs | Where-Object { $_.State -eq 'Running' }).Count -ge $maxPar) { Start-Sleep -Seconds 8 }
     "RUN  $name  $(Get-Date -Format 'HH:mm:ss')" | Add-Content $log -Encoding utf8
     $jobs += Start-Job -Name $name -ScriptBlock {

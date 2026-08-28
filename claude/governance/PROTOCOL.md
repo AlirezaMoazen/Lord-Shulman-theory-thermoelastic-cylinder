@@ -4,8 +4,8 @@ These rules were agreed between the author (Alireza) and Claude and apply to
 every change in this folder.
 
 ## 1. Revision naming
-- New **features** → next major revision: `claude_R1` → `claude_R2` → `claude_R3` → …
-- **Audit / correction** changes → sub-revision: `claude_R2_1`, `claude_R3_1`, …
+- New **features** → next major revision: `LSTE_solver_R1` → `LSTE_solver_R2` → `LSTE_solver_R3` → …
+- **Audit / correction** changes → sub-revision: `LSTE_solver_R2_1`, `LSTE_solver_R3_1`, …
   (MATLAB forbids dots in script names, so "R x.1" is written `_R x _1`.)
 - Old revisions are **frozen** — they are the verified history.
 
@@ -32,7 +32,7 @@ Parameter studies run through the `cfg` override struct — the solver file
 is not edited per run. Drivers live in separate `*_run_*.m` scripts.
 
 ## 5. Outputs
-Each solver run saves `Results_claude_R<rev>.mat` (overridable via
+Each solver run saves `Results_LSTE_solver_R<rev>.mat` (overridable via
 `cfg.out_name`). Benchmarks write publication figures (PNG 300 dpi + .fig)
 and CSV tables into `Validation/`.
 

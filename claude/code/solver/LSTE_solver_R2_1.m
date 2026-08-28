@@ -1,53 +1,6 @@
 %% ========================================================================
-%  claude_R5.m  —  DYNAMIC THERMOELASTIC ANALYSIS (MULTI-THEORY)
+%  LSTE_solver_R2_1.m  —  DYNAMIC THERMOELASTIC ANALYSIS (LORD-SHULMAN / FOURIER)
 %  Multilayer porous GPL-reinforced cylinder, layerwise DQM + Newmark (beta)
-%  ------------------------------------------------------------------------
-%  REVISION R5 (additive): GENERALIZED THERMOELASTICITY THEORY SWITCH
-%   theory = 'FOURIER' : classical coupled (parabolic heat conduction)
-%            'LS'      : Lord-Shulman, one relaxation time tau0   (default)
-%            'DPL'     : dual-phase-lag, lags tau_q (=tau0) and tau_T:
-%                        rho*c*(th'+tau_q*th'') + beta*T0*(e'+tau_q*e'')
-%                          = div(k grad th) + tau_T * div(k grad th')
-%                        (LS is DPL with tau_T = 0)
-%            'GN3'     : Green-Naghdi type III (energy dissipation):
-%                        rho*c*th'' + beta*T0*e''
-%                          = k_star*div(grad th) + k*div(grad th')
-%   Back-compat: cfg.LS_enabled=false maps to theory='FOURIER'.
-%   Regression: default (theory='LS') is digit-identical to claude_R4.
-%  ------------------------------------------------------------------------
-%  REVISION R4 (additive): generalized inner-surface thermal loading
-%   (+) T_in_mode 'ramp' (default, R3_1 behavior)
-%                 'gauss': Gaussian thermal pulse
-%                   theta_in(t) = (T_in_val - T_ref) * exp(-(t-t_g0)^2/(2*sig_g^2))
-%       (novelty loading: Gaussian shock + LS + porous GPL cylinder)
-%  ------------------------------------------------------------------------
-%  REVISION R3_1 — POROSITY PATTERNS FINALIZED (per the author's porosity
-%  document, Google Doc 2026-07-20, which confirms:)
-%   * centered coordinate  zeta = (r - r_mid)/l  in [-1/2, +1/2]
-%   * PRIMARY = mass-side factors P_m with exact conservation:
-%       UD: P_m = em3
-%       O : P_m = 1 - em1*cos(pi*zeta),          em1 = (pi/2)(1-em3)
-%       X : P_m = 1 - em2*(1-cos(pi*zeta)),      em2 = (1-em3)/(1-2/pi)
-%       V : P_m = 2*em4*cos(pi*zeta/2 + pi/4),   em4 = (pi/4)*em3  (max INNER)
-%       A : P_m = 2*em5*cos(pi*zeta/2 - pi/4),   em5 = em4         (max OUTER)
-%   * E-side factor pointwise:  P_E = P_m^2   (E/Es = (rho/rhos)^2)
-%     (tabulated e1..e5 are equivalent-integral reporting values;
-%      e3 = em3^2 and e4 = e5 = (pi/2)*em4^2 hold exactly)
-%   * k and c scale with P_E; rho with P_m; alpha, nu unchanged
-%   * V/A shapes are mirrors; asymmetric thermal loading distinguishes them
-%   * P_m is clipped to <= 1 where the V/A shape exceeds 1 near its peak
-%  Input: user sets em3 (preferred) or e3 (converted em3 = sqrt(e3)).
-%  Verified against the author's tables by claude_porosity_check_R3_1.m
-%  ------------------------------------------------------------------------
-%  REVISION R3 (new features, additive only — R2_1 logic unchanged):
-%   (+) T_BC_in  'dirichlet' (default) | 'flux'  : inner thermal BC can be a
-%       prescribed heat flux  -k dT/dr = q_in_fun(t)  (Bagri-Eslami benchmark)
-%   (+) T_BC_out 'convection' (default) | 'dirichlet0' : outer T = T_ref
-%   (+) Mech_BC_in 'pressure' (default) | 'fixed' : inner surface u = 0
-%   (+) BC_z 'R' : roller / plane-strain ends (w = 0, tau_rz = 0) — needed
-%       to reproduce 1-D plane-strain radial benchmarks in the 2-D solver
-%   Purpose: run the Lord-Shulman coupled-cylinder benchmark of
-%   Bagri & Eslami, Int. J. Mech. Sci. 49 (2007) 1325, sec. 4.1, Figs 2-4.
 %  ------------------------------------------------------------------------
 %  REVISION HISTORY
 %   R1   : corrected solver, verified (static-limit 2e-11, IJPVP Table 6,
@@ -105,28 +58,12 @@
 clearvars -except cfg; clc; close all;
 
 %% ========================= 0. Model configuration =========================
-LS_enabled = true;          % legacy switch (kept for old drivers; see theory)
-tau0       = 1e-5;          % relaxation time tau_q (s)
+LS_enabled = true;          % true: Lord-Shulman (tau0 > 0), false: Fourier
+tau0       = 1e-5;          % relaxation time (s)  (used only if LS_enabled)
 coupling_on = true;         % thermoelastic coupling term in the energy eq.
 
-% --- (R5 addition) thermoelasticity theory selector ----------------------
-theory = 'LS';              % 'FOURIER' | 'LS' | 'DPL' | 'GN3'
-tau_T  = 0;                 % DPL temperature-gradient lag (s)
-k_star = 1;                 % GN3 conductivity-rate constant k* (W/m/K/s)
-
-% Mechanical support at z = 0 and z = L :
-%   'S' simply, 'F' free, 'C' clamped, 'R' roller/plane-strain (R3 addition)
+% Mechanical support at z = 0 and z = L :  'S' simply, 'F' free, 'C' clamped
 BC_z = 'S';
-
-% --- (R3 addition) boundary-condition type selectors ---------------------
-T_BC_in    = 'dirichlet';   % 'dirichlet': theta = ramp(t) | 'flux': -k dT/dr = q_in_fun(t)
-% (R4 addition) inner-temperature time shape when T_BC_in='dirichlet':
-T_in_mode  = 'ramp';        % 'ramp' (default) | 'gauss' (Gaussian pulse)
-t_g0       = 10;            % Gaussian pulse center time (s)
-sig_g      = 3;             % Gaussian pulse standard deviation (s)
-T_BC_out   = 'convection';  % 'convection' | 'dirichlet0' (theta = 0)
-Mech_BC_in = 'pressure';    % 'pressure': sigma_rr = -P(t) | 'fixed': u = 0
-q_in_fun   = @(t) 0;        % inner heat-flux time function (used when T_BC_in='flux')
 
 % GPL and porosity patterns.
 % NOTE: only 'UD' is fully confirmed against the spec (MZ-R 0.docx evaluates
@@ -137,13 +74,13 @@ GPL_pattern      = 'UD';    % 'UD','O','X','V','A'
 porosity_on      = true;
 porosity_pattern = 'UD';    % 'UD','O','X','V','A'
 W_GPL_total = 0.04;         % total GPL mass fraction
-% (R3_1) porosity level: set em3 (mass-side, primary). All other pattern
-% coefficients are DERIVED exactly (see header). e3 = em3^2.
-em3  = 0.8980;              % mass-side UD coefficient  ->  e3 = 0.8064
-e3   = em3^2;               % kept for output/reporting
+e3   = 0.8064;              % UD porosity coefficient (MZ table)
+% (R2_1 fix) matched-mass set exactly as in the MZ-R 0.docx table row
+% [em3 e1 e2 e3 e4 e5] = [0.8980 0.3100 0.5123 0.8064 0.7813 0.7813]
+e1   = 0.3100;  e2 = 0.5123;  e4 = 0.7813;  e5 = 0.7813;
 
 % --- (R2 addition) material mode -----------------------------------------
-% 'GPL'         : GPL + porosity model from the docx spec (claude_R1 behavior)
+% 'GPL'         : GPL + porosity model from the docx spec (LSTE_solver_R1 behavior)
 % 'FG_powerlaw' : P(r) = P_i_val*(r/R_i)^n, evaluated at layer mid-radius
 material_mode = 'GPL';
 FG_E_i   = 223e9;   FG_nE   = 2;       % E at inner radius, exponent
@@ -153,7 +90,7 @@ FG_k     = 10;      FG_c    = 500;     % conductivity / heat capacity (unused if
 FG_alpha = 0;                          % thermal expansion (0 -> pure mechanics)
 
 % --- (R2 addition) pressure time function --------------------------------
-P_time_mode = 'step';       % 'step' (claude_R1 behavior) or 'sine'
+P_time_mode = 'step';       % 'step' (LSTE_solver_R1 behavior) or 'sine'
 t0_P        = 1.0;          % period parameter for 'sine': P(t)=P_i*sin(pi*t/t0_P)
 
 % --- (R2 addition) full time-history storage -----------------------------
@@ -199,9 +136,7 @@ dt         = 5e-4;          % time step (s)
 % Newmark parameters (gam > 0.5 adds numerical damping, useful for
 % verification runs that must settle to the static solution)
 gam = 0.5;  bet = 0.25;
-out_name = 'Results_claude_R5.mat';    % output file for saved results
-% NOTE (R5/GN3): thermal boundary rows keep the standard -k*dth/dr flux form;
-% for GN3 this is an approximation of its rate-type flux (documented choice).
+out_name = 'Results_LSTE_solver_R2_1.mat';  % output file for saved results
 
 % ---- optional overrides from workspace struct `cfg` (for batch testing) ----
 if exist('cfg','var') && isstruct(cfg)
@@ -211,7 +146,7 @@ if exist('cfg','var') && isstruct(cfg)
         % any existing configuration variable (a misspelled field would
         % otherwise be silently ignored by the solver)
         if ~exist(fn{iov}, 'var')
-            warning('claude_R2_1:unknownCfgField', ...
+            warning('LSTE_solver_R2_1:unknownCfgField', ...
                 'cfg field "%s" does not match any configuration variable — check spelling!', fn{iov});
         end
         eval([fn{iov} ' = cfg.(fn{iov});']);   %#ok<EVLDOT>
@@ -219,14 +154,7 @@ if exist('cfg','var') && isstruct(cfg)
     if any(strcmp(fn,'gam')) && ~any(strcmp(fn,'bet'))
         bet = (gam + 0.5)^2 / 4;               % consistent dissipative pair
     end
-    % (R5) legacy mapping: cfg.LS_enabled=false without explicit cfg.theory
-    % selects the classical coupled (Fourier) theory
-    if ~any(strcmp(fn,'theory')) && any(strcmp(fn,'LS_enabled')) && ~LS_enabled
-        theory = 'FOURIER';
-    end
 end
-% (R5) tau_q (=tau0) terms are active for LS and DPL
-LSDPL_on = strcmpi(theory,'LS') || strcmpi(theory,'DPL');
 Nt = round(total_time/dt);
 
 % (R2 addition) rebuild geometry-dependent grids and DQ weights, because
@@ -258,15 +186,16 @@ gamma_conn = 0.5;           % docx: gamma = 1/2
 E_L_  = zeros(NL,1); nu_L_ = zeros(NL,1); rho_L = zeros(NL,1);
 c_L   = zeros(NL,1); k_L   = zeros(NL,1); al_L  = zeros(NL,1);
 
-% (R3_1) porosity coefficients — derived EXACTLY from em3 per the author's
-% porosity document (all patterns confirmed; warnings removed):
-em1 = (pi/2)*(1 - em3);
-em2 = (1 - em3)/(1 - 2/pi);
-em4 = (pi/4)*em3;
-em5 = em4;
-% reporting values (equivalent-integral convention of the document):
-e1_rep = NaN;  e2_rep = NaN;          % descriptive only (not used)
-e4 = (pi/2)*em4^2;  e5 = e4;          % exact document relations
+% (R2_1) single up-front warning for unverified porosity patterns:
+% only UD is fully confirmed against the MZ tables. O/X coordinate
+% convention and V/A normalization are PENDING source-paper verification.
+if porosity_on && ~strcmpi(material_mode,'FG_powerlaw') && ...
+        any(strcmpi(porosity_pattern, {'O','X','V','A'}))
+    warning('LSTE_solver_R2_1:patternUnverified', ...
+        ['Porosity pattern ''%s'' is NOT verified against the MZ tables yet ' ...
+         '(only UD is confirmed). Do not use these results in the thesis ' ...
+         'until the source-paper check is done.'], porosity_pattern);
+end
 
 for e = 1:NL
     % --- (R2 addition) FG power-law mode: bypass the GPL model entirely ---
@@ -310,22 +239,33 @@ for e = 1:NL
         ks = k_m;   % no GPL network: pure matrix conductivity
     end
 
-    % --- (R3_1) porosity factors at layer mid-radius, CENTERED coordinate ---
-    %  zeta = (r - r_mid)/l in [-1/2,+1/2];  P_m = mass factor (primary),
-    %  P_E = P_m^2 (pointwise, E/Es = (rho/rhos)^2). k,c scale with P_E.
+    % --- porosity factor at layer mid-radius (docx: piecewise constant) ---
     if porosity_on
-        rm  = R_i + l_total/(2*NL) + (e-1)*l_total/NL;    % layer mid radius
-        zet = (rm - (R_i + R_o)/2)/l_total;               % centered: -1/2..+1/2
+        rm = R_i + l_total/(2*NL) + (e-1)*l_total/NL;    % layer mid radius
+        s  = (rm - R_i)/l_total;                          % 0..1 through thickness
+        % ################################################################
+        % ##  WARNING — ONLY 'UD' IS FULLY VERIFIED (decision pending)  ##
+        % ##  MZ-R 0.docx is the authority, but its pattern formulas    ##
+        % ##  are ambiguous in text extraction:                         ##
+        % ##   * O/X: current from-inner-surface coordinate does NOT    ##
+        % ##     reproduce the MZ mass table; a mid-thickness-centered  ##
+        % ##     version does (e3 = 1-(2/pi)e1 -> 0.9363 vs table       ##
+        % ##     0.9361). Kept unchanged per user decision — resolve    ##
+        % ##     with the source paper (Kiarasi review / Babaei-Asemi). ##
+        % ##   * V/A: possible sqrt(2)/2 factor + coordinate origin     ##
+        % ##     unknown; normalization does not close.                 ##
+        % ##  UD is PROVEN by the table itself: em3=0.8980=sqrt(0.8064).##
+        % ##  DO NOT use O/X/V/A results in the thesis until resolved.  ##
+        % ################################################################
         switch upper(porosity_pattern)
-            case 'UD', Pm = em3;
-            case 'O',  Pm = 1 - em1*cos(pi*zet);
-            case 'X',  Pm = 1 - em2*(1 - cos(pi*zet));
-            case 'V',  Pm = 2*em4*cos(pi*zet/2 + pi/4);   % max at INNER face
-            case 'A',  Pm = 2*em5*cos(pi*zet/2 - pi/4);   % max at OUTER face
+            case 'UD', Pf = e3;             Pm = sqrt(e3);
+            case 'O',  Pf = 1-e1*cos(pi*s);           Pm = sqrt(max(Pf,0));
+            case 'X',  Pf = 1-e2*(1-cos(pi*s));       Pm = sqrt(max(Pf,0));
+            case 'V',  Pf = e4*cos(pi*s/2+pi/4);      Pm = sqrt(max(Pf,0));
+            case 'A',  Pf = e5*cos(pi*s/2-pi/4);      Pm = sqrt(max(Pf,0));
             otherwise, error('bad porosity_pattern');
         end
-        Pm = max(0, min(1, Pm));      % physical clip (document V/A peak > 1)
-        Pf = Pm^2;                    % E-side factor, pointwise square
+        Pf = max(0,min(1,Pf));  Pm = max(0,min(1,Pm));
     else
         Pf = 1; Pm = 1;
     end
@@ -366,68 +306,37 @@ for e = 1:NL
     for ir = 1:N_r
         r = rv(ir);
         for iz = 1:N_z
-            % ===== energy equation row (R5: theory-dependent) =====
+            % ===== energy equation row =====
             eqT = idx_Th(e,ir,iz);
+            % -k*(1/r dth/dr + d2th/dr2)   (k constant inside layer)
+            for jr = 1:N_r
+                cT = idx_Th(e,jr,iz);
+                K(eqT,cT) = K(eqT,cT) - k_L(e)*( A_r{e}(ir,jr)/r + B_r{e}(ir,jr) );
+            end
+            % -k d2th/dz2
+            for jz = 1:N_z
+                cT = idx_Th(e,ir,jz);
+                K(eqT,cT) = K(eqT,cT) - k_L(e)*B_z(iz,jz);
+            end
+            % rho*c and LS relaxation
+            C(eqT,eqT) = C(eqT,eqT) + rho_L(e)*c_L(e);
+            if LS_enabled
+                M(eqT,eqT) = M(eqT,eqT) + rho_L(e)*c_L(e)*tau0;
+            end
+            % thermoelastic coupling  beta*T_ref*(d/dt)(e)  [+ tau0 (d2/dt2)]
             cpl = beta_th(e)*T_ref*double(coupling_on);
-            if strcmpi(theory,'GN3')
-                % GN-III: rho*c*th'' + beta*T0*e'' = k*grad2(th) + k grad2(th')
-                for jr = 1:N_r
-                    cT = idx_Th(e,jr,iz);
-                    op = A_r{e}(ir,jr)/r + B_r{e}(ir,jr);
-                    K(eqT,cT) = K(eqT,cT) - k_star*op;
-                    C(eqT,cT) = C(eqT,cT) - k_L(e)*op;
-                end
-                for jz = 1:N_z
-                    cT = idx_Th(e,ir,jz);
-                    K(eqT,cT) = K(eqT,cT) - k_star*B_z(iz,jz);
-                    C(eqT,cT) = C(eqT,cT) - k_L(e)*B_z(iz,jz);
-                end
-                M(eqT,eqT) = M(eqT,eqT) + rho_L(e)*c_L(e);
-                % coupling: beta*T0*e''  (second time derivative only)
-                for jr = 1:N_r
-                    M(eqT,idx_U(e,jr,iz)) = M(eqT,idx_U(e,jr,iz)) + cpl*A_r{e}(ir,jr);
-                end
-                M(eqT,idx_U(e,ir,iz)) = M(eqT,idx_U(e,ir,iz)) + cpl/r;
-                for jz = 1:N_z
-                    M(eqT,idx_W(e,ir,jz)) = M(eqT,idx_W(e,ir,jz)) + cpl*A_z(iz,jz);
-                end
-            else
-                % FOURIER / LS / DPL family (LS = DPL with tau_T = 0)
-                % -k*(1/r dth/dr + d2th/dr2) [+ DPL: same operator on th']
-                for jr = 1:N_r
-                    cT = idx_Th(e,jr,iz);
-                    op = A_r{e}(ir,jr)/r + B_r{e}(ir,jr);
-                    K(eqT,cT) = K(eqT,cT) - k_L(e)*op;
-                    if strcmpi(theory,'DPL') && tau_T > 0
-                        C(eqT,cT) = C(eqT,cT) - tau_T*k_L(e)*op;   % (R5 DPL)
-                    end
-                end
-                for jz = 1:N_z
-                    cT = idx_Th(e,ir,jz);
-                    K(eqT,cT) = K(eqT,cT) - k_L(e)*B_z(iz,jz);
-                    if strcmpi(theory,'DPL') && tau_T > 0
-                        C(eqT,cT) = C(eqT,cT) - tau_T*k_L(e)*B_z(iz,jz);
-                    end
-                end
-                % rho*c and relaxation (tau_q for LS/DPL)
-                C(eqT,eqT) = C(eqT,eqT) + rho_L(e)*c_L(e);
-                if LSDPL_on
-                    M(eqT,eqT) = M(eqT,eqT) + rho_L(e)*c_L(e)*tau0;
-                end
-                % thermoelastic coupling  beta*T0*(e' [+ tau_q e''])
-                for jr = 1:N_r
-                    cU = idx_U(e,jr,iz);
-                    C(eqT,cU) = C(eqT,cU) + cpl*A_r{e}(ir,jr);
-                    if LSDPL_on, M(eqT,cU) = M(eqT,cU) + cpl*tau0*A_r{e}(ir,jr); end
-                end
-                cU = idx_U(e,ir,iz);
-                C(eqT,cU) = C(eqT,cU) + cpl/r;
-                if LSDPL_on, M(eqT,cU) = M(eqT,cU) + cpl*tau0/r; end
-                for jz = 1:N_z
-                    cW = idx_W(e,ir,jz);
-                    C(eqT,cW) = C(eqT,cW) + cpl*A_z(iz,jz);
-                    if LSDPL_on, M(eqT,cW) = M(eqT,cW) + cpl*tau0*A_z(iz,jz); end
-                end
+            for jr = 1:N_r
+                cU = idx_U(e,jr,iz);
+                C(eqT,cU) = C(eqT,cU) + cpl*A_r{e}(ir,jr);
+                if LS_enabled, M(eqT,cU) = M(eqT,cU) + cpl*tau0*A_r{e}(ir,jr); end
+            end
+            cU = idx_U(e,ir,iz);
+            C(eqT,cU) = C(eqT,cU) + cpl/r;
+            if LS_enabled, M(eqT,cU) = M(eqT,cU) + cpl*tau0/r; end
+            for jz = 1:N_z
+                cW = idx_W(e,ir,jz);
+                C(eqT,cW) = C(eqT,cW) + cpl*A_z(iz,jz);
+                if LS_enabled, M(eqT,cW) = M(eqT,cW) + cpl*tau0*A_z(iz,jz); end
             end
 
             % ===== r-momentum row =====
@@ -493,35 +402,24 @@ F0      = zeros(Ndof,1);       % constant part of RHS
 rows_Tin  = zeros(N_z,1);      % rows carrying the inner temperature ramp
 rows_Pin  = [];                % rows carrying the pressure step
 
-% ---- (a) thermal: inner surface — Dirichlet ramp OR heat flux (R3) ----
+% ---- (a) thermal: inner surface Dirichlet ramp (LAYER 1 ONLY) ----
 for iz = 1:N_z
     n = idx_Th(1,1,iz);
     K(n,:)=0; C(n,:)=0; M(n,:)=0;
-    if strcmpi(T_BC_in,'flux')
-        % (R3 addition)  -k dtheta/dr = q_in_fun(t)  at r = R_i
-        for jr = 1:N_r
-            K(n, idx_Th(1,jr,iz)) = -k_L(1)*A_r{1}(1,jr);
-        end
-    else
-        K(n,n)=1;               % theta = theta_in(t)  (F set in time loop)
-    end
+    K(n,n)=1;                   % theta = theta_in(t)  (F set in time loop)
     rows_Tin(iz) = n;
 end
 
-% ---- (b) thermal: outer surface — convection OR theta = 0 (R3) ----
+% ---- (b) thermal: outer surface convection ----
+%  k dth/dr + h*th = h*theta_inf ,  theta_inf = T_inf - T_ref = 0
 for iz = 1:N_z
     n = idx_Th(NL,N_r,iz);
     K(n,:)=0; C(n,:)=0; M(n,:)=0;
-    if strcmpi(T_BC_out,'dirichlet0')
-        K(n,n) = 1;  F0(n) = 0;         % (R3 addition) theta(R_o) = 0
-    else
-        %  k dth/dr + h*th = h*theta_inf ,  theta_inf = T_inf - T_ref
-        for jr = 1:N_r
-            K(n, idx_Th(NL,jr,iz)) = k_L(NL)*A_r{NL}(N_r,jr);
-        end
-        K(n,n) = K(n,n) + h_c;
-        F0(n)  = h_c*(T_inf - T_ref);
+    for jr = 1:N_r
+        K(n, idx_Th(NL,jr,iz)) = k_L(NL)*A_r{NL}(N_r,jr);
     end
+    K(n,n) = K(n,n) + h_c;
+    F0(n)  = h_c*(T_inf - T_ref);
 end
 
 % ---- (c) thermal: insulated ends dth/dz = 0 ----
@@ -569,22 +467,12 @@ end
 %  S: u=0            and sigma_zz = 0 (with thermal term)
 %  F: tau_rz = 0     and sigma_zz = 0 (with thermal term)
 %  C: u=0 and w=0
-%  R: tau_rz = 0 and w=0  (roller / plane strain, R3 addition)
 for e = 1:NL
     for ir = 2:N_r-1                       % radial corners handled by r-faces
         r = r_nodes{e}(ir);
         for iz = [1, N_z]
             rU = idx_U(e,ir,iz);  rW = idx_W(e,ir,iz);
             switch upper(BC_z)
-                case 'R'                    % (R3) rollers: tau_rz=0, w=0
-                    K(rU,:)=0; C(rU,:)=0; M(rU,:)=0;
-                    for jz = 1:N_z
-                        K(rU, idx_U(e,ir,jz)) = C55(e)*A_z(iz,jz);
-                    end
-                    for jr = 1:N_r
-                        K(rU, idx_W(e,jr,iz)) = C55(e)*A_r{e}(ir,jr);
-                    end
-                    K(rW,:)=0; C(rW,:)=0; M(rW,:)=0; K(rW,rW)=1;
                 case 'C'
                     K(rU,:)=0; C(rU,:)=0; M(rU,:)=0; K(rU,rU)=1;
                     K(rW,:)=0; C(rW,:)=0; M(rW,:)=0; K(rW,rW)=1;
@@ -617,31 +505,26 @@ for e = 1:NL
                     end
                     K(rW, idx_Th(e,ir,iz)) = -(C13(e)+C23(e)+C33(e))*al_L(e);
                 otherwise
-                    error('BC_z must be S, F, C or R');
+                    error('BC_z must be S, F or C');
             end
         end
     end
 end
 
-% ---- (f) mechanical: inner surface ----
-%  'pressure' (default): sigma_rr = -P_i(t)   |   'fixed' (R3): u = 0
+% ---- (f) mechanical: inner surface  sigma_rr = -P_i(t), tau_rz = 0 ----
 e = 1; ir = 1; r = r_nodes{1}(1);
 for iz = 1:N_z
     rU = idx_U(e,ir,iz);
     K(rU,:)=0; C(rU,:)=0; M(rU,:)=0;
-    if strcmpi(Mech_BC_in,'fixed')
-        K(rU,rU) = 1;                       % (R3 addition) u(R_i) = 0
-    else
-        for jr = 1:N_r
-            K(rU, idx_U(e,jr,iz)) = C11(e)*A_r{e}(ir,jr);
-        end
-        K(rU, idx_U(e,ir,iz)) = K(rU, idx_U(e,ir,iz)) + C12(e)/r;
-        for jz = 1:N_z
-            K(rU, idx_W(e,ir,jz)) = C13(e)*A_z(iz,jz);
-        end
-        K(rU, idx_Th(e,ir,iz)) = -(C11(e)+C12(e)+C13(e))*al_L(e);  % thermal term
-        rows_Pin(end+1) = rU;                                      %#ok<SAGROW>
+    for jr = 1:N_r
+        K(rU, idx_U(e,jr,iz)) = C11(e)*A_r{e}(ir,jr);
     end
+    K(rU, idx_U(e,ir,iz)) = K(rU, idx_U(e,ir,iz)) + C12(e)/r;
+    for jz = 1:N_z
+        K(rU, idx_W(e,ir,jz)) = C13(e)*A_z(iz,jz);
+    end
+    K(rU, idx_Th(e,ir,iz)) = -(C11(e)+C12(e)+C13(e))*al_L(e);   % thermal term
+    rows_Pin(end+1) = rU;                                       %#ok<SAGROW>
 end
 for iz = 2:N_z-1
     rW = idx_W(e,ir,iz);
@@ -736,15 +619,6 @@ for e = 2:NL
     for iz = [1, N_z]
         rU2 = idx_U(e,1,iz);  rW2 = idx_W(e,1,iz);
         switch upper(BC_z)
-            case 'R'                        % (R3) rollers at interface corners
-                K(rU2,:)=0; C(rU2,:)=0; M(rU2,:)=0;
-                for jz = 1:N_z
-                    K(rU2, idx_U(e,1,jz)) = C55(e)*A_z(iz,jz);
-                end
-                for jr = 1:N_r
-                    K(rU2, idx_W(e,jr,iz)) = C55(e)*A_r{e}(1,jr);
-                end
-                K(rW2,:)=0; C(rW2,:)=0; M(rW2,:)=0; K(rW2,rW2)=1;
             case 'C'
                 K(rU2,:)=0; C(rU2,:)=0; M(rU2,:)=0; K(rU2,rU2)=1;
                 K(rW2,:)=0; C(rW2,:)=0; M(rW2,:)=0; K(rW2,rW2)=1;
@@ -781,8 +655,7 @@ for e = 2:NL
 end
 
 % ---- (i) rigid-body pin (needed for S and F ends: axial translation) ----
-% (R3) 'R' ends already fix w at the ends -> no pin needed (like 'C')
-if upper(BC_z) ~= 'C' && upper(BC_z) ~= 'R'
+if upper(BC_z) ~= 'C'
     n = idx_W(1, round(N_r/2), round(N_z/2));
     K(n,:)=0; C(n,:)=0; M(n,:)=0; K(n,n)=1;   % w = 0 at one interior node
 end
@@ -813,13 +686,7 @@ if ~isempty(zr), error('K_eff has empty rows — BC bookkeeping error.'); end
 
 % ---- static-limit self-check: solve K*x = F(t->inf) directly ----
 F_inf = F0;
-if strcmpi(T_BC_in,'flux')
-    F_inf(rows_Tin) = q_in_fun(1e9).*rs_Tin;   % (R3) long-time flux value
-elseif strcmpi(T_in_mode,'gauss')
-    F_inf(rows_Tin) = 0;                       % (R4) pulse ends -> theta_in=0
-else
-    F_inf(rows_Tin) = (T_in_val - T_ref).*rs_Tin;
-end
+F_inf(rows_Tin) = (T_in_val - T_ref).*rs_Tin;
 F_inf(rows_Pin) = -P_i.*rs_Pin;
 x_inf = K \ F_inf;
 fprintf('static limit  : T_mid = %.2f K, u_mid = %.4e m\n', ...
@@ -846,21 +713,13 @@ for n = 1:Nt
     t = n*dt;
     % ----- RHS at t_{n+1} (row-scaled) -----
     F = F0;
-    if strcmpi(T_in_mode,'gauss')        % (R4 addition) Gaussian pulse
-        th_in = (T_in_val - T_ref)*exp(-(t-t_g0)^2/(2*sig_g^2));
-    else
-        th_in = (T_in_val - T_ref)*(1 - exp(-t/t0_ramp));
-    end
-    if strcmpi(T_BC_in,'flux')
-        F(rows_Tin) = q_in_fun(t).*rs_Tin;   % (R3) prescribed inner heat flux
-    else
-        F(rows_Tin) = th_in.*rs_Tin;
-    end
+    th_in = (T_in_val - T_ref)*(1 - exp(-t/t0_ramp));
+    F(rows_Tin) = th_in.*rs_Tin;
     % (R2 addition) pressure time function
     if strcmpi(P_time_mode, 'sine')
         P_now = P_i*sin(pi*t/t0_P);
     else
-        P_now = P_i;                        % step (claude_R1 behavior)
+        P_now = P_i;                        % step (LSTE_solver_R1 behavior)
     end
     F(rows_Pin) = -P_now.*rs_Pin;
 

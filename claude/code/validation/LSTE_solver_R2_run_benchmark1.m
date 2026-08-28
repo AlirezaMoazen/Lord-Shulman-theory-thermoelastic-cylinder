@@ -1,5 +1,5 @@
 %% ========================================================================
-%  claude_R2_run_benchmark1.m — VALIDATION BENCHMARK 1
+%  LSTE_solver_R2_run_benchmark1.m — VALIDATION BENCHMARK 1
 %  ------------------------------------------------------------------------
 %  Reproduces: Malekzadeh & Heydarpour, Int. J. Pressure Vessels & Piping
 %  98 (2012) 43-56, Table 6 / Fig. 2 — stationary (omega=0) FG cylinder,
@@ -16,7 +16,7 @@
 %  Published reference values (paper "Present" and ANSYS, Table 6) are
 %  embedded below for automatic comparison.
 %
-%  Uses the claude_R2 solver via the cfg override mechanism — the solver
+%  Uses the LSTE_solver_R2 solver via the cfg override mechanism — the solver
 %  file itself is not modified by this driver.
 %  ========================================================================
 clearvars -except BENCH; clc; close all;
@@ -40,7 +40,7 @@ cfg = struct( ...
     'store_full_history',true, ...
     'out_name',sprintf('Results_R2_bench1_NL%d_Nr%d.mat',BENCH.NL,BENCH.N_r));
 
-claude_R2;    % run the solver (all workspace variables remain available)
+LSTE_solver_R2;    % run the solver (all workspace variables remain available)
 
 %% ---------------------- extract benchmark quantities --------------------
 P0     = 100e6;
@@ -90,7 +90,7 @@ for k = 1:size(ref_paper,1)
     ts = ref_paper(k,1);
     [~,n_ts] = min(abs(tstar - ts));
     mine = [Ustar(n_ts) SttS(n_ts) SzzS(n_ts) SrrS(n_ts)];
-    fprintf('%-6.2f %-10s %10.3f %10.3f %10.3f %10.3f\n', ts,'claude_R2', mine);
+    fprintf('%-6.2f %-10s %10.3f %10.3f %10.3f %10.3f\n', ts,'LSTE_solver_R2', mine);
     fprintf('%-6s %-10s %10.3f %10.3f %10.3f %10.3f\n','','Paper',  ref_paper(k,2:5));
     fprintf('%-6s %-10s %10.3f %10.3f %10.3f %10.3f\n','','ANSYS',  ref_ansys(k,2:5));
     err = abs(mine - ref_paper(k,2:5)) ./ max(abs(ref_paper(k,2:5)), eps) * 100;

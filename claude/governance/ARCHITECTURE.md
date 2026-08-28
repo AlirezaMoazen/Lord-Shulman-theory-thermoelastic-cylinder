@@ -71,9 +71,9 @@ constants **after** calling the solver (the call clears the workspace).
   (spurious DQM end modes; independent of γ and of the coupling).
   Use S or C for transient runs. Purely 1-D radial problems (plane strain)
   are solved with the self-contained 1-D solver in
-  `claude_R3_run_benchmark3.m`.
+  `LSTE_solver_R3_run_benchmark3.m`.
 - Assembly uses scalar sparse writes (simple, slow: ~1–5 min at ~1500 DOF).
-  A vectorized assembly is a planned future revision (claude_R4 candidate).
+  A vectorized assembly is a planned future revision (LSTE_solver_R4 candidate).
 - Stress recovery evaluates layer-constant properties; the layerwise
   homogenization makes σ_θθ/σ_zz converge first-order in NL (documented in
   the Benchmark-1 convergence table).

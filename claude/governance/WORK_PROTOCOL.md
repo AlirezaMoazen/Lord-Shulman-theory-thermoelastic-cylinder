@@ -7,8 +7,8 @@ PROTOCOL.md (code rules) and THESIS_TODO.md (task plan). Newest first.
 ## Standing operating rules (agreed with the author)
 1. **Revision naming — ALL files** (author directive 2026-07-28, so changes and
    progress are followable): every deliverable carries `_R<n>`; the first version
-   is R1; a change → the NEXT integer (`claude_R6`, `..._R3`); audit fixes →
-   sub-revision (`claude_R6_1`). Never edit a working file in place. Old
+   is R1; a change → the NEXT integer (`LSTE_solver_R6`, `..._R3`); audit fixes →
+   sub-revision (`LSTE_solver_R6_1`). Never edit a working file in place. Old
    revisions are frozen (kept for provenance). The single index to follow every
    artifact's current revision + the commit timeline is **`claude/REVISIONS.md`**
    — update it whenever a new revision is made. (Applies to util/figure scripts
@@ -79,7 +79,7 @@ PROTOCOL.md (code rules) and THESIS_TODO.md (task plan). Newest first.
 - **Split convergence & validation** into two sections — the review explicitly
   requires it; convergence = numerical (layers, grid, DQM-vs-FDM-vs-FEM),
   validation = physical agreement with papers/exact solutions.
-- **claude_R6 built (not editing R5)** — the GPL dimensions were assigned AFTER
+- **LSTE_solver_R6 built (not editing R5)** — the GPL dimensions were assigned AFTER
   the cfg override and BC_z was a single both-ends selector, so the aspect-ratio
   and mixed-BC studies were impossible via cfg. Reason for a new revision:
   no-rewrite rule; verified regression = 0 vs R5, so nothing broke.

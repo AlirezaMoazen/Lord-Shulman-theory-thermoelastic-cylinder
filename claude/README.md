@@ -12,7 +12,7 @@ GPL-reinforced hollow cylinders** (layerwise DQM + Newmark).
 Open MATLAB in this folder and run the current solver revision:
 
 ```matlab
-claude_R5          % runs with default configuration (UD/UD patterns, LS on)
+LSTE_solver_R5          % runs with default configuration (UD/UD patterns, LS on)
 ```
 
 To run a custom case, set a `cfg` struct first (any config variable can be
@@ -23,7 +23,7 @@ cfg = struct('theory','LS', 'tau0',50, 'BC_z','S', ...
              'NL',5, 'N_r',9, 'N_z',11, ...
              'T_in_val',600, 'h_c',10, 'P_i',1e6, ...
              'total_time',100, 'dt',0.1);
-claude_R5
+LSTE_solver_R5
 ```
 
 `theory` accepts `'FOURIER' | 'LS' | 'DPL' | 'GN3'` (with `tau_T` for DPL and
@@ -33,19 +33,19 @@ claude_R5
 
 | file | purpose |
 |---|---|
-| `claude_R5.m` | **current verified solver** (theory switch FOURIER/LS/DPL/GN3, all BC options, final porosity patterns) |
-| `claude_R4.m` | campaign solver (adds Gaussian thermal-pulse loading) |
-| `claude_R1.m` / `claude_R2.m` / `claude_R2_1.m` / `claude_R3.m` / `claude_R3_1.m` | frozen revision history (see PROTOCOL.md) |
+| `LSTE_solver_R5.m` | **current verified solver** (theory switch FOURIER/LS/DPL/GN3, all BC options, final porosity patterns) |
+| `LSTE_solver_R4.m` | campaign solver (adds Gaussian thermal-pulse loading) |
+| `LSTE_solver_R1.m` / `LSTE_solver_R2.m` / `LSTE_solver_R2_1.m` / `LSTE_solver_R3.m` / `LSTE_solver_R3_1.m` | frozen revision history (see PROTOCOL.md) |
 | `run_param_studies_v3.ps1` | parallel campaign orchestrator (3 MATLAB jobs, skip-existing resume) |
 | `claude_param_figures_R2.m` | campaign/extension figure generator (dimensionless); R1 frozen |
 | `claude_T1_time_integrators.m` | T1: six time-integration methods compared (table) |
 | `claude_T2_1_spatial_methods.m` | T2.1: spatial convergence DQM vs FDM vs FEM (lin+quad); T2 frozen |
 | `Static_Baseline_R1.m` | independent static solver (legacy Main-EN + one bug fix) used for cross-validation |
 | `Compare_R1.m` | static-vs-dynamic cross-validation script |
-| `claude_R2_run_benchmark1.m` | Benchmark 1: IJPVP-2012 Table 6 (dynamic pressure vs paper + ANSYS) |
-| `claude_R2_run_benchmark2.m` | Benchmark 2: exact Bessel transient conduction + Newmark-vs-ode15s table |
-| `claude_R3_run_benchmark3.m` | Benchmark 3: Bagri-Eslami LS wave benchmark (self-contained 1-D radial solver) |
-| `claude_R2_run_LSdemo.m` | Lord-Shulman wave-propagation demonstration figures |
+| `LSTE_solver_R2_run_benchmark1.m` | Benchmark 1: IJPVP-2012 Table 6 (dynamic pressure vs paper + ANSYS) |
+| `LSTE_solver_R2_run_benchmark2.m` | Benchmark 2: exact Bessel transient conduction + Newmark-vs-ode15s table |
+| `LSTE_solver_R3_run_benchmark3.m` | Benchmark 3: Bagri-Eslami LS wave benchmark (self-contained 1-D radial solver) |
+| `LSTE_solver_R2_run_LSdemo.m` | Lord-Shulman wave-propagation demonstration figures |
 | `claude_porosity_check_R3_1.m` | proves the porosity-pattern implementation reproduces the author's tables |
 | `claude_porosity_variant_test.m` | the investigation script that identified the pattern conventions |
 | `Validation/` | all benchmark figures (PNG 300 dpi + editable .fig) and CSV tables |

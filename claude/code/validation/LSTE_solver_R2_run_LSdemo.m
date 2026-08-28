@@ -1,5 +1,5 @@
 %% ========================================================================
-%  claude_R2_run_LSdemo.m — LORD-SHULMAN WAVE-PROPAGATION DEMONSTRATION
+%  LSTE_solver_R2_run_LSdemo.m — LORD-SHULMAN WAVE-PROPAGATION DEMONSTRATION
 %  ------------------------------------------------------------------------
 %  Thermal shock on the inner surface of the GPL-reinforced porous cylinder
 %  (docx material), full LS coupling, no pressure. Four cases:
@@ -14,7 +14,7 @@
 %  Produces:  Validation\LSdemo_T_profiles.png/.fig  (wave fronts vs Fourier)
 %             Validation\LSdemo_T_history.png/.fig   (delayed arrival vs tau0)
 %             Validation\LSdemo_U_history.png/.fig   (radial displacement)
-%  NOTE: claude_R2 clears the workspace at each call, so the four runs are
+%  NOTE: LSTE_solver_R2 clears the workspace at each call, so the four runs are
 %  written as explicit blocks and all data is exchanged through .mat files.
 %  ========================================================================
 clearvars; clc; close all;
@@ -34,7 +34,7 @@ base = struct( ...
 % ---- case 1: Fourier ----
 cfg = base;  cfg.LS_enabled = false;
 cfg.out_name = 'Results_LSdemo_F.mat';
-claude_R2;
+LSTE_solver_R2;
 
 % ---- case 2: LS tau0 = 1 ----
 load('Results_LSdemo_F.mat','NL');   %#ok<LOAD> % (no-op: keeps analyzers quiet)
@@ -50,7 +50,7 @@ base = struct( ...
     'total_time',15, 'dt',0.025, ...
     'store_full_history',true);
 cfg = base;  cfg.tau0 = 1.0;  cfg.out_name = 'Results_LSdemo_t1.mat';
-claude_R2;
+LSTE_solver_R2;
 
 % ---- case 3: LS tau0 = 2 ----
 base = struct( ...
@@ -65,7 +65,7 @@ base = struct( ...
     'total_time',15, 'dt',0.025, ...
     'store_full_history',true);
 cfg = base;  cfg.tau0 = 2.0;  cfg.out_name = 'Results_LSdemo_t2.mat';
-claude_R2;
+LSTE_solver_R2;
 
 % ---- case 4: LS tau0 = 4 ----
 base = struct( ...
@@ -80,7 +80,7 @@ base = struct( ...
     'total_time',15, 'dt',0.025, ...
     'store_full_history',true);
 cfg = base;  cfg.tau0 = 4.0;  cfg.out_name = 'Results_LSdemo_t4.mat';
-claude_R2;
+LSTE_solver_R2;
 
 %% ======================= plotting / comparison ==========================
 clearvars; close all;

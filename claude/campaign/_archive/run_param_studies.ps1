@@ -1,5 +1,5 @@
 # run_param_studies.ps1 — orchestrates the thesis parametric studies
-# Each case = one MATLAB batch process running claude_R3_1 with its cfg.
+# Each case = one MATLAB batch process running LSTE_solver_R3_1 with its cfg.
 # Results land in param_studies\<case>.mat ; log in param_studies\run_log.txt
 $ErrorActionPreference = 'Continue'
 $here = "c:\Users\InfosaicUser\Desktop\MSc\Lord-Shulman-theory-thermoelastic-cylinder\claude"
@@ -55,7 +55,7 @@ $jobs = @()
 foreach ($name in $cases.Keys) {
     $ov  = $cases[$name]
     $cfg = "cfg=struct($base$ov,'out_name','param_studies\\$name.mat','store_full_history',false);"
-    $cmd = "cd('$here'); try, $cfg claude_R3_1; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); try, $cfg LSTE_solver_R3_1; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     while (@($jobs | Where-Object { $_.State -eq 'Running' }).Count -ge $maxPar) { Start-Sleep -Seconds 10 }
     "LAUNCH $name  $(Get-Date -Format 'HH:mm:ss')" | Add-Content $log -Encoding utf8
     $jobs += Start-Job -Name $name -ScriptBlock {

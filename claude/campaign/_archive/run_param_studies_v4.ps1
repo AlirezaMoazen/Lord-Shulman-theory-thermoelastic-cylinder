@@ -48,7 +48,7 @@ foreach ($name in $cases.Keys) {
         $cfg += " ov=struct($ovPairs); fo=fieldnames(ov); for ii=1:numel(fo), cfg.(fo{ii})=ov.(fo{ii}); end;"
     }
     $cfg += " cfg.out_name='param_studies\$name.mat'; cfg.store_full_history=false;"
-    $cmd = "cd('$here'); try, $cfg claude_R4; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
+    $cmd = "cd('$here'); try, $cfg LSTE_solver_R4; catch ME, disp(getReport(ME)); exit(1); end; exit(0)"
     while (@($jobs | Where-Object { $_.State -eq 'Running' }).Count -ge $maxPar) { Start-Sleep -Seconds 8 }
     "RUN  $name  $(Get-Date -Format 'HH:mm:ss')" | Add-Content $log -Encoding utf8
     $jobs += Start-Job -Name $name -ScriptBlock {

@@ -1,30 +1,6 @@
 %% ========================================================================
-%  claude_R4.m  —  DYNAMIC THERMOELASTIC ANALYSIS (LORD-SHULMAN / FOURIER)
+%  LSTE_solver_R3.m  —  DYNAMIC THERMOELASTIC ANALYSIS (LORD-SHULMAN / FOURIER)
 %  Multilayer porous GPL-reinforced cylinder, layerwise DQM + Newmark (beta)
-%  ------------------------------------------------------------------------
-%  REVISION R4 (additive): generalized inner-surface thermal loading
-%   (+) T_in_mode 'ramp' (default, R3_1 behavior)
-%                 'gauss': Gaussian thermal pulse
-%                   theta_in(t) = (T_in_val - T_ref) * exp(-(t-t_g0)^2/(2*sig_g^2))
-%       (novelty loading: Gaussian shock + LS + porous GPL cylinder)
-%  ------------------------------------------------------------------------
-%  REVISION R3_1 — POROSITY PATTERNS FINALIZED (per the author's porosity
-%  document, Google Doc 2026-07-20, which confirms:)
-%   * centered coordinate  zeta = (r - r_mid)/l  in [-1/2, +1/2]
-%   * PRIMARY = mass-side factors P_m with exact conservation:
-%       UD: P_m = em3
-%       O : P_m = 1 - em1*cos(pi*zeta),          em1 = (pi/2)(1-em3)
-%       X : P_m = 1 - em2*(1-cos(pi*zeta)),      em2 = (1-em3)/(1-2/pi)
-%       V : P_m = 2*em4*cos(pi*zeta/2 + pi/4),   em4 = (pi/4)*em3  (max INNER)
-%       A : P_m = 2*em5*cos(pi*zeta/2 - pi/4),   em5 = em4         (max OUTER)
-%   * E-side factor pointwise:  P_E = P_m^2   (E/Es = (rho/rhos)^2)
-%     (tabulated e1..e5 are equivalent-integral reporting values;
-%      e3 = em3^2 and e4 = e5 = (pi/2)*em4^2 hold exactly)
-%   * k and c scale with P_E; rho with P_m; alpha, nu unchanged
-%   * V/A shapes are mirrors; asymmetric thermal loading distinguishes them
-%   * P_m is clipped to <= 1 where the V/A shape exceeds 1 near its peak
-%  Input: user sets em3 (preferred) or e3 (converted em3 = sqrt(e3)).
-%  Verified against the author's tables by claude_porosity_check_R3_1.m
 %  ------------------------------------------------------------------------
 %  REVISION R3 (new features, additive only — R2_1 logic unchanged):
 %   (+) T_BC_in  'dirichlet' (default) | 'flux'  : inner thermal BC can be a
@@ -102,10 +78,6 @@ BC_z = 'S';
 
 % --- (R3 addition) boundary-condition type selectors ---------------------
 T_BC_in    = 'dirichlet';   % 'dirichlet': theta = ramp(t) | 'flux': -k dT/dr = q_in_fun(t)
-% (R4 addition) inner-temperature time shape when T_BC_in='dirichlet':
-T_in_mode  = 'ramp';        % 'ramp' (default) | 'gauss' (Gaussian pulse)
-t_g0       = 10;            % Gaussian pulse center time (s)
-sig_g      = 3;             % Gaussian pulse standard deviation (s)
 T_BC_out   = 'convection';  % 'convection' | 'dirichlet0' (theta = 0)
 Mech_BC_in = 'pressure';    % 'pressure': sigma_rr = -P(t) | 'fixed': u = 0
 q_in_fun   = @(t) 0;        % inner heat-flux time function (used when T_BC_in='flux')
@@ -119,13 +91,13 @@ GPL_pattern      = 'UD';    % 'UD','O','X','V','A'
 porosity_on      = true;
 porosity_pattern = 'UD';    % 'UD','O','X','V','A'
 W_GPL_total = 0.04;         % total GPL mass fraction
-% (R3_1) porosity level: set em3 (mass-side, primary). All other pattern
-% coefficients are DERIVED exactly (see header). e3 = em3^2.
-em3  = 0.8980;              % mass-side UD coefficient  ->  e3 = 0.8064
-e3   = em3^2;               % kept for output/reporting
+e3   = 0.8064;              % UD porosity coefficient (MZ table)
+% (R2_1 fix) matched-mass set exactly as in the MZ-R 0.docx table row
+% [em3 e1 e2 e3 e4 e5] = [0.8980 0.3100 0.5123 0.8064 0.7813 0.7813]
+e1   = 0.3100;  e2 = 0.5123;  e4 = 0.7813;  e5 = 0.7813;
 
 % --- (R2 addition) material mode -----------------------------------------
-% 'GPL'         : GPL + porosity model from the docx spec (claude_R1 behavior)
+% 'GPL'         : GPL + porosity model from the docx spec (LSTE_solver_R1 behavior)
 % 'FG_powerlaw' : P(r) = P_i_val*(r/R_i)^n, evaluated at layer mid-radius
 material_mode = 'GPL';
 FG_E_i   = 223e9;   FG_nE   = 2;       % E at inner radius, exponent
@@ -135,7 +107,7 @@ FG_k     = 10;      FG_c    = 500;     % conductivity / heat capacity (unused if
 FG_alpha = 0;                          % thermal expansion (0 -> pure mechanics)
 
 % --- (R2 addition) pressure time function --------------------------------
-P_time_mode = 'step';       % 'step' (claude_R1 behavior) or 'sine'
+P_time_mode = 'step';       % 'step' (LSTE_solver_R1 behavior) or 'sine'
 t0_P        = 1.0;          % period parameter for 'sine': P(t)=P_i*sin(pi*t/t0_P)
 
 % --- (R2 addition) full time-history storage -----------------------------
@@ -181,7 +153,7 @@ dt         = 5e-4;          % time step (s)
 % Newmark parameters (gam > 0.5 adds numerical damping, useful for
 % verification runs that must settle to the static solution)
 gam = 0.5;  bet = 0.25;
-out_name = 'Results_claude_R4.mat';    % output file for saved results
+out_name = 'Results_LSTE_solver_R3.mat';    % output file for saved results
 
 % ---- optional overrides from workspace struct `cfg` (for batch testing) ----
 if exist('cfg','var') && isstruct(cfg)
@@ -191,7 +163,7 @@ if exist('cfg','var') && isstruct(cfg)
         % any existing configuration variable (a misspelled field would
         % otherwise be silently ignored by the solver)
         if ~exist(fn{iov}, 'var')
-            warning('claude_R2_1:unknownCfgField', ...
+            warning('LSTE_solver_R2_1:unknownCfgField', ...
                 'cfg field "%s" does not match any configuration variable — check spelling!', fn{iov});
         end
         eval([fn{iov} ' = cfg.(fn{iov});']);   %#ok<EVLDOT>
@@ -231,15 +203,16 @@ gamma_conn = 0.5;           % docx: gamma = 1/2
 E_L_  = zeros(NL,1); nu_L_ = zeros(NL,1); rho_L = zeros(NL,1);
 c_L   = zeros(NL,1); k_L   = zeros(NL,1); al_L  = zeros(NL,1);
 
-% (R3_1) porosity coefficients — derived EXACTLY from em3 per the author's
-% porosity document (all patterns confirmed; warnings removed):
-em1 = (pi/2)*(1 - em3);
-em2 = (1 - em3)/(1 - 2/pi);
-em4 = (pi/4)*em3;
-em5 = em4;
-% reporting values (equivalent-integral convention of the document):
-e1_rep = NaN;  e2_rep = NaN;          % descriptive only (not used)
-e4 = (pi/2)*em4^2;  e5 = e4;          % exact document relations
+% (R2_1) single up-front warning for unverified porosity patterns:
+% only UD is fully confirmed against the MZ tables. O/X coordinate
+% convention and V/A normalization are PENDING source-paper verification.
+if porosity_on && ~strcmpi(material_mode,'FG_powerlaw') && ...
+        any(strcmpi(porosity_pattern, {'O','X','V','A'}))
+    warning('LSTE_solver_R2_1:patternUnverified', ...
+        ['Porosity pattern ''%s'' is NOT verified against the MZ tables yet ' ...
+         '(only UD is confirmed). Do not use these results in the thesis ' ...
+         'until the source-paper check is done.'], porosity_pattern);
+end
 
 for e = 1:NL
     % --- (R2 addition) FG power-law mode: bypass the GPL model entirely ---
@@ -283,22 +256,33 @@ for e = 1:NL
         ks = k_m;   % no GPL network: pure matrix conductivity
     end
 
-    % --- (R3_1) porosity factors at layer mid-radius, CENTERED coordinate ---
-    %  zeta = (r - r_mid)/l in [-1/2,+1/2];  P_m = mass factor (primary),
-    %  P_E = P_m^2 (pointwise, E/Es = (rho/rhos)^2). k,c scale with P_E.
+    % --- porosity factor at layer mid-radius (docx: piecewise constant) ---
     if porosity_on
-        rm  = R_i + l_total/(2*NL) + (e-1)*l_total/NL;    % layer mid radius
-        zet = (rm - (R_i + R_o)/2)/l_total;               % centered: -1/2..+1/2
+        rm = R_i + l_total/(2*NL) + (e-1)*l_total/NL;    % layer mid radius
+        s  = (rm - R_i)/l_total;                          % 0..1 through thickness
+        % ################################################################
+        % ##  WARNING — ONLY 'UD' IS FULLY VERIFIED (decision pending)  ##
+        % ##  MZ-R 0.docx is the authority, but its pattern formulas    ##
+        % ##  are ambiguous in text extraction:                         ##
+        % ##   * O/X: current from-inner-surface coordinate does NOT    ##
+        % ##     reproduce the MZ mass table; a mid-thickness-centered  ##
+        % ##     version does (e3 = 1-(2/pi)e1 -> 0.9363 vs table       ##
+        % ##     0.9361). Kept unchanged per user decision — resolve    ##
+        % ##     with the source paper (Kiarasi review / Babaei-Asemi). ##
+        % ##   * V/A: possible sqrt(2)/2 factor + coordinate origin     ##
+        % ##     unknown; normalization does not close.                 ##
+        % ##  UD is PROVEN by the table itself: em3=0.8980=sqrt(0.8064).##
+        % ##  DO NOT use O/X/V/A results in the thesis until resolved.  ##
+        % ################################################################
         switch upper(porosity_pattern)
-            case 'UD', Pm = em3;
-            case 'O',  Pm = 1 - em1*cos(pi*zet);
-            case 'X',  Pm = 1 - em2*(1 - cos(pi*zet));
-            case 'V',  Pm = 2*em4*cos(pi*zet/2 + pi/4);   % max at INNER face
-            case 'A',  Pm = 2*em5*cos(pi*zet/2 - pi/4);   % max at OUTER face
+            case 'UD', Pf = e3;             Pm = sqrt(e3);
+            case 'O',  Pf = 1-e1*cos(pi*s);           Pm = sqrt(max(Pf,0));
+            case 'X',  Pf = 1-e2*(1-cos(pi*s));       Pm = sqrt(max(Pf,0));
+            case 'V',  Pf = e4*cos(pi*s/2+pi/4);      Pm = sqrt(max(Pf,0));
+            case 'A',  Pf = e5*cos(pi*s/2-pi/4);      Pm = sqrt(max(Pf,0));
             otherwise, error('bad porosity_pattern');
         end
-        Pm = max(0, min(1, Pm));      % physical clip (document V/A peak > 1)
-        Pf = Pm^2;                    % E-side factor, pointwise square
+        Pf = max(0,min(1,Pf));  Pm = max(0,min(1,Pm));
     else
         Pf = 1; Pm = 1;
     end
@@ -757,8 +741,6 @@ if ~isempty(zr), error('K_eff has empty rows — BC bookkeeping error.'); end
 F_inf = F0;
 if strcmpi(T_BC_in,'flux')
     F_inf(rows_Tin) = q_in_fun(1e9).*rs_Tin;   % (R3) long-time flux value
-elseif strcmpi(T_in_mode,'gauss')
-    F_inf(rows_Tin) = 0;                       % (R4) pulse ends -> theta_in=0
 else
     F_inf(rows_Tin) = (T_in_val - T_ref).*rs_Tin;
 end
@@ -788,11 +770,7 @@ for n = 1:Nt
     t = n*dt;
     % ----- RHS at t_{n+1} (row-scaled) -----
     F = F0;
-    if strcmpi(T_in_mode,'gauss')        % (R4 addition) Gaussian pulse
-        th_in = (T_in_val - T_ref)*exp(-(t-t_g0)^2/(2*sig_g^2));
-    else
-        th_in = (T_in_val - T_ref)*(1 - exp(-t/t0_ramp));
-    end
+    th_in = (T_in_val - T_ref)*(1 - exp(-t/t0_ramp));
     if strcmpi(T_BC_in,'flux')
         F(rows_Tin) = q_in_fun(t).*rs_Tin;   % (R3) prescribed inner heat flux
     else
@@ -802,7 +780,7 @@ for n = 1:Nt
     if strcmpi(P_time_mode, 'sine')
         P_now = P_i*sin(pi*t/t0_P);
     else
-        P_now = P_i;                        % step (claude_R1 behavior)
+        P_now = P_i;                        % step (LSTE_solver_R1 behavior)
     end
     F(rows_Pin) = -P_now.*rs_Pin;
 

@@ -18,12 +18,12 @@ function Run($solver, $ov, $name) {
 }
 
 Write-Output "== R6 verification (corrected) =="
-Run "claude_R5" ""                          "R6ver_R5ref"
-Run "claude_R6" ""                          "R6ver_R6def"
-Run "claude_R6" "'BC_z0','S','BC_zL','C'"   "R6ver_mixed"
-Run "claude_R6" "'BC_z','S'"                "R6ver_SS"
-Run "claude_R6" "'BC_z','C'"                "R6ver_CC"
-Run "claude_R6" "'a_GPL',5.0e-6"            "R6ver_aspect"
+Run "LSTE_solver_R5" ""                          "R6ver_R5ref"
+Run "LSTE_solver_R6" ""                          "R6ver_R6def"
+Run "LSTE_solver_R6" "'BC_z0','S','BC_zL','C'"   "R6ver_mixed"
+Run "LSTE_solver_R6" "'BC_z','S'"                "R6ver_SS"
+Run "LSTE_solver_R6" "'BC_z','C'"                "R6ver_CC"
+Run "LSTE_solver_R6" "'a_GPL',5.0e-6"            "R6ver_aspect"
 
 $cmp = "cd('$here');" +
 "R5=load('results/R6ver_R5ref.mat'); R6=load('results/R6ver_R6def.mat');" +

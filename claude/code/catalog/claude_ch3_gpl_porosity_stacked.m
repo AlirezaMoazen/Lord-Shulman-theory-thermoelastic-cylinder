@@ -5,7 +5,7 @@
 %  side by side -- the two have different x-axes (discrete layer index vs
 %  continuous xi), so they are two stacked panels, not a shared-axis overlay.
 %  Same data/formulas/styling as claude_ch123_figs.m (ground-truth: frozen
-%  solver claude_R7.m). New file; does not modify claude_ch123_figs.m or its
+%  solver LSTE_solver_R7.m). New file; does not modify claude_ch123_figs.m or its
 %  standalone PNGs.
 clearvars; clc; close all;
 outdir = 'C:/Users/InfosaicUser/Desktop/MSc/Lord-Shulman-theory-thermoelastic-cylinder/claude/figures_ch123';

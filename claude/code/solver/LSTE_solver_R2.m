@@ -1,8 +1,13 @@
 %% ========================================================================
-%  claude_R1.m  —  DYNAMIC THERMOELASTIC ANALYSIS (LORD-SHULMAN / FOURIER)
+%  LSTE_solver_R2.m  —  DYNAMIC THERMOELASTIC ANALYSIS (LORD-SHULMAN / FOURIER)
 %  Multilayer porous GPL-reinforced cylinder, layerwise DQM + Newmark (beta)
-%  (revision R1 of the corrected solver; companions: Static_Baseline_R1.m,
-%   Compare_R1.m)
+%  ------------------------------------------------------------------------
+%  REVISION R2 = LSTE_solver_R1 (verified, unchanged logic) + ADDITIONS ONLY:
+%   (+) material_mode 'FG_powerlaw' : E(r)=E_i*(r/R_i)^nE, rho likewise —
+%       needed for the IJPVP-2012 Table-6 validation benchmark
+%   (+) P_time_mode 'sine' : P(t)=P_i*sin(pi*t/t0_P) dynamic pressure
+%   (+) store_full_history : record x at every step for post-processing
+%  The verified LSTE_solver_R1 solver logic is byte-identical otherwise.
 %  ------------------------------------------------------------------------
 %  REWRITTEN from scratch on top of the VALIDATED static assembly (Main-EN.m),
 %  fixing the fatal problems of Main_Dyn .. Main_Dyn_R4:
@@ -59,6 +64,23 @@ W_GPL_total = 0.04;         % total GPL mass fraction
 e3   = 0.8064;              % UD porosity coefficient (docx table)
 e1   = 0.3;   e2 = 0.5103;  e4 = 0.7813;  e5 = 0.7813;   % matched-mass set (docx)
 
+% --- (R2 addition) material mode -----------------------------------------
+% 'GPL'         : GPL + porosity model from the docx spec (LSTE_solver_R1 behavior)
+% 'FG_powerlaw' : P(r) = P_i_val*(r/R_i)^n, evaluated at layer mid-radius
+material_mode = 'GPL';
+FG_E_i   = 223e9;   FG_nE   = 2;       % E at inner radius, exponent
+FG_rho_i = 8900;    FG_nrho = -5.93;   % rho at inner radius, exponent
+FG_nu    = 0.3;                        % constant Poisson ratio
+FG_k     = 10;      FG_c    = 500;     % conductivity / heat capacity (unused if isothermal)
+FG_alpha = 0;                          % thermal expansion (0 -> pure mechanics)
+
+% --- (R2 addition) pressure time function --------------------------------
+P_time_mode = 'step';       % 'step' (LSTE_solver_R1 behavior) or 'sine'
+t0_P        = 1.0;          % period parameter for 'sine': P(t)=P_i*sin(pi*t/t0_P)
+
+% --- (R2 addition) full time-history storage -----------------------------
+store_full_history = false; % true: save x at every step in X_hist (Ndof x Nt+1)
+
 %% ========================= 1. Geometry and discretization =========================
 NL  = 5;                    % number of layers
 R_i = 0.1;                  % inner radius (m)
@@ -96,7 +118,7 @@ dt         = 5e-4;          % time step (s)
 % Newmark parameters (gam > 0.5 adds numerical damping, useful for
 % verification runs that must settle to the static solution)
 gam = 0.5;  bet = 0.25;
-out_name = 'Results_claude_R1.mat';    % output file for saved results
+out_name = 'Results_LSTE_solver_R2.mat';    % output file for saved results
 
 % ---- optional overrides from workspace struct `cfg` (for batch testing) ----
 if exist('cfg','var') && isstruct(cfg)
@@ -109,6 +131,22 @@ if exist('cfg','var') && isstruct(cfg)
     end
 end
 Nt = round(total_time/dt);
+
+% (R2 addition) rebuild geometry-dependent grids and DQ weights, because
+% section 1 ran BEFORE the cfg overrides — without this, overriding NL,
+% N_r, N_z, R_i, R_o or L via cfg leaves stale grids/weight matrices.
+R_bound = linspace(R_i, R_o, NL+1);
+l_total = R_o - R_i;
+z_nodes = chebyshev_grid(0, L, N_z);
+r_nodes = cell(NL,1);
+for e = 1:NL
+    r_nodes{e} = chebyshev_grid(R_bound(e), R_bound(e+1), N_r);
+end
+[A_z, B_z] = DQ_weights(z_nodes);
+A_r = cell(NL,1); B_r = cell(NL,1);
+for e = 1:NL
+    [A_r{e}, B_r{e}] = DQ_weights(r_nodes{e});
+end
 
 %% ========================= 3. Material properties (per layer, docx style) ========
 % GPL
@@ -124,6 +162,17 @@ E_L_  = zeros(NL,1); nu_L_ = zeros(NL,1); rho_L = zeros(NL,1);
 c_L   = zeros(NL,1); k_L   = zeros(NL,1); al_L  = zeros(NL,1);
 
 for e = 1:NL
+    % --- (R2 addition) FG power-law mode: bypass the GPL model entirely ---
+    if strcmpi(material_mode, 'FG_powerlaw')
+        rm = R_i + l_total/(2*NL) + (e-1)*l_total/NL;   % layer mid radius
+        E_L_(e)  = FG_E_i  *(rm/R_i)^FG_nE;
+        rho_L(e) = FG_rho_i*(rm/R_i)^FG_nrho;
+        nu_L_(e) = FG_nu;
+        k_L(e)   = FG_k;
+        c_L(e)   = FG_c;
+        al_L(e)  = FG_alpha;
+        continue;
+    end
     % --- GPL weight fraction of this layer (docx patterns) ---
     switch upper(GPL_pattern)
         case 'UD', Wg = W_GPL_total;
@@ -162,8 +211,22 @@ for e = 1:NL
             case 'UD', Pf = e3;             Pm = sqrt(e3);
             case 'O',  Pf = 1-e1*cos(pi*s);           Pm = sqrt(max(Pf,0));
             case 'X',  Pf = 1-e2*(1-cos(pi*s));       Pm = sqrt(max(Pf,0));
-            case 'V',  Pf = e4*sqrt(2)*cos(pi*s/2+pi/4); Pm = sqrt(max(Pf,0));
-            case 'A',  Pf = e5*sqrt(2)*cos(pi*s/2-pi/4); Pm = sqrt(max(Pf,0));
+            % ############################################################
+            % ##  WARNING — V/A PATTERNS NOT FINAL (decision pending)   ##
+            % ##  The MZ-R 0.docx file is the authority, but its V/A    ##
+            % ##  formulas are ambiguous in text extraction (possible   ##
+            % ##  sqrt(2)/2 factor, coordinate origin mid vs inner).    ##
+            % ##  To be corrected after checking the source paper and   ##
+            % ##  verifying against the MZ mass-conservation tables.    ##
+            % ##  UD / O / X patterns are fine. DO NOT use V/A results  ##
+            % ##  in the thesis until this is resolved.                 ##
+            % ############################################################
+            case 'V',  warning('LSTE_solver_R2:VApattern', ...
+                           'V porosity pattern formula NOT verified yet — placeholder!');
+                       Pf = e4*cos(pi*s/2+pi/4); Pm = sqrt(max(Pf,0));
+            case 'A',  warning('LSTE_solver_R2:VApattern', ...
+                           'A porosity pattern formula NOT verified yet — placeholder!');
+                       Pf = e5*cos(pi*s/2-pi/4); Pm = sqrt(max(Pf,0));
             otherwise, error('bad porosity_pattern');
         end
         Pf = max(0,min(1,Pf));  Pm = max(0,min(1,Pm));
@@ -604,15 +667,25 @@ hist_T = zeros(Nt+1,1); hist_U = zeros(Nt+1,1); hist_W = zeros(Nt+1,1);
 hist_Ti= zeros(Nt+1,1);
 hist_T(1) = T_ref;   % theta=0
 
+% (R2 addition) full history storage
+if store_full_history, X_hist = zeros(Ndof, Nt+1); end
+
 snap_every = max(1,round(Nt/6));  snaps = {};  snap_t = [];
 
+newmark_tic = tic;   % (R2 addition) CPU timing of the time-integration loop
 for n = 1:Nt
     t = n*dt;
     % ----- RHS at t_{n+1} (row-scaled) -----
     F = F0;
     th_in = (T_in_val - T_ref)*(1 - exp(-t/t0_ramp));
     F(rows_Tin) = th_in.*rs_Tin;
-    F(rows_Pin) = -P_i.*rs_Pin;             % pressure step (t>0)
+    % (R2 addition) pressure time function
+    if strcmpi(P_time_mode, 'sine')
+        P_now = P_i*sin(pi*t/t0_P);
+    else
+        P_now = P_i;                        % step (LSTE_solver_R1 behavior)
+    end
+    F(rows_Pin) = -P_now.*rs_Pin;
 
     % ----- displacement-form Newmark solve -----
     rhs = F + M*(a0*x + a2*xd + a3*xdd) + C*(a1*x + a4*xd + a5*xdd);
@@ -627,6 +700,7 @@ for n = 1:Nt
     hist_U(n+1) = x(idx_U (e_mid,ir_mid,iz_mid));
     hist_W(n+1) = x(idx_W (e_mid,ir_mid,iz_mid));
     hist_Ti(n+1)= T_ref + th_in;
+    if store_full_history, X_hist(:,n+1) = x; end   % (R2 addition)
 
     if mod(n,snap_every)==0
         snaps{end+1} = x; snap_t(end+1) = t;                     %#ok<SAGROW>
@@ -640,6 +714,8 @@ for n = 1:Nt
         error('Solution diverged at step %d (t=%.3e s), max|x|=%.3e', n, t, max(abs(x)));
     end
 end
+newmark_cpu = toc(newmark_tic);  % (R2 addition)
+fprintf('Newmark time-integration CPU: %.2f s (%d steps)\n', newmark_cpu, Nt);
 
 %% ========================= 7. Post-processing =========================
 tv = (0:Nt)'*dt;
@@ -697,6 +773,7 @@ fprintf('sigma_rr at outer node : %.4e Pa  (target 0)\n', S_rr(end));
 save(out_name,'tv','hist_T','hist_U','hist_W','r_all','T_all','U_all', ...
      'S_rr','S_tt','S_zz','snaps','snap_t','x_inf','T_inf_prof','U_inf_prof', ...
      'NL','N_r','N_z','r_nodes','z_nodes');
+if store_full_history, save(out_name,'X_hist','-append'); end   % (R2 addition)
 fprintf('Saved %s\n', out_name);
 
 %% ========================= helper functions =========================

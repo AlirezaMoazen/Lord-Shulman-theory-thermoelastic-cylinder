@@ -11,11 +11,11 @@ writing the results chapter.
 A long-standing blocker: the legacy dynamic solver (`Main_Dyn` R1–R4) never
 worked — results frozen/diverging for months. Static solver (`Main-EN`) OK.
 
-### Phase 1 · Diagnosis & rescue → `claude_R1`
+### Phase 1 · Diagnosis & rescue → `LSTE_solver_R1`
 Read the whole repo + thesis spec (MZ-R 0.docx) + Rezaei twin thesis.
 Found four fatal bug families: Newmark displacement/acceleration mix-up,
 flipped operator sign, fake volume factors, corrupted BC rows.
-`claude_R1` = corrected solver (frozen since).
+`LSTE_solver_R1` = corrected solver (frozen since).
 
 ### Phase 2 · Validation (6 independent checks → `Validation/`)
 1. Static cross-check (independent assembly): agreement 2×10⁻¹¹

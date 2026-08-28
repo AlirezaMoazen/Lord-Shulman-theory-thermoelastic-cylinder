@@ -38,7 +38,7 @@ most of its "open" items were resolved weeks ago and it was missing newer ones.
    Ch4 (R4.4) is frozen — these need your decision on whether/how to fix.
 8. **Ch4 wave-front animation** (§4-17, optional): needs your choice of which
    field to animate, which case, and output format (gif/mp4/frame sequence).
-9. **`claude_R9.m` (the new ~2.1×-faster solver revision)**: fully validated
+9. **`LSTE_solver_R9.m` (the new ~2.1×-faster solver revision)**: fully validated
    against R8 (floating-point-roundoff match + an independent literature-benchmark
    re-check — see `REVISIONS.md` §1). Not adopted as the thesis-of-record revision
    by default. Say the word if you want the Ch4 campaign switched to it (would

@@ -1,5 +1,5 @@
 %% ========================================================================
-%  claude_R2_run_benchmark2.m — VALIDATION BENCHMARK 2 (THERMAL) + METHOD TABLE
+%  LSTE_solver_R2_run_benchmark2.m — VALIDATION BENCHMARK 2 (THERMAL) + METHOD TABLE
 %  ------------------------------------------------------------------------
 %  Part A: transient heat conduction in a homogeneous hollow cylinder,
 %          inner surface temperature ramp  theta(Ri,t)=th0*(1-exp(-t/t0)),
@@ -9,11 +9,11 @@
 %
 %  Part B: method-versus-method comparison (like the Newmark-vs-NURBS
 %          tables in Heydarpour & Malekzadeh / Rezaei's thesis):
-%          Newmark (claude_R2) vs MATLAB ode15s on the SAME spatial
+%          Newmark (LSTE_solver_R2) vs MATLAB ode15s on the SAME spatial
 %          system (constraints eliminated by static condensation),
 %          with accuracy and CPU time reported.
 %
-%  Uses the claude_R2 solver via cfg — the solver file is not modified.
+%  Uses the LSTE_solver_R2 solver via cfg — the solver file is not modified.
 %  ========================================================================
 clearvars; clc; close all;
 
@@ -37,9 +37,9 @@ cfg = struct( ...
     'store_full_history',true, ...
     'out_name','Results_R2_bench2.mat');
 
-claude_R2;    % solver runs; workspace keeps all matrices and X_hist
+LSTE_solver_R2;    % solver runs; workspace keeps all matrices and X_hist
 
-% NOTE: claude_R2 begins with clearvars, so the driver-local constants above
+% NOTE: LSTE_solver_R2 begins with clearvars, so the driver-local constants above
 % are gone now — re-derive them from the solver workspace (same values):
 k_th = k_L(1);  rho_th = rho_L(1);  c_th = c_L(1);
 kappa = k_th/(rho_th*c_th);
@@ -183,7 +183,7 @@ th_ex_t = arrayfun(@(t) theta_exact(r_probe, max(t,1e-12)), tsol);
 
 fprintf('\n===== METHOD COMPARISON (probe: r=%.4f m, z=L/2) =====\n', r_probe);
 fprintf('%-22s %-14s %-12s\n','method','max err vs exact','CPU (s)');
-fprintf('%-22s %-14.4f %-12.2f\n','Newmark (claude_R2)', max(abs(th_newm - th_ex_t)), newmark_cpu);
+fprintf('%-22s %-14.4f %-12.2f\n','Newmark (LSTE_solver_R2)', max(abs(th_newm - th_ex_t)), newmark_cpu);
 fprintf('%-22s %-14.4f %-12.2f\n','ode15s (reduced)',    max(abs(th_ode  - th_ex_t)), ode_cpu);
 fprintf('%-22s %-14.4f\n','Newmark vs ode15s',  max(abs(th_newm - th_ode)));
 

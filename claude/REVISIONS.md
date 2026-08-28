@@ -14,16 +14,33 @@
 ---
 
 ## 1. Solver (MATLAB)
+<!-- 2026-08-28 RENAME (author request): the whole solver family's filename prefix
+     changed claude_R# -> LSTE_solver_R# (Lord-Shulman ThermoElastic), across ALL
+     9 revisions (R1..R9), the 2 R9 companion scripts, the 4 R2/R3 validation
+     drivers, and the regression test (test_r7_regression.m -> test_LSTE_solver_R7_regression.m).
+     Pure rename (via git mv, history preserved) -- NO content/physics change.
+     Every literal internal/external reference to the old "claude_R" identifier
+     was updated in the same pass: the 2 live campaign scripts that actually
+     invoke the solver (run_ch4_campaign.ps1 calls LSTE_solver_R7, run_nz_sweep.ps1
+     calls LSTE_solver_R7, run_conv_explore.ps1 calls LSTE_solver_R9), archived
+     campaign scripts, all validation/regression drivers' internal calls, and
+     every prose mention across code_docs/*.md, governance/*.md, README.md (both),
+     and this file. Verified with a smoke test after the rename: LSTE_solver_R9
+     and LSTE_solver_R7 both run a small config cleanly, and the full R6-vs-R7
+     regression test (test_LSTE_solver_R7_regression.m) reports DIGIT-IDENTICAL
+     physics + all DOF-map checks pass, same as before the rename. Does NOT touch
+     the already-computed param_studies_ch4/*.mat results (they don't reference
+     filenames internally) or any solver's physics/content. -->
 | Artifact | Current | History |
 |---|---|---|
-| `claude_R#.m` (main solver) | **R9** (performance) — **R8 is still the thesis-of-record revision**, kept frozen | R1 fixed the broken dynamic solver (frozen) → R2 cfg engine + full-history + sine pressure → R2_1 audit fix → R3 BC options → R3_1 final porosity → R4 Gaussian shock → R5 theory switch (Fourier/LS/DPL/GN3) → R6 per-end BC + cfg-overridable GPL dims → **R7 explicit DOF numbering/mapping matrix (NodeMap + DOFmap + GridDOF + CSV export); physics digit-identical to R6 (Prom.2 p.4) → **R8 FINAL/DEFINITIVE revision — physics byte-identical to R7; default config set to the thesis reference case (LS, N_L=7, R_i=1.0, R_o=1.5, L=2.1, N_r=15, N_z=11, W=0.3%, h_c=10, 300→600 K, P_i=50 MPa, tau0=418 s, 3000 s / dt=1) so a standalone run reproduces the thesis; porosity patterns left for the author to finalize per MZ (A7)** → **R9 (2026-08-06, performance-only) — vectorized the interior assembly loop (section 4.1): every scalar sparse-matrix write inside the per-node `for jr`/`for jz` loops replaced with one batched row-vector write (using `A_r{e}(ir,:)`/`A_z(iz,:)` directly) or, for the double-loop u/w elastic-coupling blocks, one `kron()`-built write over the contiguous per-layer column range; row equilibration also reworked to avoid forming a dense `Ndof × 3·Ndof` matrix. Section 4.2 (every boundary/interface condition) is byte-for-byte copied from R8, untouched. Validated: R8-vs-R9 diffed field-by-field across 5 configs (default/FOURIER/DPL/GN3/different mesh) and the full 3000-step thesis reference case — every field matches to floating-point roundoff (relative ~1e-9 to 1e-16); independently re-checked against literature benchmark 1 (Malekzadeh & Heydarpour), same documented accuracy as always. Timing (sequential, uncontended): R8 1039.1 s (899.9 s assembly+setup) vs R9 495.2 s (364.4 s assembly+setup) on the full reference case — **≈2.1× faster overall, ≈2.5× faster on assembly**. Not yet adopted as the thesis-of-record revision — use R8 for anything that must match already-published numbers; R9 is available for anyone who needs faster iteration.** |
+| `LSTE_solver_R#.m` (main solver) | **R9** (performance) — **R8 is still the thesis-of-record revision**, kept frozen | R1 fixed the broken dynamic solver (frozen) → R2 cfg engine + full-history + sine pressure → R2_1 audit fix → R3 BC options → R3_1 final porosity → R4 Gaussian shock → R5 theory switch (Fourier/LS/DPL/GN3) → R6 per-end BC + cfg-overridable GPL dims → **R7 explicit DOF numbering/mapping matrix (NodeMap + DOFmap + GridDOF + CSV export); physics digit-identical to R6 (Prom.2 p.4) → **R8 FINAL/DEFINITIVE revision — physics byte-identical to R7; default config set to the thesis reference case (LS, N_L=7, R_i=1.0, R_o=1.5, L=2.1, N_r=15, N_z=11, W=0.3%, h_c=10, 300→600 K, P_i=50 MPa, tau0=418 s, 3000 s / dt=1) so a standalone run reproduces the thesis; porosity patterns left for the author to finalize per MZ (A7)** → **R9 (2026-08-06, performance-only) — vectorized the interior assembly loop (section 4.1): every scalar sparse-matrix write inside the per-node `for jr`/`for jz` loops replaced with one batched row-vector write (using `A_r{e}(ir,:)`/`A_z(iz,:)` directly) or, for the double-loop u/w elastic-coupling blocks, one `kron()`-built write over the contiguous per-layer column range; row equilibration also reworked to avoid forming a dense `Ndof × 3·Ndof` matrix. Section 4.2 (every boundary/interface condition) is byte-for-byte copied from R8, untouched. Validated: R8-vs-R9 diffed field-by-field across 5 configs (default/FOURIER/DPL/GN3/different mesh) and the full 3000-step thesis reference case — every field matches to floating-point roundoff (relative ~1e-9 to 1e-16); independently re-checked against literature benchmark 1 (Malekzadeh & Heydarpour), same documented accuracy as always. Timing (sequential, uncontended): R8 1039.1 s (899.9 s assembly+setup) vs R9 495.2 s (364.4 s assembly+setup) on the full reference case — **≈2.1× faster overall, ≈2.5× faster on assembly**. Not yet adopted as the thesis-of-record revision — use R8 for anything that must match already-published numbers; R9 is available for anyone who needs faster iteration.** |
 
 ## 2. Parametric-campaign figure scripts
 | Artifact | Current | History |
 |---|---|---|
 | `claude_param_figures*.m` | **ARCHIVED** (old geometry) | base → R2 → R3 → R4 (+`_R4_color`). OLD-geometry Ch4 figure lineage that read the now-deleted `param_studies\`; **superseded in practice by the `claude_catalog_R6*` family** (§3, which reads `param_studies_ch4\` → `figures_ch4_*`). Moved to `code/_archive/` in the 2026-08-05 code audit (Prom 5 #6). |
 
-<!-- 2026-08-05 CODE AUDIT / REORG (Prom 5 #6): current solver = claude_R8 (physics ≡ R7; the Ch4 campaign still invokes R7). Current campaign = campaign/run_ch4_campaign.ps1 + run_nz_sweep.ps1 → param_studies_ch4 (86 cases). Current Ch4 figures = claude_catalog_R6* family. Current stats = code/misc/claude_chapter_stats_ch4.m → chapter_stats.csv. ARCHIVED to code/_archive/ (17 files): param_figures lineage, catalog_R1..R5(+color), old claude_chapter_stats.m, test_r5_hooke.m, claude_T2_spatial_methods.m (superseded by T2_1). ARCHIVED to campaign/_archive/ (7 files): run_param_studies v1..v6, run_R6_verify.ps1. The old param_studies/ folder (old-geometry NL=5 runs) was deleted. Both code_docs updated to R8/current pipeline; matrix documented as epoxy. -->
+<!-- 2026-08-05 CODE AUDIT / REORG (Prom 5 #6): current solver = LSTE_solver_R8 (physics ≡ R7; the Ch4 campaign still invokes R7). Current campaign = campaign/run_ch4_campaign.ps1 + run_nz_sweep.ps1 → param_studies_ch4 (86 cases). Current Ch4 figures = claude_catalog_R6* family. Current stats = code/misc/claude_chapter_stats_ch4.m → chapter_stats.csv. ARCHIVED to code/_archive/ (17 files): param_figures lineage, catalog_R1..R5(+color), old claude_chapter_stats.m, test_r5_hooke.m, claude_T2_spatial_methods.m (superseded by T2_1). ARCHIVED to campaign/_archive/ (7 files): run_param_studies v1..v6, run_R6_verify.ps1. The old param_studies/ folder (old-geometry NL=5 runs) was deleted. Both code_docs updated to R8/current pipeline; matrix documented as epoxy. -->
 
 ### 2a. Methodological extension studies (T1/T2/T3, `code/extensions/`, output → `results_extensions/`)
 | Artifact | Current | History |
@@ -36,7 +53,7 @@
 ### 2b. Exploratory convergence study (author request 2026-08-24; NOT the locked reference mesh)
 | Artifact | Current | Note |
 |---|---|---|
-| `campaign/run_conv_explore.ps1` + `code/catalog/claude_catalog_conv_explore.m` → `param_studies_conv_explore/` + `figures_conv_explore/` | **DONE** | Standalone diagnostic conv_master figure at a new anchor **N_r=11, N_z=13, N_L=7** (the locked Ch4 reference mesh, N_r=15/N_z=11, is untouched — this does not replace it). 15 fresh solver runs via **claude_R9** (validated digit-identical to R8, ~2.1× faster), each varying one of N_r∈{5,7,9,11,13,15}, N_z∈{5,7,9,11,13,15}, N_L∈{3,5,7,9,15} with the other two held at the anchor. Same reference-case physics as the locked campaign (`run_nz_sweep.ps1`). Finding matches the locked-mesh study's conclusion: **N_z is the binding direction** — L₂ hoop-profile error starts >5% at N_z=5, crosses below 1% by N_z=7, while N_r and N_L are already under ~0.4% even at their coarsest tested value. Output kept fully separate from `param_studies_ch4`/`figures_ch4` so the locked campaign is unaffected. |
+| `campaign/run_conv_explore.ps1` + `code/catalog/claude_catalog_conv_explore.m` → `param_studies_conv_explore/` + `figures_conv_explore/` | **DONE** | Standalone diagnostic conv_master figure at a new anchor **N_r=11, N_z=13, N_L=7** (the locked Ch4 reference mesh, N_r=15/N_z=11, is untouched — this does not replace it). 15 fresh solver runs via **LSTE_solver_R9** (validated digit-identical to R8, ~2.1× faster), each varying one of N_r∈{5,7,9,11,13,15}, N_z∈{5,7,9,11,13,15}, N_L∈{3,5,7,9,15} with the other two held at the anchor. Same reference-case physics as the locked campaign (`run_nz_sweep.ps1`). Finding matches the locked-mesh study's conclusion: **N_z is the binding direction** — L₂ hoop-profile error starts >5% at N_z=5, crosses below 1% by N_z=7, while N_r and N_L are already under ~0.4% even at their coarsest tested value. Output kept fully separate from `param_studies_ch4`/`figures_ch4` so the locked campaign is unaffected. |
 
 ## 3. Quantity CATALOG (figure-selection tool)
 | Artifact | Current | History |
@@ -67,13 +84,13 @@
 | `MASTER_FIGURE_LIST_FA` (+ docx) | **DONE (R1)** | all 42 numbered figures; Fig 3-3 row updated for the porosity-coefficient replot (2026-08-06) |
 | `MASTER_FIGURES_FLIPBOOK_FA` (+ docx) | **DONE (R1)** | 36 figures (Ch2:1, Ch3:5, Ch4:30) inlined |
 | `CODE_DOC_usage_FA` / `CODE_DOC_technical_FA` (+ docx) | **DONE, current as of R8/R9** | fully corrected 2026-08-05 (was documenting R7 defaults/a false runtime-warning claim/dead campaign scripts): now documents R8's thesis-reference defaults, the real `run_ch4_campaign.ps1`+`catalog_R6*` pipeline, the epoxy matrix. **Not yet updated to mention R9** (§1) — see open items below. |
-| `CODE_FIX_HISTORY_EN/FA` (+ docx) | **NEW 2026-08-05** | evidence-based writeup (line-cited against `Main_Dyn.m`) of the 4 fatal bugs in the author's original solver and what `claude_R1.m` fixed |
+| `CODE_FIX_HISTORY_EN/FA` (+ docx) | **NEW 2026-08-05** | evidence-based writeup (line-cited against `Main_Dyn.m`) of the 4 fatal bugs in the author's original solver and what `LSTE_solver_R1.m` fixed |
 | `CODE_WRITING_GUIDE_EN/FA` (+ docx) | **NEW 2026-08-06** | teaches the codebase's recurring patterns (revision-file convention, solver structure, cfg mechanism, validation pattern, catalog-script pattern) |
 | `governance/EXAMINER_REVIEW_FA` | **DONE** | strict examiner critique of Ch1–4 |
 | `governance/IMPROVEMENT_SUGGESTIONS_FA` | **DONE** | 27-item priority list |
 | `governance/DEFENSE_QA_FA` (+ docx) | **DONE** | 37 Q&A pairs; 5 formulas that rendered as raw `$...$` text (unsupported `\rm` LaTeX command) fixed 2026-08-06 |
 | `BACKGROUND_EN` | **DONE** | English mirror of the framing material |
-| `claude_R2016b_*` variants (`ch123_figs`, `catalog_conv`, `catalog_ch4_variants`) | **NEW 2026-08-06** | R2016b-compatible copies of the 3 figure scripts using post-2016b functions (`exportgraphics`→`print`, `yline`→`plot(xlim,...)`); originals untouched, verified identical output |
+| `LSTE_solver_R2016b_*` variants (`ch123_figs`, `catalog_conv`, `catalog_ch4_variants`) | **NEW 2026-08-06** | R2016b-compatible copies of the 3 figure scripts using post-2016b functions (`exportgraphics`→`print`, `yline`→`plot(xlim,...)`); originals untouched, verified identical output |
 
 ## 6. Records & governance (dated snapshots / living docs — tracked by git, not _R<n>)
 | File | Role |
@@ -88,7 +105,7 @@
 ## 7. Commit timeline (newest first — the dated progress trail)
 | Commit | What |
 |---|---|
-| ecbf6f9 | **claude_R9.m** — vectorized-assembly performance revision (§1): ~2.1× faster overall, ~2.5× on assembly; validated field-by-field vs R8 across 5 configs + the full 3000-step reference case (floating-point-roundoff match) plus an independent literature-benchmark re-check. R8 stays the thesis-of-record revision. |
+| ecbf6f9 | **LSTE_solver_R9.m** — vectorized-assembly performance revision (§1): ~2.1× faster overall, ~2.5× on assembly; validated field-by-field vs R8 across 5 configs + the full 3000-step reference case (floating-point-roundoff match) plus an independent literature-benchmark re-check. R8 stays the thesis-of-record revision. |
 | a08fd1e | `CODE_WRITING_GUIDE_EN/FA` (+ docx, §5) — bilingual guide to the codebase's recurring patterns |
 | 7ac09c2 | `claude_*_2016b.m` (§5) — R2016b-compatible variants of 3 figure scripts (`exportgraphics`→`print`, `yline`→`plot(xlim,...)`), originals untouched |
 | c8482f1 | Fixed 5 formulas in `DEFENSE_QA_FA.docx` rendering as raw `$...$` text (pandoc doesn't support the `\rm` LaTeX command) |
@@ -96,7 +113,7 @@
 | 8d6fb26 | Project-wide plotting-rule sweep (§3 note) — no titles/floating text, solid color lines, across every active+archived figure script; found & fixed the `run()` cwd relative-path bug in 4 catalog scripts |
 | 48c35bf | 13 editable Word versions of chapters/abstracts/TOC/figure-list/governance reports (§5) |
 | 975d452 | Ch5 + both abstracts realigned to R4.4's real numbers after the `chapter_stats.csv` stale-folder fix; code_docs corrected to R8; 24 stale files archived (2026-08-05 code audit) |
-| _(Prom.4b)_ | **Ch4 R4 — Prom.4 round 2 (Rezaei format + fixes):** figure captions rewritten in **Bahram Rezaei's thesis format** — bare figure number above (`۴-N`) + full caption below `شکل ۴-N: ‹توضیح› [‹پارامترها›]` with the case parameters in brackets (EN+FA). Fixes: bench1 legend `Present (claude_R2)` → `Present`; **τ\*=0.87 removed** from the relaxation figure 4-14 and its text (EN+FA); **25-matrix top title removed**. Figures re-rendered; 4 docx rebuilt. |
+| _(Prom.4b)_ | **Ch4 R4 — Prom.4 round 2 (Rezaei format + fixes):** figure captions rewritten in **Bahram Rezaei's thesis format** — bare figure number above (`۴-N`) + full caption below `شکل ۴-N: ‹توضیح› [‹پارامترها›]` with the case parameters in brackets (EN+FA). Fixes: bench1 legend `Present (LSTE_solver_R2)` → `Present`; **τ\*=0.87 removed** from the relaxation figure 4-14 and its text (EN+FA); **25-matrix top title removed**. Figures re-rendered; 4 docx rebuilt. |
 | _(Prom.4)_ | **Ch4 R4 — Prom.4 figure/format corrections:** colour plots solid-only + `sgtitle` removed (4-panel); **academic figure numbering** (Figure 4-N above each figure, caption below) with in-text refs renumbered (EN+FA); **length symbol l → L** throughout; 25-matrix axis labels on every subplot; **convergence §4-3 restructured into 3 subparts (N_r/N_z/N_L) with the (c)/(d) panels replaced by tables** (2-panel `conv2` figures); jump/severe-change explanations added; verification diagrams kept. New render script `code/catalog/claude_catalog_conv2.m`; 4 docx rebuilt (24 figs each). See [[supervisor-prom4-review]] / `reviews/REVIEW4_PROM4.md`. |
 | _(R4+tidy)_ | **Ch4 R4 finished + repo tidy:** figure **captions** (descriptive, FA+EN) on all four docx (Prom.1); **3 verification comparison figures** inlined in §4-4 (present vs Malekzadeh/ANSYS, exact Bessel, Bagri&Eslami — Prom.1 "diagrams not tables only"); `FIGURE_CAPTIONS_R4`; **folder tidy** (Prom.3 #1) — `.m`→`code/{solver,catalog,validation,extensions,misc}`, runners→`campaign/`, docs→`governance/`+`reviews/`; data/figures/thesis_chapter kept at root so relative paths still resolve (run scripts from `claude/` via `run('code/.../x.m')`). |
 | _(Ch4 R4)_ | Chapter 4 R4 EN draft (53283b1) + FA mirror & 4 docx EN/FA×bw/color (5b021be) — see §4. |
@@ -112,7 +129,7 @@
 | b68c337 | Results chapter R3 + Prom.2 review transcription |
 | c0c132a | Chapter R3: 4 sections the workflow could not finish |
 | 6d02617 | Governance files + complete revision figures (B&W + color) |
-| 2109b01 | claude_R6: per-end mechanical BC + cfg-overridable GPL dims |
+| 2109b01 | LSTE_solver_R6: per-end mechanical BC + cfg-overridable GPL dims |
 | 99209bd | Revision runs (v4): pressure sweep, layers 9/15, weight-fill |
 | 6235611 | Authoritative (author-corrected) chapter-4 review notes |
 | 19b9ddf | Typed transcription of handwritten chapter-4 review notes |

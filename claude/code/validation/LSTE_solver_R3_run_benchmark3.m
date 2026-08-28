@@ -1,5 +1,5 @@
 %% ========================================================================
-%  claude_R3_run_benchmark3.m — LS-COUPLED CYLINDER BENCHMARK (1-D radial)
+%  LSTE_solver_R3_run_benchmark3.m — LS-COUPLED CYLINDER BENCHMARK (1-D radial)
 %  ------------------------------------------------------------------------
 %  Reproduces: Bagri & Eslami, "A unified generalized thermoelasticity;
 %  solution for cylinders and spheres", Int. J. Mech. Sci. 49 (2007)
@@ -9,7 +9,7 @@
 %  it is solved here with a dedicated 1-D radial DQM + Newmark code that
 %  uses the SAME discretization philosophy (Chebyshev DQ + displacement-
 %  form Newmark + algebraic constraint rows + row equilibration) as the
-%  2-D solver claude_R3. This validates the Lord-Shulman COUPLED operator
+%  2-D solver LSTE_solver_R3. This validates the Lord-Shulman COUPLED operator
 %  (finite thermal wave speed + thermoelastic wave interaction).
 %
 %  NOTE: the 2-D solver with 'R' (roller) ends develops the same spurious

@@ -21,7 +21,7 @@ space, **Newmark** in time, MATLAB.
 | `*.pdf` (root) | key reference papers |
 
 ## Status (2026-07)
-- Dynamic Lord-Shulman solver: **working and verified** (`claude/claude_R3_1.m`)
+- Dynamic Lord-Shulman solver: **working and verified** (`claude/LSTE_solver_R3_1.m`)
 - Validation: 3 independent benchmarks + convergence + method-comparison —
   all passed (figures in `claude/Validation/`)
 - Porosity patterns (UD/O/X/V/A): finalized and proven against the

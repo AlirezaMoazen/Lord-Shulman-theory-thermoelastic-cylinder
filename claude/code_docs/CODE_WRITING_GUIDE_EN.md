@@ -7,7 +7,7 @@ lang: en-US
      validation, catalog/figure scripts) is built, so the patterns can be
      reused/extended by hand. Companion to CODE_DOC_usage_FA/technical_FA
      (which document what the current code DOES) and CODE_FIX_HISTORY_EN/FA
-     (which document the original bugs vs. claude_R1.m). This one explains
+     (which document the original bugs vs. LSTE_solver_R1.m). This one explains
      HOW to write code in the same style. -->
 
 # How this codebase is built — a guide to the patterns
@@ -20,9 +20,9 @@ same conventions.
 
 ## 1. The big organizing idea: revision files, never in-place edits
 
-Every solver file is named `claude_R<n>.m` (`claude_R1.m` … `claude_R8.m`).
+Every solver file is named `LSTE_solver_R<n>.m` (`LSTE_solver_R1.m` … `LSTE_solver_R8.m`).
 When a bug is fixed or a feature is added, a **new file** is created —
-`claude_R1.m` is never edited once it's verified. `claude_R8.m`'s own header
+`LSTE_solver_R1.m` is never edited once it's verified. `LSTE_solver_R8.m`'s own header
 comment is the clearest example of why:
 
 ```matlab
@@ -34,7 +34,7 @@ comment is the clearest example of why:
 %  REVISION R7 (additive, on frozen R6 -- supervisor review Prom.2 page 4):
 %   EXPLICIT DOF NUMBERING / MAPPING MATRICES. ... they add NO physics and
 %   change no result (K, C, M, the solve and every output are identical to
-%   claude_R6).
+%   LSTE_solver_R6).
 ```
 
 Each revision states, explicitly, in its own header:
@@ -54,7 +54,7 @@ have `claude_ch123_figs_2016b.m` sitting next to `claude_ch123_figs.m`
 instead of a modified original — same idea, different reason (compatibility
 instead of a new feature), same rule.
 
-## 2. The solver's structure (`claude_R8.m`), section by section
+## 2. The solver's structure (`LSTE_solver_R8.m`), section by section
 
 Every solver revision follows the same skeleton, marked with `%% ===` banner
 comments so you can jump between sections in the MATLAB editor:
@@ -151,7 +151,7 @@ runs strictly afterward and **overwrites** those rows with the true boundary
 equation. This ordering — "assemble everything as if there were no boundary,
 then stamp the boundary equations on top" — is simpler than trying to special
 -case boundary nodes inside the interior loop, and it generalizes cleanly:
-adding a new boundary-condition type (`claude_R3`'s `T_BC_in='flux'`, for
+adding a new boundary-condition type (`LSTE_solver_R3`'s `T_BC_in='flux'`, for
 example) means adding one more `if`/`switch` branch in section 4.2, with zero
 changes to section 4.1.
 
@@ -175,21 +175,21 @@ it, by building a struct and running the solver as a script:
 
 ```matlab
 cfg = struct('NL', 5, 'porosity_pattern', 'V', 'tau0', 111);
-claude_R8;   % note: no parentheses, no output args — this RUNS the script
+LSTE_solver_R8;   % note: no parentheses, no output args — this RUNS the script
 ```
 
 This is how the whole 86-case parametric campaign (`param_studies_ch4/`)
 works — one script (`run_ch4_campaign.ps1`) loops over case definitions and
 calls the solver once per case with a different `cfg`, never editing
-`claude_R8.m` itself. The `warning` on unknown field names exists because
+`LSTE_solver_R8.m` itself. The `warning` on unknown field names exists because
 this pattern has a sharp edge: `eval` will silently do nothing useful if you
 typo a field name (`cfg.N_L` instead of `cfg.NL`, say) — the warning is
 what catches that instead of a silently-wrong run.
 
-**Important gotcha reused everywhere in this project**: `claude_R8;` runs
+**Important gotcha reused everywhere in this project**: `LSTE_solver_R8;` runs
 with `clearvars -except cfg` at the top, so it inherits nothing from your
 workspace except `cfg` — and if you call it via MATLAB's `run('full/path/to/
-claude_R8.m')` (rather than having it on the MATLAB path and calling it by
+LSTE_solver_R8.m')` (rather than having it on the MATLAB path and calling it by
 name), **MATLAB changes the current directory to the script's own folder**
 before running. Any relative path inside the script (`outdir =
 'figures_ch4'`) then resolves against the *script's* folder, not wherever
@@ -204,7 +204,7 @@ error** — never "eyeball a plot and decide it looks right."
 
 ```matlab
 cfg = struct('NL', 5, 'N_r', 9, ..., 'theory', 'FOURIER', ...);   % match the paper's case
-claude_R2;                                    % run the solver with this cfg
+LSTE_solver_R2;                                    % run the solver with this cfg
 % ... independent reference values, either analytic or digitized from a paper's table ...
 err_pct = 100*abs(U_solver - U_paper)/abs(U_paper);
 fprintf('U error vs paper: %.3f%%\n', err_pct);
@@ -213,7 +213,7 @@ fprintf('U error vs paper: %.3f%%\n', err_pct);
 The solver is never modified to "pass" a benchmark — if a benchmark
 disagrees, the fix goes into the *next* solver revision (with the
 benchmark re-run to confirm), and the disagreement plus fix are documented
-in that revision's header, the same way `claude_R1.m`'s header documents
+in that revision's header, the same way `LSTE_solver_R1.m`'s header documents
 the four bugs found in the original `Main_Dyn.m` (see
 `CODE_FIX_HISTORY_EN.md`). Six independent benchmarks currently exist,
 each stressing a different part of the physics: a pure-static limit, two
@@ -294,7 +294,7 @@ once, call it from every figure.
 - **English comments only.** MATLAB's editor and console don't render
   Persian reliably, so every comment in every `.m` file in this project is
   English, even though the thesis text and most documentation are Persian.
-- **Don't invent physics to make code shorter.** `claude_R8.m` runs a
+- **Don't invent physics to make code shorter.** `LSTE_solver_R8.m` runs a
   `NL=7, N_r=15, N_z=11` case in a few seconds mainly *because* nothing is
   approximated for convenience — matrices are exact DQM operators, the
   Newmark scheme is unconditionally stable at $\delta=1/2$, the LU
@@ -304,12 +304,12 @@ once, call it from every figure.
 
 ## 6. Where this document stops
 
-This explains *patterns*, not every line of `claude_R8.m` — for the exact
+This explains *patterns*, not every line of `LSTE_solver_R8.m` — for the exact
 current configuration defaults and how to run a case, see
 `CODE_DOC_usage_FA.md`; for the mathematical formulation itself (governing
 equations, DQM/Newmark derivation), see `CODE_DOC_technical_FA.md` and
-Chapter 3 of the thesis. For a live discussion of where `claude_R8.m` itself
+Chapter 3 of the thesis. For a live discussion of where `LSTE_solver_R8.m` itself
 could be made faster without changing any result, see the companion note in
 this session about assembly-loop vectorization — that is a *performance*
 change, larger in scope than anything above, and (per §1) would need to ship
-as a new, separately-validated revision rather than an edit to `claude_R8.m`.
+as a new, separately-validated revision rather than an edit to `LSTE_solver_R8.m`.
