@@ -63,7 +63,7 @@ constants **after** calling the solver (the call clears the workspace).
   extensions**: T1 integrator table, T2.1 spatial convergence
   (DQM-Chebyshev / DQM-uniform / FDM / FEM-linear / FEM-quadratic),
   T3 theory comparison. Written by `claude_param_figures_R2.m` and
-  `claude_T2_1_spatial_methods.m`.
+  `T2_1_spatial_methods.m`.
 
 ## Known limits / findings
 - **F (free) and R (roller) end supports are dynamically unstable** in the

@@ -35,12 +35,12 @@ For open author-facing questions in detail, see `DECISIONS_NEEDED.md`.
 ## PHASE 3 — Parametric campaign (new geometry) ✅ DONE
 8. ✅ 86-case campaign (`param_studies_ch4/`, via `campaign/run_ch4_campaign.ps1` +
    `run_nz_sweep.ps1`), including the full 25-case GPL×porosity matrix (Prom.3).
-9. ✅ Figure catalog rebuilt for the new geometry: `claude_catalog_R6*` family
+9. ✅ Figure catalog rebuilt for the new geometry: `catalog_R6*` family
    (4-panel selection, full-component, wave-fronts, 25-matrix, convergence),
-   `claude_catalog_gplpor.m`, `claude_catalog_bestworst.m`.
+   `catalog_gplpor.m`, `catalog_bestworst.m`.
 10. ✅ `chapter_stats.csv` regenerated correctly (2026-08-05 fix — the old
     generator was reading a stale old-geometry folder; new one is
-    `code/misc/claude_chapter_stats_ch4.m`).
+    `code/misc/chapter_stats_ch4.m`).
 
 ## PHASE 4 — Chapter 4 (Results) ✅ DONE — currently R4.4
 11. ✅ Full chapter built and iterated through supervisor review rounds

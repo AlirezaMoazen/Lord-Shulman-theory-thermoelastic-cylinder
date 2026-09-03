@@ -1,6 +1,6 @@
 # PROTOCOL — working rules of this code line
 
-These rules were agreed between the author (Alireza) and Claude and apply to
+These rules were agreed between the author (Alireza) and the AI assistant and apply to
 every change in this folder.
 
 ## 1. Revision naming

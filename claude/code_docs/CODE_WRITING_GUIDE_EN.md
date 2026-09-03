@@ -50,7 +50,7 @@ match the exact static-limit test" every time a new feature is added,
 because the new feature is proven not to touch the old code path. If you
 ever need to change something in a *verified* file, the answer is: copy it
 to a new revision number first, then edit the copy. This is why you now also
-have `claude_ch123_figs_2016b.m` sitting next to `claude_ch123_figs.m`
+have `ch123_figs_2016b.m` sitting next to `ch123_figs.m`
 instead of a modified original — same idea, different reason (compatibility
 instead of a new feature), same rule.
 
@@ -132,7 +132,7 @@ Halpin-Tsai + rule-of-mixtures + the open-cell porosity factor. This is
 "compute material properties" and "use material properties" as two separate,
 sequential phases (rather than interleaving them) is what makes it possible
 to unit-test material properties independently (see
-`claude_porosity_check_R3_1.m`-style scripts) and what makes the assembly
+`porosity_check_R3_1.m`-style scripts) and what makes the assembly
 loop itself easy to read.
 
 ### Global assembly: constraint rows are just "zero the row, write a new equation"
@@ -251,7 +251,7 @@ Two style rules, applied uniformly across every catalog script this session:
    labels, tick labels, and legends. Figure numbers and captions belong in
    the thesis text, not baked into the image. (Two narrow, deliberate
    exceptions: box-and-arrow diagrams where the text *is* the content — see
-   `claude_ch123_figs.m`'s flowchart/taxonomy figures — and per-cell
+   `ch123_figs.m`'s flowchart/taxonomy figures — and per-cell
    identity labels in the 25-panel GPL×porosity matrix, where the label is
    structural, not decorative.)
 2. **Color figures use solid lines only** (`'-'`); curves are told apart by
@@ -274,7 +274,7 @@ once, call it from every figure.
   `pdir = fullfile(CLROOT, 'param_studies_ch4')` with `CLROOT` a full,
   absolute path defined at the top of the script. This one habit prevents
   an entire class of "my script silently wrote to the wrong folder" bugs —
-  it happened twice this session (`claude_chapter_stats_ch4.m` and four
+  it happened twice this session (`chapter_stats_ch4.m` and four
   catalog scripts) before becoming a hard rule.
 - **Local helper functions at the end of the file**, with a comment marking
   the boundary (`%% ---- local helper functions (must be at end of a

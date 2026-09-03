@@ -122,18 +122,18 @@ powershell -File .\campaign\run_nz_sweep.ps1
 
 ```matlab
 % خانوادهٔ کاتالوگِ فصل چهار — می‌خوانند از param_studies_ch4\ و می‌سازند در figures_ch4_bw\ و figures_ch4_color\
-claude_catalog_R6            % ۴-پنل: T*,U* بر حسب Fo و T*,Σθθ بر حسب ξ
-claude_catalog_R6_color      % همان، رنگی
-claude_catalog_R6_full       % ۸-پنلِ کاملِ کرنش/تنش
-claude_catalog_R6_extras     % پیشانی‌های صوتِ دوم + ماتریسِ ۵×۵ گرافن×تخلخل
-claude_catalog_gplpor        % شکل‌های به‌تفکیکِ تخلخل
-claude_catalog_bestworst     % بهترین/بدترین
-claude_catalog_conv, claude_catalog_conv2   % همگرایی (هر دو سبک B&W و رنگی)
-claude_catalog_ch4_variants  % تکمیلِ نسخه‌های کم‌بودِ سیاه‌وسفید/رنگی
+catalog_R6            % ۴-پنل: T*,U* بر حسب Fo و T*,Σθθ بر حسب ξ
+catalog_R6_color      % همان، رنگی
+catalog_R6_full       % ۸-پنلِ کاملِ کرنش/تنش
+catalog_R6_extras     % پیشانی‌های صوتِ دوم + ماتریسِ ۵×۵ گرافن×تخلخل
+catalog_gplpor        % شکل‌های به‌تفکیکِ تخلخل
+catalog_bestworst     % بهترین/بدترین
+catalog_conv, catalog_conv2   % همگرایی (هر دو سبک B&W و رنگی)
+catalog_ch4_variants  % تکمیلِ نسخه‌های کم‌بودِ سیاه‌وسفید/رنگی
 ```
 
 شکل‌های سیاه‌وسفید از رنگ‌های خاکستری + سبک خط + نشانگر استفاده می‌کنند تا در
-چاپ تک‌رنگ خوانا باشند. شکل‌های گسترشی (T2/T3) با `claude_T2_1_spatial_methods` و
+چاپ تک‌رنگ خوانا باشند. شکل‌های گسترشی (T2/T3) با `T2_1_spatial_methods` و
 اسکریپت‌های تئوری در `results_extensions\` تولید می‌شوند. (اسکریپت‌های قدیمیِ
 `claude_param_figures*` برای هندسهٔ قدیمی بودند و در `code\_archive\` بایگانی شده‌اند.)
 
@@ -158,7 +158,7 @@ claude_catalog_ch4_variants  % تکمیلِ نسخه‌های کم‌بودِ س
 `<out_name>_DOFmap.csv` (با سرستون `gdof,component,comp_name,layer_e,ir,iz,localnode,r,z`)
 نیز صادر می‌کند تا برای سند مستندسازیِ کد قابل ارجاع باشد.
 
-اسکریپت `claude_chapter_stats_ch4.m` (در `code\misc`) این فایل‌ها را از پوشهٔ
+اسکریپت `chapter_stats_ch4.m` (در `code\misc`) این فایل‌ها را از پوشهٔ
 `param_studies_ch4\` می‌خواند و جدول آماری `chapter_stats.csv` (بیشینه/نهاییِ
 کمیت‌های بی‌بعد هر حالت، با بی‌بعدسازیِ هندسهٔ جدید) را می‌سازد که مبنای اعداد فصل
 چهارم است. (نسخهٔ قدیمیِ `claude_chapter_stats.m` پوشهٔ حذف‌شدهٔ `param_studies\` را

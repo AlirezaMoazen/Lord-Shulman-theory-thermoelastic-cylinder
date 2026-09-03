@@ -1,6 +1,6 @@
 # claude/ — Verified Dynamic Solver & Validation Suite
 
-MATLAB codes written by Claude (AI assistant) for the MSc thesis:
+AI-assisted MATLAB codes for the MSc thesis:
 **Transient coupled Lord-Shulman thermoelastic analysis of multilayer porous
 GPL-reinforced hollow cylinders** (layerwise DQM + Newmark).
 
@@ -38,16 +38,16 @@ LSTE_solver_R5
 | `LSTE_solver_R1.m` / `LSTE_solver_R2.m` / `LSTE_solver_R2_1.m` / `LSTE_solver_R3.m` / `LSTE_solver_R3_1.m` | frozen revision history (see PROTOCOL.md) |
 | `run_param_studies_v3.ps1` | parallel campaign orchestrator (3 MATLAB jobs, skip-existing resume) |
 | `claude_param_figures_R2.m` | campaign/extension figure generator (dimensionless); R1 frozen |
-| `claude_T1_time_integrators.m` | T1: six time-integration methods compared (table) |
-| `claude_T2_1_spatial_methods.m` | T2.1: spatial convergence DQM vs FDM vs FEM (lin+quad); T2 frozen |
+| `T1_time_integrators.m` | T1: six time-integration methods compared (table) |
+| `T2_1_spatial_methods.m` | T2.1: spatial convergence DQM vs FDM vs FEM (lin+quad); T2 frozen |
 | `Static_Baseline_R1.m` | independent static solver (legacy Main-EN + one bug fix) used for cross-validation |
 | `Compare_R1.m` | static-vs-dynamic cross-validation script |
 | `LSTE_solver_R2_run_benchmark1.m` | Benchmark 1: IJPVP-2012 Table 6 (dynamic pressure vs paper + ANSYS) |
 | `LSTE_solver_R2_run_benchmark2.m` | Benchmark 2: exact Bessel transient conduction + Newmark-vs-ode15s table |
 | `LSTE_solver_R3_run_benchmark3.m` | Benchmark 3: Bagri-Eslami LS wave benchmark (self-contained 1-D radial solver) |
 | `LSTE_solver_R2_run_LSdemo.m` | Lord-Shulman wave-propagation demonstration figures |
-| `claude_porosity_check_R3_1.m` | proves the porosity-pattern implementation reproduces the author's tables |
-| `claude_porosity_variant_test.m` | the investigation script that identified the pattern conventions |
+| `porosity_check_R3_1.m` | proves the porosity-pattern implementation reproduces the author's tables |
+| `porosity_variant_test.m` | the investigation script that identified the pattern conventions |
 | `Validation/` | all benchmark figures (PNG 300 dpi + editable .fig) and CSV tables |
 | `results/` | saved .mat results of the verification runs |
 | `param_studies/` | **raw data store**: one .mat + .log per campaign/extension case (33 campaign + T1/T2/T3) |
