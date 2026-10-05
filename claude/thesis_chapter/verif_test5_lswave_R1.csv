@@ -1,0 +1,5 @@
+N_r,radial points,Linf relative error,L2 relative error
+7,49,1.343e-02,4.881e-03
+11,77,6.204e-03,1.876e-03
+15,105,3.756e-03,1.207e-03
+21,147,3.230e-03,6.507e-04

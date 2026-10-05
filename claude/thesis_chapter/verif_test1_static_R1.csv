@@ -1,0 +1,6 @@
+quantity,value,unit
+radial points compared,45,-
+max |u| independent static solver,9.555556e-04,m
+max |u| dynamic solver static limit,9.555556e-04,m
+max absolute difference,2.103667e-14,m
+max relative difference,2.201512e-11,-
