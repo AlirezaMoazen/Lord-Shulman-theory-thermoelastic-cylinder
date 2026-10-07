@@ -1,4 +1,4 @@
 method,max error vs exact (K),CPU (s)
-DQM + Newmark,0.003190,0.18
-DQM + ode15s,0.000263,1.74
+DQM + Newmark,0.003190,0.29
+DQM + ode15s,0.000263,3.00
 Newmark vs ode15s,0.003371,-
