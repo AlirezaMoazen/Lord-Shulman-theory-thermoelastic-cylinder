@@ -250,6 +250,8 @@
 | `REVIEW2_PROM2.docx` | round-2 supervisor review (Prom.2) transcription |
 | `PROJECT_AUDIT.md` | 2026-07-28 protocol/review/gap audit |
 | `THESIS_TODO.md`, `WORK_PROTOCOL.md`, `DECISIONS_NEEDED.md`, `ROADMAP.md` | living governance (git history is the change log) |
+| `governance/AUTHOR_CH4_SECTION_4_4_TEST2_IJPVP_BENCHMARK_FA_R1.md` (+ docx) | 2026-10-13, **author-only** | Explanation of validation test 2 (§4-4-2): where the paper numbers come from (Table 6 of IJPVP 98 (2012), p.46, verified against the PDF), the equations solved, reproduction by `LSTE_solver_R2_run_benchmark1` (re-run with R11: identical to ~1e-13), and the finding that **no ANSYS run exists in the project** — the ANSYS column is quoted from Setoodeh et al. [11] via that table. Contains suggested replacement wording for §4-4-2 and defense answers. |
+| `governance/AUTHOR_CH4_SECTION_4_4_TEST3_BESSEL_SERIES_FA_R1.md` (+ docx) | 2026-10-13, **author-only** | Explanation of validation test 3 (§4-4-3): step-by-step derivation of the exact Bessel-series conduction solution (steady lift, Sturm–Liouville modes, Duhamel), numerical implementation (root search, 60 modes) with a mode-convergence check run on 2026-10-13, comparison method and error table, and why the inner-surface temperature is not a round number (exponential ramp: 365.94/472.93/499.93 K at 2/10/40 s). |
 | `governance/AUTHOR_NOTES_FA_R1.md` | 2026-10-12 author's reference notes (file map, key numbers, full equations incl. §4-17 telegraph wave equation, solution method, pitfalls) + open inconsistencies: GN-III k\* run vs text, FEM/DQM wording in §4-19, two U\*/Σ\* normalisations (`chapter_stats.csv` vs Table 4-1) |
 
 ---
