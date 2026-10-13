@@ -3,7 +3,7 @@ dir: rtl
 lang: fa-IR
 ---
 
-<!-- CH4_SECTION_4_4_METHOD_DETAIL_FA_R1 — توضیح تفصیلی، روش کار و روش حل برای بخش صحت‌سنجی (۴-۴).
+<!-- AUTHOR_CH4_SECTION_4_4_METHOD_DETAIL_FA_R1 — توضیح تفصیلی، روش کار و روش حل برای بخش صحت‌سنجی (۴-۴).
      سندی مرجع برای نگارنده و پشتوانهٔ متن ۴-۴؛ جایگزین متن فصل نیست (متن فصل: CH4_SECTION_4_4_FA_R5).
      منابع: code/validation/*.m، code/solver/{Static_Baseline_R3,Compare_R2,LSTE_solver_R9_check_benchmark1_v2}.m،
      Validation/*.csv، thesis_chapter/{verif_test*,ls_wave_*}.csv. هر عدد قابل ردیابی به یکی از این‌هاست.
