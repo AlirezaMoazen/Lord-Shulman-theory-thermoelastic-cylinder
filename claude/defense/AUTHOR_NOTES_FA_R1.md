@@ -39,7 +39,7 @@ lang: fa-IR
 | صحت‌سنجی | `code/validation/` + `Validation/` (شکل و CSV) |
 | تاریخچهٔ تغییرات | `REVISIONS.md` (هر چیز `_R<n>`؛ تغییر جزئی `_R<n>.<m>`) |
 | متن فصل ۴ فعلی | `thesis_chapter/RESULTS_CHAPTER_FA_R4.4.md` / `..._EN_R4.4.md` |
-| بازنویسی تفصیلی ۴-۱۹ و ۴-۲۰ | `governance/AUTHOR_CH4_SECTIONS_4_19_4_20_FA_R1.md` |
+| بازنویسی تفصیلی ۴-۱۹ و ۴-۲۰ | `defense/AUTHOR_CH4_SECTIONS_4_19_4_20_FA_R1.md` |
 
 قاعدهٔ کاری (PROTOCOL.md): فایل کاری را درجا ویرایش نکنید؛ نسخهٔ جدید بسازید.
 

@@ -10,7 +10,7 @@ lang: fa-IR
        ۴-۱۹: code/extensions/T2_10_spatial_methods.m  +  results_extensions/T2_spatial_table.csv
        ۴-۲۰: code/solver/LSTE_solver_R11.m (شاخهٔ theory) + campaign/run_ch4_campaign.ps1
              (موارد C_FOURIER, C_TAU_015, T3_DPL, T3_GN3) + param_studies_ch4/*.mat
-     هشدار تصمیم‌گیری (k* در GN-III): توضیحات در governance/AUTHOR_NOTES_FA_R1.md §۸-۱ -->
+     هشدار تصمیم‌گیری (k* در GN-III): توضیحات در defense/AUTHOR_NOTES_FA_R1.md §۸-۱ -->
 
 ## ۴-۱۹. مقایسهٔ روش‌های گسسته‌سازی مکانی
 
@@ -312,7 +312,7 @@ $r=1.25$ m یعنی $\xi=0.5$) و گرهٔ ۶ از ۱۱ محوری ($z=L/2$). ن
 > سرعت موج آن $\sqrt{k^{*}/\rho c}=1.09\times10^{-3}$ m/s است، یعنی **۲٫۳۵ برابر** LS
 > ($4.63\times10^{-4}$) و زمان عبور از جداره $\mathrm{Fo}=0.165$ به‌جای 0.387. پس عبارت «سرعت موج برابر LS»
 > برای اجرای فعلی درست نیست؛ یا باید اجرا با $k^{*}=0.182$ تکرار شود، یا متن اصلاح شود. (جزئیات:
-> `governance/AUTHOR_NOTES_FA_R1.md` §۸-۱.)
+> `defense/AUTHOR_NOTES_FA_R1.md` §۸-۱.)
 
 ### ۴-۲۰-۶. نتایج
 
