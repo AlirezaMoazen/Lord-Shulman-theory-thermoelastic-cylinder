@@ -1,0 +1,64 @@
+%% ========================================================================
+%  T2_T4_spatial_2panel_R2.m — spatial discretisation comparison, ONE figure with TWO panels, no panel titles
+%  ------------------------------------------------------------------------
+%  Purpose : journal-article figure (papers/ARTICLE_FULL_THESIS_EN_R5). Combines the two
+%            thesis figures 4-32 (radial nodes, T2_spatial_convergence) and 4-33 (axial nodes,
+%            T4_axial_convergence) into one two-panel figure (left radial, right axial), with a
+%            single legend at the bottom, and leaves out the DIVERGING part of the DQM with the
+%            uniform grid (N > 31; the saved errors there are 1e47 ... 1e254 or NaN).
+%  R2 change (author instruction of 2026-11-23, Prom8 item 16): the titles and the letters (a), (b)
+%            above the two panels are removed (marked CHANGE R2 below); everything else is R1.
+%  Inputs  : results_extensions/T2_spatial_table.csv, results_extensions/T4_axial_table.csv
+%            (the saved data of the thesis figures; nothing is recomputed, no solver is run).
+%  Outputs : results_extensions/figures_article/T2T4_spatial_2panel_R2.png  (300 dpi)
+%            results_extensions/figures_article/T2T4_spatial_2panel_R2.fig
+%  Run from claude/ :  matlab -batch "addpath('code/extensions'); T2_T4_spatial_2panel_R2; exit(0)"
+%  Style   : same as the thesis figures (default colour order, o s ^ d v markers, slope -2 line).
+%  New file (R2); R1 and the scripts that made the thesis figures stay untouched.
+%  ========================================================================
+clearvars; clc; close all;
+
+cfg.csv     = {fullfile('results_extensions','T2_spatial_table.csv'), ...
+               fullfile('results_extensions','T4_axial_table.csv')};
+cfg.xlab    = {'number of radial points','number of axial points'};
+cfg.ylim    = {[1e-4 0.3],[1e-6 0.3]};
+% CHANGE R2: cfg.ptitle ('(a) radial direction', '(b) axial direction') removed
+cfg.unifMax = 31;                       % DQM (uniform): keep N <= 31, drop the diverging range
+cfg.outdir  = fullfile('results_extensions','figures_article');
+cfg.name    = 'T2T4_spatial_2panel_R2';
+
+meth = {'DQM-cheb','DQM-unif','FDM','FEM-lin','FEM-quad'};
+mlab = {'DQM (Chebyshev)','DQM (uniform)','FDM (2nd order)','FEM (linear)','FEM (quadratic)'};
+mk   = {'o','s','^','d','v'};
+co   = [0.0000 0.4470 0.7410; 0.8500 0.3250 0.0980; 0.9290 0.6940 0.1250; ...
+        0.4940 0.1840 0.5560; 0.4660 0.6740 0.1880];
+
+if ~exist(cfg.outdir,'dir'), mkdir(cfg.outdir); end
+fig = figure('Position',[60 60 1500 620],'Color','w');
+tl  = tiledlayout(fig,1,2,'TileSpacing','compact','Padding','compact');
+for p = 1:2
+    T  = readtable(cfg.csv{p});
+    ax = nexttile(tl); hold(ax,'on');
+    h  = gobjects(1,numel(meth)+1);
+    for m = 1:numel(meth)
+        s = strcmp(T.method, meth{m}) & isfinite(T.max_err_K);
+        if strcmp(meth{m},'DQM-unif'), s = s & (T.N <= cfg.unifMax); end
+        h(m) = loglog(ax, T.N(s), T.max_err_K(s), ['-' mk{m}], 'Color',co(m,:), ...
+                      'LineWidth',2,'MarkerSize',8);
+    end
+    sF = strcmp(T.method,'FDM');  NF = T.N(sF);  eF = T.max_err_K(sF);
+    h(end) = loglog(ax, NF, eF(1)*(NF(1)./NF).^2, ':k', 'LineWidth',1.5);
+    set(ax,'XScale','log','YScale','log','FontSize',14,'Box','on','XGrid','on','YGrid','on', ...
+           'XMinorGrid','on','YMinorGrid','on','GridAlpha',0.25);
+    xlim(ax,[6 400]); ylim(ax,cfg.ylim{p});
+    xlabel(ax,cfg.xlab{p}); ylabel(ax,'max error at t = 10 s (K)');
+    % CHANGE R2: title(ax,cfg.ptitle{p},...) removed (no title and no letter above the panel)
+    if p == 1, hLeg = h; ax1 = ax; end
+end
+lg = legend(ax1, hLeg, [mlab,{'slope -2'}], 'NumColumns',6,'FontSize',13);
+lg.Layout.Tile = 'south';
+
+exportgraphics(fig, fullfile(cfg.outdir,[cfg.name '.png']), 'Resolution',300);
+savefig(fig, fullfile(cfg.outdir,[cfg.name '.fig']));
+fprintf('Saved %s (.png + .fig) in %s\n', cfg.name, cfg.outdir);
+close(fig);
