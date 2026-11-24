@@ -15,3 +15,6 @@ claude/param_studies_ch4/
 
 # MATLAB batch run/render logs (noise)
 *.log
+
+# Thesis drafts stay local only (author instruction 2026-11-24). Drafts R 0 and R 0.1 were committed earlier and stay tracked.
+پیش نویس پایان نامه (R *).docx
